@@ -114,19 +114,11 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 
 		int voxelId = chunk->second->blocks[lx][lz][ly];
 	
-
-		/*VoxelHandler::chunkCoord = coord;
-		VoxelHandler::voxelLocalPosition = glm::ivec3(lx, ly, lz);
-		VoxelHandler::voxelWorldPos = voxelWorldPos;
-		*/
 		int values[] = { voxelId, lx, ly, lz, coord.first, coord.second };
 		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 		return vec;
 	}
-	/*VoxelHandler::chunkCoord = {0, 0};
-	VoxelHandler::voxelLocalPosition = glm::ivec3(0, 0, 0);
-	VoxelHandler::voxelWorldPos = glm::vec3(0);
-	voxelId = 0;*/
+	
 	int values[6] = { 0,0,0,0,0,0 };
 	std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 	return vec;
