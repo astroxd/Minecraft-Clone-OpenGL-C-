@@ -7,7 +7,7 @@
 class VoxelHandler {
 public:
 
-	const int MAX_RAY_DIST = 12;
+	const int MAX_RAY_DIST = 6;
 	const int DELAY_DESTROY_BLOCK = 100;
 	const int DELAY_PLACE_BLOCK = 100;
 	Camera* camera;

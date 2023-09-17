@@ -100,7 +100,7 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 	int values[6] = { 0,0,0,0,0,0 };
 	std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 
-	//IF PLAYER ABOVE 50 CAN'T DESTROY BLOCKS BELOW HIM
+	//IF BLOCK POS Y ABOVE 50 DON'T CHECK FOR VOXELS
 	if (voxelWorldPos.y >= 50) return vec;
 
 	int cx = floor(voxelWorldPos.x / CHUNK_W);
