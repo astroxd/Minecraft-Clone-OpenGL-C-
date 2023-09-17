@@ -77,17 +77,10 @@ public:
 	
 	void render(Shader& shader, glm::vec3 position) {
 		if (handler->voxelId == 0) return;
+
 		glm::mat4 model = glm::mat4(1.0f);
-		glm::vec3 pos = glm::vec3{ floor(handler->voxelWorldPos.x),
-									floor(handler->voxelWorldPos.y),
-									floor(handler->voxelWorldPos.z) };
-		//if (handler->chunkCoord.first < 0) pos.x -= 1;
-		//if (handler->chunkCoord.second < 0) pos.z += 1;
 		
-		std::cout << "X: " << pos.x << " Y: " << pos.y << " Z: " << pos.z << std::endl;
-
-		model = glm::translate(model, pos);
-
+		model = glm::translate(model, floor(handler->voxelWorldPos));
 
 		shader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
