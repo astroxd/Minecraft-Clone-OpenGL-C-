@@ -11,15 +11,20 @@ void VoxelHandler::init(Camera* camera) {
 void VoxelHandler::rayCasting() {
 	float maxX, maxY, maxZ, deltaX, deltaY, deltaZ;
 
-	float x1 = abs(camera->Position.x);
-	float y1 = abs(camera->Position.y);
-	float z1 = abs(camera->Position.z);
+	//WORKS WITH NEGATIVES TOO
+	//float x1 = abs(camera->Position.x);
+	//float y1 = abs(camera->Position.y);
+	//float z1 = abs(camera->Position.z);
 
+	float x1 = camera->Position.x;
+	float y1 = camera->Position.y;
+	float z1 = camera->Position.z;
+	
 	auto normOri = glm::normalize(camera->Orientation);
-
-	float x2 = x1 + normOri.x * MAX_RAY_DIST;
-	float y2 = y1 + normOri.y * MAX_RAY_DIST;
-	float z2 = z1 + normOri.z * MAX_RAY_DIST;
+	
+	float x2 = x1 + camera->Orientation.x * MAX_RAY_DIST;
+	float y2 = y1 + camera->Orientation.y * MAX_RAY_DIST;
+	float z2 = z1 + camera->Orientation.z * MAX_RAY_DIST;
 
 	glm::vec3 currentVoxelPos = glm::vec3(camera->Position.x, camera->Position.y, camera->Position.z);
 	voxelId = 0;
@@ -42,11 +47,10 @@ void VoxelHandler::rayCasting() {
 	while (not(maxX > 1.0f && maxY > 1.0f && maxZ > 1.0f)) {
 		std::vector<int> values = getVoxelId(currentVoxelPos);
 		
-		
-
+		//voxelId = values[0];
 		if (values[0] > 0) {
 			voxelId = values[0];
-
+			std::cout << "VOXELID: " << voxelId << std::endl;
 			voxelLocalPosition = glm::ivec3(values[1], values[2], values[3]);
 			chunkCoord = { values[4], values[5] };
 			voxelWorldPos = currentVoxelPos;
@@ -99,7 +103,8 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 	int cy = floor(voxelWorldPos.y / CHUNK_H);
 	int cz = floor(voxelWorldPos.z / CHUNK_D);
 
-
+	//if (cx == -0) cx == -1;
+	//if (cz == -0) cz == -1;
 	ChunkCoord coord = { cx, cz };
 
 	auto chunk = chunks->find(coord);
@@ -109,11 +114,15 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		int ly = abs(static_cast<int>(voxelWorldPos.y) % CHUNK_H);
 		int lz = abs(static_cast<int>(voxelWorldPos.z) % CHUNK_D);
 
+		 
 		if (coord.first < 0) lx = (CHUNK_W - 1) - lx;
 		if (coord.second < 0) lz = (CHUNK_D - 1) - lz;
 
 		int voxelId = chunk->second->blocks[lx][lz][ly];
-	
+		//std::cout << "WORLD POS X: " << voxelWorldPos.x << " WORLD POS Z: " << voxelWorldPos.z << std::endl;
+		//std::cout << "LOCAL X: " << lx << " LOCAL Z: " << lz << std::endl;;
+		
+
 		int values[] = { voxelId, lx, ly, lz, coord.first, coord.second };
 		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 		return vec;
@@ -172,8 +181,8 @@ void VoxelHandler::placeVoxel() {
 	if (voxelId > 0) {
 		std::vector<int> values = getVoxelId(voxelWorldPos + voxelNormal);
 		if (values[0] == 0) {
-			std::cout << "ENTRA " << std::endl;
-			std::cout << " LOCAL X: " << values[1] << " LOCAL Y: " << values[2] << " LOCAL Z: " << values[3] << std::endl;
+			//std::cout << "ENTRA " << std::endl;
+			//std::cout << " LOCAL X: " << values[1] << " LOCAL Y: " << values[2] << " LOCAL Z: " << values[3] << std::endl;
 			(*chunks)[{values[4], values[5]}]->blocks[values[1]][values[3]][values[2]] = 1;
 			(*chunks)[{values[4], values[5]}]->generateChunk();
 			(*chunks)[{values[4], values[5]}]->setVAO();

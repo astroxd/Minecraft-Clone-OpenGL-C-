@@ -20,7 +20,7 @@ class Scene {
 		void setShader(Shader& shader);
 		void setCamera(Camera* camera);
 
-		void render(Shader& shader);
+		void render(Shader& shader, Shader& voxelMarkerShader);
 };
 
 

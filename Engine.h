@@ -13,6 +13,7 @@ public:
 	Window window;
 	Camera camera = Camera(window.width, window.height, glm::vec3(0.0f, 0.0f, 2.0f));
 	Shader ShaderProgram;
+	Shader VoxelMarkerProgram;
 	Scene scene;
 
 	Engine();

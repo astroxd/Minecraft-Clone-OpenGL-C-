@@ -3,6 +3,7 @@
 Engine::Engine() {
 
 	ShaderProgram.init("chunk.vert", "chunk.frag");
+	VoxelMarkerProgram.init("cube.vert", "cube.frag");
 	scene.window = window.window;
 	scene.second_context = window.second_context;
 	scene.setShader(ShaderProgram);
@@ -39,7 +40,10 @@ void Engine::run() {
 		camera.Inputs(window.window, timeDiff);
 		camera.Matrix(45.0f, 0.1f, 6000.0f, ShaderProgram, "camMatrix");
 		
-		scene.render(ShaderProgram);
+		VoxelMarkerProgram.Activate();
+		camera.Matrix(45.0f, 0.1f, 6000.0f, VoxelMarkerProgram, "camMatrix");
+
+		scene.render(ShaderProgram, VoxelMarkerProgram);
 
 
 		if (glfwGetKey(window.window, GLFW_KEY_F) == GLFW_PRESS)
@@ -59,7 +63,7 @@ void Engine::run() {
 	std::cout << "Closing" << std::endl;
 	
 	ShaderProgram.Delete();
-
+	VoxelMarkerProgram.Delete();
 	glfwDestroyWindow(window.window);
 	glfwTerminate();
 }

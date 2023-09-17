@@ -27,7 +27,7 @@ public:
 		VBO.Delete();
 	}
 	void setData(std::vector <Vertex>& vertices);
-	void setVAO();
+	virtual void setVAO();
 	//Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& texture);
 
 	//Mesh(std::vector <Vertex>& vertices, std::vector <Texture>& texture);

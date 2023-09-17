@@ -4,6 +4,100 @@
 #include "MyChunk.h"
 #include "VoxelHandler.h"
 
+
+class VoxelMarker : public Mesh {
+public:
+
+	VoxelHandler* handler;
+
+	VoxelMarker(VoxelHandler* handler) {
+		VoxelMarker::handler = handler;
+		generateVertices();
+		setVAO();
+	};
+
+
+	void setVAO() override {
+		VAO.Bind();
+		VBO.setVertices(vertices);
+
+		// Links VBO attributes such as coordinates and colors to VAO
+		VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
+		// Unbind all to prevent accidentally modifying them
+		VAO.Unbind();
+		VBO.Unbind();
+	};
+
+	void generateVertices() {
+		vertices.clear();
+		vertices = {
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+
+			Vertex{ glm::vec3(0.0f, 0.0f,  1.0f) },
+			Vertex{ glm::vec3(1.0f, 0.0f,  1.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 1.0f) },
+
+			Vertex{ glm::vec3(0.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 1.0f) },
+
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 0.0f, 1.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(0.5f, 0.0f, 0.0f) },
+			Vertex{ glm::vec3(0.5f, 0.0f, 1.0f) },
+			Vertex{ glm::vec3(0.5f, 0.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 0.0f, 0.0f) },
+
+			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 0.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 1.0f) },
+			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) } 
+		};
+	};
+	
+	void render(Shader& shader, glm::vec3 position) {
+		if (handler->voxelId == 0) return;
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::vec3 pos = glm::vec3{ floor(handler->voxelWorldPos.x),
+									floor(handler->voxelWorldPos.y),
+									floor(handler->voxelWorldPos.z) };
+		//if (handler->chunkCoord.first < 0) pos.x -= 1;
+		//if (handler->chunkCoord.second < 0) pos.z += 1;
+		
+		std::cout << "X: " << pos.x << " Y: " << pos.y << " Z: " << pos.z << std::endl;
+
+		model = glm::translate(model, pos);
+
+
+		shader.Activate();
+		glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		Draw(shader);
+	}
+
+};
+
+
+
 class World {
 public:
 
@@ -24,6 +118,7 @@ public:
 	GLFWwindow* window;
 
 	VoxelHandler voxelHandler;
+	VoxelMarker voxelMarker = VoxelMarker(&voxelHandler);
 
 	World() {
 		FastNoiseLite noise;
@@ -42,10 +137,6 @@ public:
 	void deleteChunks();
 
 	void render(Shader& shader);
-	
-	const int MAX_RAY_DIST = 6;
-	bool rayCasting();
-	int getVoxelId(glm::vec3 voxelWorldPos);
 
 };
 

@@ -161,10 +161,6 @@
     <None Include="chunk.vert" />
     <None Include="cube.frag" />
     <None Include="cube.vert" />
-    <None Include="default.frag" />
-    <None Include="default.vert" />
-    <None Include="heightmap.frag" />
-    <None Include="heightmap.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
