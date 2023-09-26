@@ -84,7 +84,7 @@ public:
 
 		shader.Activate();
 		glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		Draw(shader);
+		//Draw(shader);
 	}
 
 };

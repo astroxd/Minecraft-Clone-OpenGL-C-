@@ -9,7 +9,6 @@ Engine::Engine() {
 	scene.setShader(ShaderProgram);
 	scene.setCamera(&camera);
 	//scene.setMesh();
-
 	run();
 
 }

@@ -32,7 +32,7 @@ Window::Window() {
 
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
-
+	//glFrontFace(GL_CW);
 	std::cout << "Window Created" << std::endl;
 	
 }

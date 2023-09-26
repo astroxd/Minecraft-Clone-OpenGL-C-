@@ -9,7 +9,7 @@
 
 const int CHUNK_W = 16;
 const int CHUNK_D = 16;
-const int CHUNK_H = 50;
+const int CHUNK_H = 16;
 
 typedef std::pair<int, int> ChunkCoord;
 
@@ -45,6 +45,12 @@ public:
 	bool checkIfVoid(int x, int z, int y);
 	bool getNeighbourChunkIndex(ChunkCoord neighbourChunkCoord, int neighbourBlockX, int neighbourBlockZ, int y);
 	void render(Shader& shader, Camera* camera);
+
+	void loadVertices();
+
+
+	std::vector<int> getAo(int x, int z, int y, char plane);
+
 };
 
 

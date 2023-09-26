@@ -20,9 +20,9 @@ void World::setCamera(Camera* camera, GLFWwindow* window) {
 
 void World::buildChunks() {
 
-	for (int x = 0; x < 2; x++)
+	for (int x = 0; x < 4; x++)
 	{
-		for (int z = 0; z < 1; z++)
+		for (int z = 0; z < 4; z++)
 		{
 			for (int y = 0; y < 1; y++)
 			{
@@ -38,6 +38,7 @@ void World::buildChunks() {
 
 	while (it != chunks.end()) {
 		it->second->setWorldChunks(&chunks);
+		it->second->setVAO();
 		++it;
 	}
 }

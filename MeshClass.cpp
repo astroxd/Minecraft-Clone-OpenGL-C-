@@ -47,6 +47,7 @@ void Mesh::setVAO() {
 	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
 	VAO.LinkAttrib(VBO, 1, 1, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 	VAO.LinkAttrib(VBO, 2, 1, GL_FLOAT, sizeof(Vertex), (void*)(4 * sizeof(float)));
+	VAO.LinkAttrib(VBO, 3, 1, GL_FLOAT, sizeof(Vertex), (void*)(7 * sizeof(float)));
 	//VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();

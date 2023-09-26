@@ -12,6 +12,7 @@ struct Vertex
 	unsigned int voxelId;
 	unsigned int faceId;
 	glm::vec2 UV;
+	int aoId;
 };
 
 class VBO {
