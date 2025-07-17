@@ -11,7 +11,7 @@ public:
 	const int DELAY_DESTROY_BLOCK = 100;
 	const int DELAY_PLACE_BLOCK = 100;
 	Camera* camera;
-	std::map<ChunkCoord, std::unique_ptr<MyChunk>>* chunks;
+	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks;
 
 	int voxelId = 0;
 	std::chrono::milliseconds lastDestroyed;
@@ -33,7 +33,7 @@ public:
 
 
 	void input(GLFWwindow* window);
-	void update(std::map<ChunkCoord, std::unique_ptr<MyChunk>>* chunks);
+	void update(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks);
 	
 
 private:

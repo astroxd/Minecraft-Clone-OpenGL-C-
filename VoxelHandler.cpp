@@ -1,7 +1,5 @@
 #include "VoxelHandler.h"
 
-#include <iostream>
-
 #include <cmath>
 
 void VoxelHandler::init(Camera* camera) {
@@ -114,7 +112,7 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		int lx = abs(static_cast<int>(voxelWorldPos.x) % CHUNK_W);
 		int ly = static_cast<int>(voxelWorldPos.y);
 		int lz = abs(static_cast<int>(voxelWorldPos.z) % CHUNK_D);
-
+		
 		if (coord.first < 0) lx = (CHUNK_W - 1) - lx;
 		if (coord.second < 0) lz = (CHUNK_D - 1) - lz;
 
@@ -191,7 +189,7 @@ void VoxelHandler::input(GLFWwindow* window) {
 	}
 }
 
-void VoxelHandler::update(std::map<ChunkCoord, std::unique_ptr<MyChunk>>* chunks) {
+void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks) {
 	VoxelHandler::chunks = chunks;
 	rayCasting();
 }

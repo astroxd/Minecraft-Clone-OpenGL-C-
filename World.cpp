@@ -26,16 +26,13 @@ void World::buildChunks() {
 		{
 			for (int y = 0; y < 1; y++)
 			{
-				//std::cout << "CHUNK" << std::endl;
-				//MyChunk chunk = MyChunk(x, z, glm::vec3((float)x, (float)y, (float)z), shader, &noise);
-				ChunkCoord coord = { x ,z };
-				chunks[coord] = std::unique_ptr<MyChunk>(new MyChunk(coord, glm::vec3((float)x, (float)y, (float)z), shader, &noise));
+				ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x,z);
+				chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x, y, z), &noise);
 			}
 		}
 	}
 
 	auto it = chunks.begin();
-
 	while (it != chunks.end()) {
 		it->second->setWorldChunks(&chunks);
 		it->second->setVAO();
@@ -61,9 +58,8 @@ void World::render(Shader& shader) {
 
 //std::function<void(std::pair<int, int>, std::map<std::pair<int, int>, std::unique_ptr<MyChunk>>*, Shader*)> func
 bool buildNewChunks(
-	std::pair<int, int> newChunksCoords,
-	std::map<ChunkCoord, std::unique_ptr<MyChunk>>*chunks,
-	Shader* shader)
+	ChunkCoord newChunksCoords,
+	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>*chunks)
 {
 	
 	(*chunks)[newChunksCoords]->isVisible = true;
@@ -90,7 +86,7 @@ void World::updateChunks() {
 		{
 			if (std::abs(xx) + std::abs(zz) > distance) continue;
 
-			ChunkCoord coord = { x + xx, z + zz };
+			ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz );
 
 			if (chunks.count(coord) > 0 && chunks[coord]->isBuilt) {
 				chunks[coord]->isVisible = true;
@@ -99,17 +95,17 @@ void World::updateChunks() {
 
 			newChunksCoords.push_back(coord);
 
-			chunks[coord] = std::unique_ptr<MyChunk>(new MyChunk(coord, glm::vec3((float)x + xx, (float)0, (float)z + zz), shader, &noise));
-			if (chunks.count({ x + xx + 1 ,z + zz }) > 0) {
+			chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x + xx, 0, z + zz), &noise);
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx + 1 ,z + zz )) > 0) {
 				//newChunksCoords.push_back({ xCoord + 1, zCoord });
 			}
-			if (chunks.count({ x + xx - 1 ,z + zz }) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx - 1 ,z + zz )) > 0) {
 				//newChunksCoords.push_back({ xCoord - 1, zCoord });
 			}
-			if (chunks.count({ x + xx, z + zz + 1 }) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz + 1 )) > 0) {
 				//newChunksCoords.push_back({ xCoord, zCoord + 1 });
 			}
-			if (chunks.count({ x + xx, z + zz - 1 }) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz - 1 )) > 0) {
 				//newChunksCoords.push_back({ xCoord, zCoord - 1 });
 			}
 		}
@@ -120,7 +116,7 @@ void World::updateChunks() {
 	for (auto& chunkCoord : newChunksCoords) {
 		//if (counter > MAXCHUNKPERFRAME) return;
 		
-		std::future<bool> fut = std::async(std::launch::async, buildNewChunks, chunkCoord, &chunks, &shader);
+		std::future<bool> fut = std::async(std::launch::async, buildNewChunks, chunkCoord, &chunks);
 		//std::chrono::milliseconds span(100);
 		//while (fut.wait_for(span) == std::future_status::timeout) {}
 		if (fut.get()) {

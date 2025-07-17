@@ -96,7 +96,7 @@ public:
 
 	//std::vector<MyChunk> chunks;
 	//string = xz
-	std::map<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
+	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
 	
 	//std::vector<std::vector<unsigned int>> voxels;
 
@@ -117,6 +117,7 @@ public:
 		FastNoiseLite noise;
 		noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 		noise.SetSeed(122422);
+		chunks.reserve(13*13);
 	};
 
 	void setShader(Shader& shader);

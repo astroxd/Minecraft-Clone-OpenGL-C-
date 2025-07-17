@@ -18,6 +18,7 @@ public:
 	// Store VAO in public so it can be used in the Draw function
 	VAO VAO;
 	VBO VBO;
+	EBO EBO;
 	// Initializes the mesh
 	Mesh();
 	Mesh(std::vector <Vertex>& vertices);
@@ -25,6 +26,7 @@ public:
 	{
 		VAO.Delete();
 		VBO.Delete();
+		EBO.Delete();
 	}
 	void setData(std::vector <Vertex>& vertices);
 	virtual void setVAO();
