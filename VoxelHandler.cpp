@@ -17,12 +17,12 @@ void VoxelHandler::rayCasting() {
 	float x1 = camera->Position.x;
 	float y1 = camera->Position.y;
 	float z1 = camera->Position.z;
-	
-	auto normOri = glm::normalize(camera->Orientation);
-	
-	float x2 = x1 + camera->Orientation.x * MAX_RAY_DIST;
-	float y2 = y1 + camera->Orientation.y * MAX_RAY_DIST;
-	float z2 = z1 + camera->Orientation.z * MAX_RAY_DIST;
+
+	auto normOri = glm::normalize(camera->Front);
+
+	float x2 = x1 + camera->Front.x * MAX_RAY_DIST;
+	float y2 = y1 + camera->Front.y * MAX_RAY_DIST;
+	float z2 = z1 + camera->Front.z * MAX_RAY_DIST;
 
 	glm::vec3 currentVoxelPos = glm::vec3(camera->Position.x, camera->Position.y, camera->Position.z);
 	voxelId = 0;
@@ -45,7 +45,7 @@ void VoxelHandler::rayCasting() {
 	while (not(maxX > 1.0f && maxY > 1.0f && maxZ > 1.0f)) {
 		std::vector<int> values = getVoxelId(currentVoxelPos);
 		voxelId = values[0];
-		
+
 		if (voxelId > 0) {
 			std::cout << "VOXELID: " << voxelId << std::endl;
 			voxelLocalPosition = glm::ivec3(values[1], values[2], values[3]);
@@ -112,7 +112,7 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		int lx = abs(static_cast<int>(voxelWorldPos.x) % CHUNK_W);
 		int ly = static_cast<int>(voxelWorldPos.y);
 		int lz = abs(static_cast<int>(voxelWorldPos.z) % CHUNK_D);
-		
+
 		if (coord.first < 0) lx = (CHUNK_W - 1) - lx;
 		if (coord.second < 0) lz = (CHUNK_D - 1) - lz;
 
@@ -122,7 +122,7 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 		return vec;
 	}
-	
+
 	return vec;
 
 }

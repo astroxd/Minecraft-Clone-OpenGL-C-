@@ -26,7 +26,7 @@ void World::buildChunks() {
 		{
 			for (int y = 0; y < 1; y++)
 			{
-				ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x,z);
+				ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x, z);
 				chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x, y, z), &noise);
 			}
 		}
@@ -59,9 +59,9 @@ void World::render(Shader& shader) {
 //std::function<void(std::pair<int, int>, std::map<std::pair<int, int>, std::unique_ptr<MyChunk>>*, Shader*)> func
 bool buildNewChunks(
 	ChunkCoord newChunksCoords,
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>*chunks)
+	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks)
 {
-	
+
 	(*chunks)[newChunksCoords]->isVisible = true;
 	(*chunks)[newChunksCoords]->setWorldChunks(chunks);
 	return true;
@@ -86,7 +86,7 @@ void World::updateChunks() {
 		{
 			if (std::abs(xx) + std::abs(zz) > distance) continue;
 
-			ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz );
+			ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz);
 
 			if (chunks.count(coord) > 0 && chunks[coord]->isBuilt) {
 				chunks[coord]->isVisible = true;
@@ -96,16 +96,16 @@ void World::updateChunks() {
 			newChunksCoords.push_back(coord);
 
 			chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x + xx, 0, z + zz), &noise);
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx + 1 ,z + zz )) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx + 1, z + zz)) > 0) {
 				//newChunksCoords.push_back({ xCoord + 1, zCoord });
 			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx - 1 ,z + zz )) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx - 1, z + zz)) > 0) {
 				//newChunksCoords.push_back({ xCoord - 1, zCoord });
 			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz + 1 )) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz + 1)) > 0) {
 				//newChunksCoords.push_back({ xCoord, zCoord + 1 });
 			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord( x + xx, z + zz - 1 )) > 0) {
+			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz - 1)) > 0) {
 				//newChunksCoords.push_back({ xCoord, zCoord - 1 });
 			}
 		}
@@ -115,7 +115,7 @@ void World::updateChunks() {
 
 	for (auto& chunkCoord : newChunksCoords) {
 		//if (counter > MAXCHUNKPERFRAME) return;
-		
+
 		std::future<bool> fut = std::async(std::launch::async, buildNewChunks, chunkCoord, &chunks);
 		//std::chrono::milliseconds span(100);
 		//while (fut.wait_for(span) == std::future_status::timeout) {}
@@ -124,7 +124,7 @@ void World::updateChunks() {
 			chunks[chunkCoord]->isBuilt = true;
 		}
 		//glfwMakeContextCurrent(window);
-		
+
 		//counter++;
 
 	}
@@ -172,19 +172,20 @@ void World::deleteChunks() {
 
 void World::update() {
 	updateChunks();
-	
-	if (m_cameraPosition != camera->Position || m_cameraOrientation != camera->Orientation) {
+
+	if (m_cameraPosition != camera->Position || m_cameraOrientation != camera->Front) {
 		voxelHandler.update(&chunks);
-		
+
 	}
 	voxelHandler.input(window);
+	//m_cameraPosition = camera->Position;
+	//m_cameraOrientation = camera->Orientation;
+
 	m_cameraPosition = camera->Position;
-	m_cameraOrientation = camera->Orientation;
+	m_cameraOrientation = camera->Front;
 
 
-	
 
-	
 }
 
 

@@ -173,6 +173,9 @@
     <ClInclude Include="CubeMesh.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FastNoiseLite.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="KeyCodes.h" />
+    <ClInclude Include="MouseCodes.h" />
     <ClInclude Include="MyChunk.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="shaderClass.h" />

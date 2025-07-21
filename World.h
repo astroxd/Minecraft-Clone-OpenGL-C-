@@ -71,15 +71,15 @@ public:
 			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
 			Vertex{ glm::vec3(1.0f, 1.0f, 1.0f) },
 			Vertex{ glm::vec3(0.0f, 1.0f, 1.0f) },
-			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) } 
+			Vertex{ glm::vec3(0.0f, 1.0f, 0.0f) }
 		};
 	};
-	
+
 	void render(Shader& shader, glm::vec3 position) {
 		if (handler->voxelId == 0) return;
 
 		glm::mat4 model = glm::mat4(1.0f);
-		
+
 		model = glm::translate(model, floor(handler->voxelWorldPos));
 
 		shader.Activate();
@@ -97,7 +97,7 @@ public:
 	//std::vector<MyChunk> chunks;
 	//string = xz
 	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
-	
+
 	//std::vector<std::vector<unsigned int>> voxels;
 
 	Shader shader;
@@ -117,7 +117,7 @@ public:
 		FastNoiseLite noise;
 		noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 		noise.SetSeed(122422);
-		chunks.reserve(13*13);
+		chunks.reserve(13 * 13);
 	};
 
 	void setShader(Shader& shader);

@@ -2,7 +2,7 @@
 
 
 Mesh::Mesh() {
-	//std::cout << "Mesh created" << std::endl;
+	std::cout << "Mesh created" << std::endl;
 }
 
 Mesh::Mesh(std::vector <Vertex>& vertices) {

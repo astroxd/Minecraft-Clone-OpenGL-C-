@@ -10,141 +10,224 @@
 #include <glm/gtx/vector_angle.hpp>
 
 #include "shaderClass.h"
+#include "Input.h"
 
 
-struct Plane {
-	glm::vec3 normal = { 0.f, 1.f, 0.f }; // unit vector
-	float     distance = 0.f;        // Distance with origin
-
-	Plane() = default;
-
-	Plane(const glm::vec3& p1, const glm::vec3& norm)
-		: normal(glm::normalize(norm)),
-		distance(glm::dot(normal, p1))
-	{}
-
-	float getSignedDistanceToPlan(const glm::vec3& point) const
-	{
-		return glm::dot(normal, point) - distance;
-	}
+// Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
+enum Camera_Movement {
+	FORWARD,
+	BACKWARD,
+	LEFT,
+	RIGHT
 };
 
-struct Frustum {
-	Plane topFace;
-	Plane bottomFace;
-
-	Plane rightFace;
-	Plane leftFace;
-
-	Plane farFace;
-	Plane nearFace;
-};
-
-struct BoundingVolume
-{
-	virtual bool isOnFrustum(const Frustum& camFrustum, const glm::mat4& transform) const = 0;
-
-	virtual bool isOnOrForwardPlan(const Plane& plan) const = 0;
-
-	bool isOnFrustum(const Frustum& camFrustum) const
-	{
-		return (isOnOrForwardPlan(camFrustum.leftFace) &&
-			isOnOrForwardPlan(camFrustum.rightFace) &&
-			isOnOrForwardPlan(camFrustum.topFace) &&
-			isOnOrForwardPlan(camFrustum.bottomFace) &&
-			isOnOrForwardPlan(camFrustum.nearFace) &&
-			isOnOrForwardPlan(camFrustum.farFace));
-	};
-};
-
-
-struct Sphere : public BoundingVolume
-{
-	glm::vec3 center{ 0.f, 0.f, 0.f };
-	float radius{ 0.f };
-
-	Sphere(const glm::vec3& inCenter, float inRadius)
-		: BoundingVolume{}, center{ inCenter }, radius{ inRadius }
-	{}
-
-	bool isOnOrForwardPlan(const Plane& plan) const final
-	{
-		return plan.getSignedDistanceToPlan(center) > -radius;
-	}
-
-	bool isOnFrustum(const Frustum& camFrustum, const glm::mat4& transform) const final
-	{
-		//Get global scale thanks to our transform
-		const glm::vec3 globalScale = glm::vec3{ glm::length(transform[0]), glm::length(transform[1]) ,glm::length(transform[2]) };
-
-		//Get our global center with process it with the global model matrix of our transform
-		//CHUNK MODEL METRIX
-		const glm::vec3 globalCenter{ transform * glm::vec4(center, 1.f) };
-
-		//To wrap correctly our shape, we need the maximum scale scalar.
-		const float maxScale = std::max(std::max(globalScale.x, globalScale.y), globalScale.z);
-
-		//Max scale is assuming for the diameter. So, we need the half to apply it to our radius
-		Sphere globalSphere(globalCenter, radius * (maxScale * 0.5f));
-
-		//Check Firstly the result that have the most chance to faillure to avoid to call all functions.
-		return (globalSphere.isOnOrForwardPlan(camFrustum.leftFace) &&
-			globalSphere.isOnOrForwardPlan(camFrustum.rightFace) &&
-			globalSphere.isOnOrForwardPlan(camFrustum.farFace) &&
-			globalSphere.isOnOrForwardPlan(camFrustum.nearFace) &&
-			globalSphere.isOnOrForwardPlan(camFrustum.topFace) &&
-			globalSphere.isOnOrForwardPlan(camFrustum.bottomFace));
-	};
-};
-
+// Default camera values
+const float YAW = -90.0f;
+const float PITCH = 0.0f;
+const float SPEED = 2.5f;
+const float SENSITIVITY = 0.1f;
 
 class Camera {
 public:
-	// Stores the main vectors of the camera
+	// camera Attributes
 	glm::vec3 Position;
-	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -1.0f);
-	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
-	glm::mat4 cameraMatrix = glm::mat4(1.0f);
-
-	// Prevents the camera from jumping around when first clicking left click
-	bool firstClick = true;
+	glm::vec3 Front;
+	glm::vec3 Up;
+	glm::vec3 Right;
+	glm::vec3 WorldUp;
+	// euler Angles
+	float Yaw;
+	float Pitch;
+	// camera options
+	float MovementSpeed;
+	float MouseSensitivity;
 
 	// Stores the width and height of the window
 	int width;
 	int height;
+	bool firstClick = true;
 
-	// Adjust the speed of the camera and it's sensitivity when looking around
-	float speed = 1.0f;
-	float sensitivity = 50.0f;
+	float lastX;
+	float lastY;
 
-
-	// Camera constructor to set up initial values
-	Camera(int width, int height, glm::vec3 position);
-	
-	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
-	
-	glm::mat4 getProj();
-	// Handles camera inputs
-	void Inputs(GLFWwindow* window, float deltaTime);
+	bool menuOpen = false;
 
 
-	Frustum createFrustumFromCamera(float aspect, float fovDeg, float nearPlane, float farPlane);
+	Camera() {
+		std::cout << "Camera Created" << std::endl;
+	}
 
-	float half_y = glm::radians(45.0) * 0.5;
-	float factor_y = 1.0f / cos(half_y);
-	float tan_y = tan(half_y);
-	
-	float half_x = glm::radians(45.0) * 0.5;
-	float factor_x = 1.0f / cos(half_x);
-	float tan_x = tan(half_x);
+	// constructor with vectors
+	Camera(int width, int height, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH)
+		: Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY)
+	{
+		std::cout << "Costruttore camera" << std::endl;
+		Position = position;
+		WorldUp = up;
+		Yaw = yaw;
+		Pitch = pitch;
 
-	bool isOnFrustum(glm::vec3 chunkCenter);
+		Camera::width = width;
+		Camera::height = height;
+		lastX = width / 2.0f;
+		lastY = height / 2.0f;
+		updateCameraVectors();
+	}
+	// constructor with scalar values
+	Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY)
+	{
+		Position = glm::vec3(posX, posY, posZ);
+		WorldUp = glm::vec3(upX, upY, upZ);
+		Yaw = yaw;
+		Pitch = pitch;
+		updateCameraVectors();
+	}
+
+	// returns the view matrix calculated using Euler Angles and the LookAt Matrix
+	glm::mat4 GetViewMatrix()
+	{
+		return glm::lookAt(Position, Position + Front, Up);
+	}
+
+	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform) {
+		glm::mat4 projection = glm::perspective(glm::radians(FOVdeg), (float)width / height, nearPlane, farPlane);
+		glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniform), 1, GL_FALSE, glm::value_ptr(projection * GetViewMatrix()));
+
+	}
+
+
+	// processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
+	void ProcessKeyboard(Camera_Movement direction, float deltaTime)
+	{
+		if (menuOpen) return;
+		float velocity = MovementSpeed * deltaTime;
+		if (direction == FORWARD)
+			Position += Front * velocity;
+		if (direction == BACKWARD)
+			Position -= Front * velocity;
+		if (direction == LEFT)
+			Position -= Right * velocity;
+		if (direction == RIGHT)
+			Position += Right * velocity;
+
+		//Position.y = 18.0f;
+	}
+
+
+	void Inputs(GLFWwindow* window, float deltaTime) {
+
+		if (Input::isKeyPressed(GLFW_KEY_W, window)) ProcessKeyboard(FORWARD, deltaTime);
+
+
+		//if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) ProcessKeyboard(FORWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) ProcessKeyboard(BACKWARD, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) ProcessKeyboard(LEFT, deltaTime);
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) ProcessKeyboard(RIGHT, deltaTime);
+
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		{
+			Position += MovementSpeed * deltaTime * WorldUp;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		{
+			Position -= MovementSpeed * deltaTime * WorldUp;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			MovementSpeed = 5.5f;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+		{
+			MovementSpeed = SPEED;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
+
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			firstClick = true;
+			menuOpen = true;
+		}
+		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			if (menuOpen) glfwSetCursorPos(window, lastX, lastY);
+			menuOpen = false;
+		}
+
+	}
+
+
+	void MouseInput(GLFWwindow* window) {
+
+		double xposIn, yposIn;
+
+		glfwGetCursorPos(window, &xposIn, &yposIn);
+		float xpos = static_cast<float>(xposIn);
+		float ypos = static_cast<float>(yposIn);
+
+		//if mouse is still don't do anything
+		if (lastX == xpos && lastY == ypos) return;
+
+
+		if (firstClick)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstClick = false;
+			glfwSetCursorPos(window, (width / 2), (height / 2));
+		}
+
+		if (menuOpen) return;
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+		lastX = xpos;
+		lastY = ypos;
+
+		ProcessMouseMovement(xoffset, yoffset);
+	}
+
+	// processes input received from a mouse input system. Expects the offset value in both the x and y direction.
+	void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true)
+	{
+		xoffset *= MouseSensitivity;
+		yoffset *= MouseSensitivity;
+
+		Yaw += xoffset;
+		Pitch += yoffset;
+
+		// make sure that when pitch is out of bounds, screen doesn't get flipped
+		if (constrainPitch)
+		{
+			if (Pitch > 89.0f)
+				Pitch = 89.0f;
+			if (Pitch < -89.0f)
+				Pitch = -89.0f;
+		}
+
+		// update Front, Right and Up Vectors using the updated Euler angles
+		updateCameraVectors();
+	}
+
 
 	std::string getCameraPosition();
 	std::string getCameraOrientation();
 
+private:
+	// calculates the front vector from the Camera's (updated) Euler Angles
+	void updateCameraVectors()
+	{
+		// calculate the new Front vector
+		glm::vec3 front;
+		front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		front.y = sin(glm::radians(Pitch));
+		front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+		Front = glm::normalize(front);
+		// also re-calculate the Right and Up vector
+		Right = glm::normalize(glm::cross(Front, WorldUp));  // normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
+		Up = glm::normalize(glm::cross(Right, Front));
+	}
 };
-
 
 
 

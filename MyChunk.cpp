@@ -242,7 +242,7 @@ void MyChunk::generateChunk() {
 						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
 						vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
 						vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-						
+
 						//vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
 						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1) , ao[2] });	//v2
 						//vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
@@ -260,23 +260,23 @@ void MyChunk::generateChunk() {
 					else {
 
 
-					vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1), ao[2] });	//v2
-					vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
+						vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1), ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
 
-					//vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
-					//vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1) , ao[2] });	//v2
-						
+						//vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
+						//vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1) , ao[2] });	//v2
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 1);
-					indices.push_back(countIndices + 2);
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 3);
-					indices.push_back(countIndices + 1);
-					countIndices += 4;
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 1);
+						indices.push_back(countIndices + 2);
+
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 3);
+						indices.push_back(countIndices + 1);
+						countIndices += 4;
 					}
 				}
 
@@ -294,7 +294,7 @@ void MyChunk::generateChunk() {
 						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
 						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
 						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
-						
+
 						indices.push_back(countIndices);
 						indices.push_back(countIndices + 1);
 						indices.push_back(countIndices + 2);
@@ -308,23 +308,23 @@ void MyChunk::generateChunk() {
 					else {
 
 
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
 
-					//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
-					//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
+						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
+						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
 
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 1);
-					indices.push_back(countIndices + 2);
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 1);
+						indices.push_back(countIndices + 2);
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 2);
-					indices.push_back(countIndices + 3);
-					countIndices += 4;
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 2);
+						indices.push_back(countIndices + 3);
+						countIndices += 4;
 					}
 				}
 
@@ -353,22 +353,22 @@ void MyChunk::generateChunk() {
 					}
 					else {
 
-					vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
-					vertices.push_back(Vertex{ glm::vec3(x, y + 1, z), voxelId, 3, glm::vec2(1,0), ao[1] });	//v1
+						vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z), voxelId, 3, glm::vec2(1,0), ao[1] });	//v1
 
-					//vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x, y    , z + 1), voxelId, 3, glm::vec2(1,1), ao[3] });	//v3
-					//vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
+						//vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x, y    , z + 1), voxelId, 3, glm::vec2(1,1), ao[3] });	//v3
+						//vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 1);
-					indices.push_back(countIndices + 2);
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 1);
+						indices.push_back(countIndices + 2);
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 3);
-					indices.push_back(countIndices + 1);
-					countIndices += 4;
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 3);
+						indices.push_back(countIndices + 1);
+						countIndices += 4;
 					}
 				}
 
@@ -397,22 +397,22 @@ void MyChunk::generateChunk() {
 					}
 					else {
 
-					vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4,  glm::vec2(0,0) , ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z), voxelId, 4, glm::vec2(1,0) , ao[1] });	//v1
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1), ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4,  glm::vec2(0,0) , ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z), voxelId, 4, glm::vec2(1,0) , ao[1] });	//v1
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1), ao[2] });	//v2
 
-					//vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4, glm::vec2(0,0) , ao[0] });	//v0
-					//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1) , ao[2] });	//v2
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 4, glm::vec2(1,1) ,ao[3] });	//v3
+						//vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4, glm::vec2(0,0) , ao[0] });	//v0
+						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1) , ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 4, glm::vec2(1,1) ,ao[3] });	//v3
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 1);
-					indices.push_back(countIndices + 2);
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 1);
+						indices.push_back(countIndices + 2);
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 2);
-					indices.push_back(countIndices + 3);
-					countIndices += 4;
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 2);
+						indices.push_back(countIndices + 3);
+						countIndices += 4;
 					}
 
 				}
@@ -444,22 +444,22 @@ void MyChunk::generateChunk() {
 					}
 					else {
 
-					vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
-					vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z + 1), voxelId, 5, glm::vec2(1,0) , ao[1] });	//v1
+						vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
+						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z + 1), voxelId, 5, glm::vec2(1,0) , ao[1] });	//v1
 
-					//vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
-					vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3
-					//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
+						//vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
+						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3
+						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 1);
-					indices.push_back(countIndices + 2);
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 1);
+						indices.push_back(countIndices + 2);
 
-					indices.push_back(countIndices);
-					indices.push_back(countIndices + 3);
-					indices.push_back(countIndices + 1);
-					countIndices += 4;
+						indices.push_back(countIndices);
+						indices.push_back(countIndices + 3);
+						indices.push_back(countIndices + 1);
+						countIndices += 4;
 					}
 
 				}

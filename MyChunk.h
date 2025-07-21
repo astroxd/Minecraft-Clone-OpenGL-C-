@@ -70,7 +70,7 @@ public:
 
 	std::vector<int> getAo(int x, int z, int y, char plane);
 
-	static inline ChunkCoord getChunkCoordFromWorldCoord(int worldX, int worldZ){
+	static inline ChunkCoord getChunkCoordFromWorldCoord(int worldX, int worldZ) {
 		return std::make_pair(worldX, worldZ);
 	}
 

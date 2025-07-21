@@ -1,5 +1,6 @@
 #include "Scene.h";
 Scene::Scene() {
+	std::cout << "Scene Created" << std::endl;
 }
 
 void Scene::setMesh() {
@@ -19,11 +20,11 @@ void Scene::setCamera(Camera* camera) {
 
 void Scene::render(Shader& shader, Shader& voxelMarkerShader) {
 	//chunk.render(shader);
-	
+
 	world.update();
 	world.render(shader);
 	world.voxelMarker.render(voxelMarkerShader, world.voxelHandler.voxelWorldPos);
-	
+
 	/*if (world.voxelHandler.voxelId) {
 		world.voxelMarker.render(voxelMarkerShader, world.voxelHandler.voxelWorldPos);
 	}*/
