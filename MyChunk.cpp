@@ -1,8 +1,5 @@
 #include "MyChunk.h"
 
-//#include <glm/ext.hpp>
-
-
 MyChunk::MyChunk() {
 	//std::cout << "Chunk created" << std::endl;
 
@@ -483,7 +480,7 @@ void MyChunk::render(Shader& shader, Camera* camera) {
 
 
 	shader.Activate();
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+	shader.SetMat4("model", model);
 	//texture[0].texUnit(shader, "tex0", 0);
 	//texture[0].Bind();
 	Draw(shader);

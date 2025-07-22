@@ -180,12 +180,13 @@ void VoxelHandler::placeVoxel() {
 	lastPlaced = time;
 }
 
-void VoxelHandler::input(GLFWwindow* window) {
-	if (window == NULL) return;
+void VoxelHandler::input() {
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
-		//placeVoxel();
+	if (Input::isMouseButtonPressed(Mouse::ButtonLeft)) {
 		destroyVoxel();
+	}
+	if (Input::isMouseButtonPressed(Mouse::ButtonRight)) {
+		placeVoxel();
 	}
 }
 

@@ -15,7 +15,7 @@ void Scene::setShader(Shader& shader) {
 }
 
 void Scene::setCamera(Camera* camera) {
-	world.setCamera(camera, window);
+	world.setCamera(camera);
 }
 
 void Scene::render(Shader& shader, Shader& voxelMarkerShader) {

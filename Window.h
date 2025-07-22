@@ -28,6 +28,8 @@ public:
 	inline unsigned int getWidth() const { return m_Width; }
 	inline unsigned int getHeight() const { return m_Height; }
 
+	inline void DestroyWindow() { glfwDestroyWindow(m_Window); }
+
 private:
 	Window();
 

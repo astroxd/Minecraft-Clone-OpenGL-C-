@@ -11,9 +11,8 @@ void World::setShader(Shader& shader) {
 	//buildChunks();
 }
 
-void World::setCamera(Camera* camera, GLFWwindow* window) {
+void World::setCamera(Camera* camera) {
 	World::camera = camera;
-	World::window = window;
 	voxelHandler.init(camera);
 }
 
@@ -177,15 +176,10 @@ void World::update() {
 		voxelHandler.update(&chunks);
 
 	}
-	voxelHandler.input(window);
-	//m_cameraPosition = camera->Position;
-	//m_cameraOrientation = camera->Orientation;
+	voxelHandler.input();
 
 	m_cameraPosition = camera->Position;
 	m_cameraOrientation = camera->Front;
-
-
-
 }
 
 

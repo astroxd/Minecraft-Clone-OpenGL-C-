@@ -7,20 +7,16 @@
 
 class Scene {
 
-	public:
-		World world;
+public:
+	World world;
+	Scene();
 
-		GLFWwindow* window;
-		GLFWwindow* second_context;
+	void setMesh();
 
-		Scene();
+	void setShader(Shader& shader);
+	void setCamera(Camera* camera);
 
-		void setMesh();
-
-		void setShader(Shader& shader);
-		void setCamera(Camera* camera);
-
-		void render(Shader& shader, Shader& voxelMarkerShader);
+	void render(Shader& shader, Shader& voxelMarkerShader);
 };
 
 

@@ -1,5 +1,7 @@
 #include "shaderClass.h"
 
+#include <glm/gtc/type_ptr.hpp>
+
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
 	if (in)
@@ -16,37 +18,7 @@ std::string get_file_contents(const char* filename) {
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
-	//init(vertexFile, fragmentFile);
-
-	std::string vertexCode = get_file_contents(vertexFile);
-	std::string fragmentCode = get_file_contents(fragmentFile);
-
-	const char* vertexSource = vertexCode.c_str();
-	const char* fragmentSource = fragmentCode.c_str();
-
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexSource, NULL);
-	glCompileShader(vertexShader);
-	compileErrors(vertexShader, "VERTEX");
-
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
-	glCompileShader(fragmentShader);
-	compileErrors(fragmentShader, "FRAGMENT");
-
-	ID = glCreateProgram();
-	glAttachShader(ID, vertexShader);
-	glAttachShader(ID, fragmentShader);
-	glLinkProgram(ID);
-	compileErrors(ID, "PROGRAM");
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-
-	std::cout << "ID: " << ID << std::endl;
-
-
+	init(vertexFile, fragmentFile);
 }
 
 void Shader::init(const char* vertexFile, const char* fragmentFile) {
@@ -78,7 +50,6 @@ void Shader::init(const char* vertexFile, const char* fragmentFile) {
 
 
 	std::cout << "ID: " << ID << std::endl;
-
 }
 
 void Shader::Activate() {
@@ -107,3 +78,11 @@ void Shader::compileErrors(unsigned int shader, const char* type) {
 		}
 	}
 }
+
+void Shader::SetMat4(const std::string& u_name, const glm::mat4& value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
+
+}
+

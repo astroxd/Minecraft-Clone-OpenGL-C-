@@ -32,9 +32,9 @@ public:
 	void placeVoxel();
 
 
-	void input(GLFWwindow* window);
+	void input();
 	void update(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks);
-	
+
 
 private:
 	std::chrono::milliseconds getMs();

@@ -10,7 +10,7 @@ class Engine {
 public:
 
 	//Window window;
-	Camera camera;
+	Camera* camera;
 	Shader ShaderProgram;
 	Shader VoxelMarkerProgram;
 	Scene scene;

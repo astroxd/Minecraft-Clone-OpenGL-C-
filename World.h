@@ -83,7 +83,7 @@ public:
 		model = glm::translate(model, floor(handler->voxelWorldPos));
 
 		shader.Activate();
-		glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		shader.SetMat4("model", model);
 		//Draw(shader);
 	}
 
@@ -94,11 +94,8 @@ public:
 class World {
 public:
 
-	//std::vector<MyChunk> chunks;
-	//string = xz
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
 
-	//std::vector<std::vector<unsigned int>> voxels;
+	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
 
 	Shader shader;
 
@@ -108,7 +105,6 @@ public:
 	glm::vec3 m_cameraOrientation;
 
 	FastNoiseLite noise;
-	GLFWwindow* window;
 
 	VoxelHandler voxelHandler;
 	VoxelMarker voxelMarker = VoxelMarker(&voxelHandler);
@@ -121,7 +117,7 @@ public:
 	};
 
 	void setShader(Shader& shader);
-	void setCamera(Camera* camera, GLFWwindow* window);
+	void setCamera(Camera* camera);
 
 	void buildChunks();
 
