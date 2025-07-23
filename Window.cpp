@@ -1,10 +1,12 @@
 #include "Window.h"
+#include "Log.h"
 
-Window* Window::s_Instance = new Window();
+//Window* Window::s_Instance = new Window();
+Window* Window::s_Instance = nullptr;
 std::mutex Window::s_Mutex;
 
 Window::Window() {
-	std::cout << "Creating Window" << std::endl;
+	LOG_INFO("Window created");
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -14,14 +16,14 @@ Window::Window() {
 
 	m_Window = glfwCreateWindow(getWidth(), getHeight(), "Test", NULL, NULL);
 	if (m_Window == NULL) {
-		std::cout << "Failed to create WIndow" << std::endl;
+		LOG_ERROR("Failed to create Window");
 		glfwTerminate();
 	}
 
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	m_SecondContext = glfwCreateWindow(getWidth(), getHeight(), "Test", NULL, m_Window);
 	if (m_SecondContext == NULL) {
-		std::cout << "Failed to create secondo Window" << std::endl;
+		LOG_ERROR("Failed to create secondo Window");
 		glfwTerminate();
 	}
 
@@ -34,6 +36,5 @@ Window::Window() {
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 	//glFrontFace(GL_CW);
-	std::cout << "Window Created" << std::endl;
 
 }

@@ -1,10 +1,12 @@
 #include"Camera.h"
+#include "Log.h"
 
 // constructor with vectors
 Camera::Camera(int width, int height, glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	: m_Width(width), m_Height(height), Front(glm::vec3(0.0f, 0.0f, -1.0f)), m_MovementSpeed(SPEED), m_MouseSensitivity(SENSITIVITY)
 {
-	std::cout << "Costruttore camera" << std::endl;
+	LOG_INFO("Camera Created");
+
 	Position = position;
 	WorldUp = up;
 
@@ -91,7 +93,8 @@ void Camera::ProcessMovement(CameraMovement direction, const float deltaTime)
 		Position -= WorldUp * velocity;
 		break;
 	default:
-		std::cout << "Invalid Camera Movement" << std::endl;
+		std::cout << "";
+		//LOG_ERROR("Invalid Camera Movement: {0}", direction);
 	}
 
 	//LOCK Y position	

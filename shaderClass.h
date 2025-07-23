@@ -16,7 +16,7 @@ class Shader {
 public:
 	GLuint ID;
 
-	Shader() { std::cout << "Shader Program Created" << std::endl; };
+	Shader();
 	Shader(const char* vertexFile, const char* fragmentFile);
 
 	void init(const char* vertexFile, const char* fragmentFile);

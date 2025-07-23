@@ -1,6 +1,8 @@
 #include "Scene.h";
+#include "Log.h";
+
 Scene::Scene() {
-	std::cout << "Scene Created" << std::endl;
+	LOG_INFO("Scene Created");
 }
 
 void Scene::setMesh() {

@@ -1,8 +1,8 @@
 #include "Mesh.h"
-
+#include "Log.h"
 
 Mesh::Mesh() {
-	std::cout << "Mesh created" << std::endl;
+	//LOG_INFO("Mesh created");
 }
 
 Mesh::Mesh(std::vector <Vertex>& vertices) {

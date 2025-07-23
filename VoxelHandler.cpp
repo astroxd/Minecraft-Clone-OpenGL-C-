@@ -1,4 +1,5 @@
 #include "VoxelHandler.h"
+#include "Log.h"
 
 #include <cmath>
 
@@ -47,7 +48,7 @@ void VoxelHandler::rayCasting() {
 		voxelId = values[0];
 
 		if (voxelId > 0) {
-			std::cout << "VOXELID: " << voxelId << std::endl;
+			//LOG_TRACE("VOXELID: {0}", voxelId);
 			voxelLocalPosition = glm::ivec3(values[1], values[2], values[3]);
 			chunkCoord = { values[4], values[5] };
 			voxelWorldPos = currentVoxelPos;

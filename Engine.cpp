@@ -1,7 +1,8 @@
 #include "Engine.h"
 
 Engine::Engine() {
-	std::cout << "Engine Created" << std::endl;
+
+	LOG_INFO("Engine Created");
 
 	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 18.0f, 0.0f));
 	ShaderProgram.init("chunk.vert", "chunk.frag");
@@ -63,7 +64,7 @@ void Engine::run() {
 		glfwPollEvents();
 	}
 
-	std::cout << "Closing" << std::endl;
+	LOG_INFO("Closing");
 
 	ShaderProgram.Delete();
 	VoxelMarkerProgram.Delete();

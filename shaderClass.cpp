@@ -1,6 +1,8 @@
 #include "shaderClass.h"
+#include "Log.h"
 
 #include <glm/gtc/type_ptr.hpp>
+
 
 std::string get_file_contents(const char* filename) {
 	std::ifstream in(filename, std::ios::binary);
@@ -15,6 +17,10 @@ std::string get_file_contents(const char* filename) {
 		return(contents);
 	}
 	throw(errno);
+}
+
+Shader::Shader() {
+	LOG_INFO("Shader Program Created");
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
@@ -48,8 +54,7 @@ void Shader::init(const char* vertexFile, const char* fragmentFile) {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-
-	std::cout << "ID: " << ID << std::endl;
+	LOG_INFO("ID: {0}", ID);
 }
 
 void Shader::Activate() {
@@ -67,14 +72,14 @@ void Shader::compileErrors(unsigned int shader, const char* type) {
 		glGetShaderiv(shader, GL_COMPILE_STATUS, &hasCompiled);
 		if (hasCompiled == GL_FALSE) {
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_COMPILATION_ERROR for:" << type << "\n" << std::endl;
+			LOG_ERROR("SHADER_COMPILATION_ERROR for: {0}", type);
 		}
 	}
 	else {
 		glGetProgramiv(shader, GL_COMPILE_STATUS, &hasCompiled);
 		if (hasCompiled == GL_FALSE) {
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			std::cout << "SHADER_LINKING_ERROR for:" << type << "\n" << std::endl;
+			LOG_ERROR("SHADER_LINKING_ERROR for: {0}", type);
 		}
 	}
 }

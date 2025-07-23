@@ -1,4 +1,6 @@
 #include "MyChunk.h"
+#include "Log.h"
+
 
 MyChunk::MyChunk() {
 	//std::cout << "Chunk created" << std::endl;
@@ -167,7 +169,7 @@ std::vector<int> MyChunk::getAo(int x, int z, int y, char plane) {
 }
 
 void MyChunk::generateChunk() {
-	std::cout << "GENERATING CHUNK" << std::endl;
+	//LOG_TRACE("GENERATING CHUNK");
 	//if (!isVisible) return;
 	vertices.clear();
 	indices.clear();
@@ -419,7 +421,6 @@ void MyChunk::generateChunk() {
 				if (checkIfVoid(x, z + 1, y)) {
 					auto ao = getAo(x, z + 1, y, 'Z');
 					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
-					std::cout << flipId << std::endl;
 
 					if (flipId) {
 						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3

@@ -4,12 +4,12 @@
 #include "Window.h"
 #include "Camera.h"
 #include "Scene.h"
+#include "Log.h"
 
 class Engine {
 
 public:
 
-	//Window window;
 	Camera* camera;
 	Shader ShaderProgram;
 	Shader VoxelMarkerProgram;
