@@ -1,5 +1,6 @@
 #include "MyChunk.h"
 #include "Log.h"
+#include "ShaderManager.h"
 
 
 MyChunk::MyChunk() {
@@ -484,5 +485,5 @@ void MyChunk::render(Shader& shader, Camera* camera) {
 	shader.SetMat4("model", model);
 	//texture[0].texUnit(shader, "tex0", 0);
 	//texture[0].Bind();
-	Draw(shader);
+	Draw(ShaderManager::GetShader("ShaderProgram"));
 }

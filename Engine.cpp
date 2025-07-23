@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "ShaderManager.h"
 
 Engine::Engine() {
 
@@ -10,6 +11,7 @@ Engine::Engine() {
 	scene.setShader(ShaderProgram);
 	scene.setCamera(camera);
 
+	ShaderManager::AddShader("ShaderProgram", ShaderProgram.GetShader());
 	glfwSetInputMode(Window::GetInstance().GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	run();

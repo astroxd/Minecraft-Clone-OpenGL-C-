@@ -156,6 +156,7 @@
     <ClCompile Include="MyChunk.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="shaderClass.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VAO.cpp" />
@@ -183,6 +184,7 @@
     <ClInclude Include="MyChunk.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="shaderClass.h" />
+    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />

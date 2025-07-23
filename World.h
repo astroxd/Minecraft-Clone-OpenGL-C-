@@ -4,7 +4,6 @@
 #include "MyChunk.h"
 #include "VoxelHandler.h"
 
-
 class VoxelMarker : public Mesh {
 public:
 
@@ -77,7 +76,6 @@ public:
 
 	void render(Shader& shader, glm::vec3 position) {
 		if (handler->voxelId == 0) return;
-
 		glm::mat4 model = glm::mat4(1.0f);
 
 		model = glm::translate(model, floor(handler->voxelWorldPos));
@@ -85,6 +83,8 @@ public:
 		shader.Activate();
 		shader.SetMat4("model", model);
 		//Draw(shader);
+		VAO.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	}
 
 };

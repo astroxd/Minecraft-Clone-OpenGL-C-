@@ -21,6 +21,8 @@ public:
 
 	void init(const char* vertexFile, const char* fragmentFile);
 
+	Shader& GetShader() { return *this; };
+
 	void Activate();
 	void Delete();
 	void compileErrors(unsigned int shader, const char* type);
