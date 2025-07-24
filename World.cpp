@@ -4,18 +4,14 @@
 #include <thread>
 #include <future>
 
-using namespace std::chrono_literals;
+#include "Log.h"
 
-void World::setShader(Shader& shader) {
-	World::shader = shader;
-	//buildChunks();
-}
+using namespace std::chrono_literals;
 
 void World::setCamera(Camera* camera) {
 	World::camera = camera;
 	voxelHandler.init(camera);
 }
-
 
 void World::buildChunks() {
 
@@ -39,11 +35,11 @@ void World::buildChunks() {
 	}
 }
 
-void World::render(Shader& shader) {
+void World::render() {
 	auto it = chunks.begin();
 
 	while (it != chunks.end()) {
-		it->second->render(shader, camera);
+		it->second->render(camera);
 		++it;
 	}
 }

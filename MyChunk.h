@@ -63,10 +63,7 @@ public:
 	void generateChunk();
 	bool checkIfVoid(int x, int z, int y);
 	bool getNeighbourChunkIndex(ChunkCoord neighbourChunkCoord, int neighbourBlockX, int neighbourBlockZ, int y);
-	void render(Shader& shader, Camera* camera);
-
-	void loadVertices();
-
+	void render(Camera* camera);
 
 	std::vector<int> getAo(int x, int z, int y, char plane);
 

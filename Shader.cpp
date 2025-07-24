@@ -1,4 +1,4 @@
-#include "shaderClass.h"
+#include "Shader.h"
 #include "Log.h"
 
 #include <glm/gtc/type_ptr.hpp>
@@ -24,10 +24,11 @@ Shader::Shader() {
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
-	init(vertexFile, fragmentFile);
+	LOG_INFO("Shader Program Created");
+	Init(vertexFile, fragmentFile);
 }
 
-void Shader::init(const char* vertexFile, const char* fragmentFile) {
+void Shader::Init(const char* vertexFile, const char* fragmentFile) {
 
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);

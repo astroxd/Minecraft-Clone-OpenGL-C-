@@ -1,5 +1,5 @@
-#ifndef SHADER_CLASS_H
-#define SHADER_CLASS_H
+#ifndef SHADER_H
+#define SHADER_H
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -19,16 +19,17 @@ public:
 	Shader();
 	Shader(const char* vertexFile, const char* fragmentFile);
 
-	void init(const char* vertexFile, const char* fragmentFile);
-
-	Shader& GetShader() { return *this; };
+	void Init(const char* vertexFile, const char* fragmentFile);
 
 	void Activate();
 	void Delete();
-	void compileErrors(unsigned int shader, const char* type);
 
 	//Set mat4 uniform
 	void SetMat4(const std::string& u_name, const glm::mat4& value);
+
+private:
+	void compileErrors(unsigned int shader, const char* type);
+
 };
 
 #endif;

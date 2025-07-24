@@ -12,8 +12,6 @@ class Engine {
 public:
 
 	Camera* camera;
-	Shader ShaderProgram;
-	Shader VoxelMarkerProgram;
 	Scene scene;
 
 	Engine();

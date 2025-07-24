@@ -1,6 +1,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "ShaderManager.h"
 #include "MyChunk.h"
 #include "VoxelHandler.h"
 
@@ -74,15 +75,15 @@ public:
 		};
 	};
 
-	void render(Shader& shader, glm::vec3 position) {
+	void render(glm::vec3 position) {
 		if (handler->voxelId == 0) return;
 		glm::mat4 model = glm::mat4(1.0f);
 
 		model = glm::translate(model, floor(handler->voxelWorldPos));
 
+		Shader shader = ShaderManager::GetShader("VoxelMarkerProgram");
 		shader.Activate();
 		shader.SetMat4("model", model);
-		//Draw(shader);
 		VAO.Bind();
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 	}
@@ -96,8 +97,6 @@ public:
 
 
 	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
-
-	Shader shader;
 
 	Camera* camera;
 
@@ -116,7 +115,6 @@ public:
 		chunks.reserve(13 * 13);
 	};
 
-	void setShader(Shader& shader);
 	void setCamera(Camera* camera);
 
 	void buildChunks();
@@ -126,7 +124,7 @@ public:
 	void updateChunks();
 	void deleteChunks();
 
-	void render(Shader& shader);
+	void render();
 
 };
 

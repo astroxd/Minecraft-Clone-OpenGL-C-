@@ -474,16 +474,17 @@ void MyChunk::generateChunk() {
 	//setVAO();
 }
 
-void MyChunk::render(Shader& shader, Camera* camera) {
+void MyChunk::render(Camera* camera) {
 	//if (!camera->isOnFrustum(position)) return;
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, position);
 
+	Shader shader = ShaderManager::GetShader("ShaderProgram");
 
 	shader.Activate();
 	shader.SetMat4("model", model);
 	//texture[0].texUnit(shader, "tex0", 0);
 	//texture[0].Bind();
-	Draw(ShaderManager::GetShader("ShaderProgram"));
+	Draw(shader);
 }
