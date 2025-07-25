@@ -85,7 +85,8 @@ public:
 		shader.Activate();
 		shader.SetMat4("model", model);
 		VAO.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+		//The red block in the face is annoying
 	}
 
 };

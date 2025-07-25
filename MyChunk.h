@@ -7,7 +7,7 @@
 #include "Mesh.h"
 #include "FastNoiseLite.h"
 #include "Camera.h"
-
+#include "Block.h"
 
 const int CHUNK_W = 16;
 const int CHUNK_D = 16;
@@ -71,7 +71,8 @@ public:
 		return std::make_pair(worldX, worldZ);
 	}
 
-
+	int countIndices = 0;
+	void generateFace(glm::vec3 position, unsigned int voxelId, BlockFace faceId, std::vector<int> ao);
 };
 
 

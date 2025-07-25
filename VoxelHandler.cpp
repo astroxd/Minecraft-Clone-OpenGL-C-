@@ -99,8 +99,8 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 	int values[6] = { 0,0,0,0,0,0 };
 	std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 
-	//IF BLOCK POS Y ABOVE 50 DON'T CHECK FOR VOXELS
-	if (voxelWorldPos.y >= 50) return vec;
+	//IF BLOCK POS Y ABOVE CHUNK HEIGHT DON'T CHECK FOR VOXELS
+	if (voxelWorldPos.y >= CHUNK_H) return vec;
 
 	int cx = floor(voxelWorldPos.x / CHUNK_W);
 	int cz = floor(voxelWorldPos.z / CHUNK_D);

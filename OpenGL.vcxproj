@@ -172,6 +172,7 @@
     <None Include="cube.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Block.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="CubeMesh.h" />

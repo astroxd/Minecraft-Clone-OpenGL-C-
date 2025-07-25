@@ -3,6 +3,7 @@
 #include "ShaderManager.h"
 
 
+
 MyChunk::MyChunk() {
 	//std::cout << "Chunk created" << std::endl;
 
@@ -118,7 +119,6 @@ bool MyChunk::checkIfVoid(int x, int z, int y) {
 
 
 std::vector<int> MyChunk::getAo(int x, int z, int y, char plane) {
-	//std::cout << "GETGAO" << std::endl;
 	bool a, b, c, d, e, f, g, h;
 
 	if (plane == 'Y') {
@@ -153,10 +153,10 @@ std::vector<int> MyChunk::getAo(int x, int z, int y, char plane) {
 	}
 
 	std::vector<int> ao = {
-		a + b + c,
-		g + h + a,
-		e + f + g,
-		c + d + e
+		c + d + e, // BOTTOM LEFT 
+		e + f + g, // BOTTOM RIGHT
+		g + h + a, // TOP RIGHT
+		a + b + c  // TOP LEFT
 	};
 
 	//std::cout << "X: " << x << " Z: " << z << " Y: " << y << " P: " << plane << std::endl;
@@ -169,13 +169,14 @@ std::vector<int> MyChunk::getAo(int x, int z, int y, char plane) {
 	return ao;
 }
 
+
 void MyChunk::generateChunk() {
 	//LOG_TRACE("GENERATING CHUNK");
 	//if (!isVisible) return;
 	vertices.clear();
 	indices.clear();
 	//std::cout << "SIZE: " << worldChunks->size() << std::endl;
-	int countIndices = 0;
+	countIndices = 0;
 
 
 	for (int x = 0; x < CHUNK_W; x++)
@@ -191,282 +192,42 @@ void MyChunk::generateChunk() {
 				//TOP FACE
 				if (checkIfVoid(x, z, y + 1)) {
 					auto ao = getAo(x, z, y + 1, 'Y');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
-
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z), voxelId, 0, glm::vec2(1,0), ao[1] }); //v1
-						vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z), voxelId, 0,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z + 1), voxelId, 0, glm::vec2(1,1) , ao[3] });	//v3
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z), voxelId, 0, glm::vec2(1,0), ao[1] }); //v1
-						//vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z + 1), voxelId, 0, glm::vec2(1,1) , ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z + 1), voxelId, 0, glm::vec2(0,1), ao[2] });	//v2
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-
-					}
-					else {
-
-						vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z), voxelId, 0,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z + 1), voxelId, 0, glm::vec2(1,1) , ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z + 1), voxelId, 0, glm::vec2(0,1), ao[2] });	//v2
-
-						//vertices.push_back(Vertex{ glm::vec3(x    ,y + 1, z), voxelId, 0,  glm::vec2(0,0), ao[0] });	//v0
-						//vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z + 1), voxelId, 0, glm::vec2(0,1), ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x + 1,y + 1, z), voxelId, 0, glm::vec2(1,0), ao[1] }); //v1
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-					}
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::TOP_FACE, ao);
 				}
 
 				//BOTTOM FACE
 				if (checkIfVoid(x, z, y - 1)) {
 					auto ao = getAo(x, z, y - 1, 'Y');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1) , ao[2] });	//v2
-						//vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-
-					}
-					else {
-
-
-						vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1), ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x    , y, z + 1), voxelId, 1, glm::vec2(1,1), ao[3] });	//v3
-
-						//vertices.push_back(Vertex{ glm::vec3(x    , y, z), voxelId, 1,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y, z), voxelId, 1, glm::vec2(1,0) , ao[1] });	//v1
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y, z + 1), voxelId, 1, glm::vec2(0,1) , ao[2] });	//v2
-
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-					}
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::BOTTOM_FACE, ao);
 				}
 
 				//RIGHT FACE
 				if (checkIfVoid(x + 1, z, y)) {
-
 					auto ao = getAo(x + 1, z, y, 'X');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-
-					}
-					else {
-
-
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 2, glm::vec2(1,0), ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 2,  glm::vec2(0,0), ao[0] });	//v0
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 2, glm::vec2(0,1), ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 2, glm::vec2(1,1), ao[3] });	//v3
-
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-					}
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
 				}
 
 				//LEFT FACE
 				if (checkIfVoid(x - 1, z, y)) {
-
 					auto ao = getAo(x - 1, z, y, 'X');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x, y    , z + 1), voxelId, 3, glm::vec2(1,1), ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z), voxelId, 3, glm::vec2(1,0), ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
 
-						//vertices.push_back(Vertex{ glm::vec3(x, y    , z + 1), voxelId, 3, glm::vec2(1,1), ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
-						//vertices.push_back(Vertex{ glm::vec3(x, y + 1, z), voxelId, 3, glm::vec2(1,0), ao[1] });	//v1
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-					}
-					else {
-
-						vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x, y + 1, z), voxelId, 3, glm::vec2(1,0), ao[1] });	//v1
-
-						//vertices.push_back(Vertex{ glm::vec3(x, y    , z), voxelId, 3, glm::vec2(0,0), ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x, y    , z + 1), voxelId, 3, glm::vec2(1,1), ao[3] });	//v3
-						//vertices.push_back(Vertex{ glm::vec3(x, y + 1, z + 1), voxelId, 3, glm::vec2(0,1), ao[2] });	//v2
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-					}
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::LEFT_FACE, ao);
 				}
-
-				//BACK FACE
-				if (checkIfVoid(x, z - 1, y)) {
-					auto ao = getAo(x, z - 1, y, 'Z');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 4, glm::vec2(1,1) ,ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4,  glm::vec2(0,0) , ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z), voxelId, 4, glm::vec2(1,0) , ao[1] });	//v1
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 4, glm::vec2(1,1) ,ao[3] });	//v3
-						//vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z), voxelId, 4, glm::vec2(1,0) , ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1), ao[2] });	//v2
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-
-					}
-					else {
-
-						vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4,  glm::vec2(0,0) , ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z), voxelId, 4, glm::vec2(1,0) , ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1), ao[2] });	//v2
-
-						//vertices.push_back(Vertex{ glm::vec3(x    , y    , z), voxelId, 4, glm::vec2(0,0) , ao[0] });	//v0
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z), voxelId, 4, glm::vec2(0,1) , ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z), voxelId, 4, glm::vec2(1,1) ,ao[3] });	//v3
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 2);
-						indices.push_back(countIndices + 3);
-						countIndices += 4;
-					}
-
-				}
-
 
 				//FRONT FACE
 				if (checkIfVoid(x, z + 1, y)) {
 					auto ao = getAo(x, z + 1, y, 'Z');
-					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
-					if (flipId) {
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z + 1), voxelId, 5, glm::vec2(1,0) , ao[1] });	//v1
-						vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
-
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
-						//vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z + 1), voxelId, 5, glm::vec2(1,0) , ao[1] });	//v1
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-					}
-					else {
-
-						vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
-						vertices.push_back(Vertex{ glm::vec3(x    , y + 1, z + 1), voxelId, 5, glm::vec2(1,0) , ao[1] });	//v1
-
-						//vertices.push_back(Vertex{ glm::vec3(x    , y    , z + 1), voxelId, 5,  glm::vec2(0,0) , ao[0] });	//v0
-						vertices.push_back(Vertex{ glm::vec3(x + 1, y    , z + 1), voxelId, 5,glm::vec2(1,1) , ao[3] });	//v3
-						//vertices.push_back(Vertex{ glm::vec3(x + 1, y + 1, z + 1), voxelId, 5, glm::vec2(0,1) , ao[2] });	//v2
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 1);
-						indices.push_back(countIndices + 2);
-
-						indices.push_back(countIndices);
-						indices.push_back(countIndices + 3);
-						indices.push_back(countIndices + 1);
-						countIndices += 4;
-					}
-
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::FRONT_FACE, ao);
 				}
+				//BACK FACE
+				if (checkIfVoid(x, z - 1, y)) {
+					auto ao = getAo(x, z - 1, y, 'Z');
 
-
-
-
-
+					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
+				}
 			}
 		}
 	}
@@ -474,7 +235,44 @@ void MyChunk::generateChunk() {
 	//setVAO();
 }
 
+void MyChunk::generateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
+
+	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
+	for (int i = 0; i < rawVertices.size(); i++)
+	{
+		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  glm::vec2(0,0) , ao[i] });
+	}
+
+	//TODO check this after texture implementation
+	bool flipId = ao[2] + ao[0] > ao[3] + ao[1];
+	if (flipId) {
+		indices.push_back(countIndices);
+		indices.push_back(countIndices + 1);
+		indices.push_back(countIndices + 3);
+
+		indices.push_back(countIndices + 1);
+		indices.push_back(countIndices + 2);
+		indices.push_back(countIndices + 3);
+	}
+	else {
+
+		indices.push_back(countIndices);
+		indices.push_back(countIndices + 1);
+		indices.push_back(countIndices + 2);
+
+		indices.push_back(countIndices);
+		indices.push_back(countIndices + 2);
+		indices.push_back(countIndices + 3);
+	}
+	countIndices += 4;
+}
+
+
+
+
 void MyChunk::render(Camera* camera) {
+	//if (!isVisible) return;
+
 	//if (!camera->isOnFrustum(position)) return;
 
 	glm::mat4 model = glm::mat4(1.0f);
