@@ -22,7 +22,7 @@ void World::buildChunks() {
 			for (int y = 0; y < 1; y++)
 			{
 				ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x, z);
-				chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x, y, z), &noise);
+				chunks[coord] = std::make_shared<MyChunk>(coord, glm::vec3(x, y, z), &noise);
 			}
 		}
 	}
@@ -54,7 +54,7 @@ void World::render() {
 //std::function<void(std::pair<int, int>, std::map<std::pair<int, int>, std::unique_ptr<MyChunk>>*, Shader*)> func
 bool buildNewChunks(
 	ChunkCoord newChunksCoords,
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks)
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks)
 {
 
 	(*chunks)[newChunksCoords]->isVisible = true;
@@ -71,85 +71,142 @@ void World::updateChunks() {
 	int z = (static_cast<int>(camera->Position.z) / CHUNK_D);
 
 	std::vector<ChunkCoord> newChunksCoords;
+	ChunkLoadList.clear();
 
-
-	int distance = 6;
+	int distance = 12;
 
 	for (int xx = -distance; xx < distance; xx++)
 	{
 		for (int zz = -distance; zz < distance; zz++)
 		{
-			if (std::abs(xx) + std::abs(zz) > distance) continue;
+			//if (std::abs(xx) + std::abs(zz) > distance) continue;
 
 			ChunkCoord coord = MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz);
 
-			if (chunks.count(coord) > 0 && chunks[coord]->isBuilt) {
-				chunks[coord]->isVisible = true;
-				continue;
-			}
+			if (ChunkExists(coord)) {
 
-			newChunksCoords.push_back(coord);
 
-			chunks[coord] = std::make_unique<MyChunk>(coord, glm::vec3(x + xx, 0, z + zz), &noise);
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx + 1, z + zz)) > 0) {
-				//newChunksCoords.push_back({ xCoord + 1, zCoord });
+				if (chunks[coord]->isBuilt && !chunks[coord]->forceRebuid) {
+					chunks[coord]->isVisible = true;
+					continue;
+				}
+
+				if (!chunks[coord]->isMeshed || chunks[coord]->forceRebuid) {
+					ChunkLoadList.push_back(coord);
+				}
 			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx - 1, z + zz)) > 0) {
-				//newChunksCoords.push_back({ xCoord - 1, zCoord });
-			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz + 1)) > 0) {
-				//newChunksCoords.push_back({ xCoord, zCoord + 1 });
-			}
-			if (chunks.count(MyChunk::getChunkCoordFromWorldCoord(x + xx, z + zz - 1)) > 0) {
-				//newChunksCoords.push_back({ xCoord, zCoord - 1 });
+			else {
+				ChunkLoadList.push_back(coord);
+				chunks[coord] = std::make_shared<MyChunk>(coord, glm::vec3(x + xx, 0, z + zz), &noise);
 			}
 		}
 	}
-	const int MAXCHUNKPERFRAME = 5;
+
+	loadChunks();
+
+
+	//deleteChunks();
+}
+
+std::mutex mtx;
+
+void testThread(std::vector<ChunkCoord> ChunkLoadList,
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks,
+	std::vector<ChunkCoord>* ChunkRenderList) {
+	//std::lock_guard<std::mutex> lock(mtx);
+
+	const int MAXCHUNKPERFRAME = 6;
 	int counter = 0;
 
-	for (auto& chunkCoord : newChunksCoords) {
-		//if (counter > MAXCHUNKPERFRAME) return;
+	ChunkRenderList->clear();
 
-		std::future<bool> fut = std::async(std::launch::async, buildNewChunks, chunkCoord, &chunks);
-		//std::chrono::milliseconds span(100);
-		//while (fut.wait_for(span) == std::future_status::timeout) {}
-		if (fut.get()) {
-			chunks[chunkCoord]->setVAO();
-			chunks[chunkCoord]->isBuilt = true;
+	//for (auto& chunkCoord : ChunkLoadList) 
+	for (size_t i = 0; i < ChunkLoadList.size(); i++)
+	{
+		if (counter > MAXCHUNKPERFRAME) return;
+
+		auto& chunkCoord = ChunkLoadList.at(i);
+		ChunkLoadList.erase(ChunkLoadList.begin() + i);
+
+		(*chunks)[chunkCoord]->setWorldChunks(chunks);
+		(*chunks)[chunkCoord]->isBuilt = false;
+		(*chunks)[chunkCoord]->isVisible = false;
+		(*chunks)[chunkCoord]->isMeshed = true;
+
+
+		if (!(*chunks)[chunkCoord]->forceRebuid) {
+			//SHOULD REBUILD ADJACENT CHUNKS
+			if (chunks->find({ chunkCoord.first + 1, chunkCoord.second }) != chunks->end()) {
+				(*chunks)[{ chunkCoord.first + 1, chunkCoord.second }]->forceRebuid = true;
+			}
+			if (chunks->find({ chunkCoord.first - 1, chunkCoord.second }) != chunks->end()) {
+				(*chunks)[{ chunkCoord.first - 1, chunkCoord.second }]->forceRebuid = true;
+
+			}
+			if (chunks->find({ chunkCoord.first, chunkCoord.second + 1 }) != chunks->end()) {
+				(*chunks)[{ chunkCoord.first, chunkCoord.second + 1 }]->forceRebuid = true;
+
+			}
+			if (chunks->find({ chunkCoord.first, chunkCoord.second - 1 }) != chunks->end()) {
+				(*chunks)[{ chunkCoord.first, chunkCoord.second - 1 }]->forceRebuid = true;
+			}
+
 		}
-		//glfwMakeContextCurrent(window);
 
-		//counter++;
+		(*chunks)[chunkCoord]->forceRebuid = false;
+		counter++;
+		ChunkRenderList->push_back(chunkCoord);
 
 	}
+}
 
-	//! THREAD VERSION
-	/*for (auto& pair : newChunksCoords) {
-		std::thread t(buildNewChunks, pair, &chunks, &shader);
-		if (t.joinable()) {
-			t.join();
-			chunks[pair]->setVAO();
-			//chunks[pair]->render(shader);
+void World::loadChunks()
+{
+	const int MAXCHUNKPERFRAME = 10;
+	int counter = 0;
+
+	//LOG_WARN("Load Queue: {0}", ChunkLoadList.size());
+	std::thread t(testThread, ChunkLoadList, &chunks, &ChunkRenderList);
+
+	if (t.joinable()) {
+
+		t.join();
+
+
+		//LOG_WARN("join");
+		//LOG_WARN("RENDER LIST: {0}", ChunkRenderList.size());
+		//for (auto& chunkCoord : ChunkRenderList) 
+		for (size_t i = 0; i < ChunkRenderList.size(); i++)
+		{
+			//if (counter > MAXCHUNKPERFRAME) return;
+			auto& chunkCoord = ChunkRenderList.at(i);
+			//ChunkRenderList.erase(ChunkRenderList.begin() + i);
+
+			chunks[chunkCoord]->setVAO();
+			chunks[chunkCoord]->isBuilt = true;
+			chunks[chunkCoord]->isVisible = true;
+
+			//counter++;
 		}
-	}*/
 
-
+	}
 	deleteChunks();
 }
 
+void deleteThread(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks,
+	std::vector<ChunkCoord>* ChunkUnloadList,
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* unsafeChunks
+) {
+	//std::lock_guard<std::mutex> lock(mtx);
 
+	ChunkUnloadList->clear();
+	*unsafeChunks = *chunks;
 
+	auto it = unsafeChunks->begin();
 
-void World::deleteChunks() {
-
-	std::vector<ChunkCoord> unloadedChunks = {};
-
-	auto it = chunks.begin();
-
-	while (it != chunks.end()) {
-		if (!it->second->isVisible) {
-			unloadedChunks.push_back(it->first);
+	while (it != unsafeChunks->end()) {
+		if (!it->second->isVisible && !it->second->forceRebuid) {
+			ChunkUnloadList->push_back(it->first);
 		}
 		else {
 			it->second->isVisible = false;
@@ -157,13 +214,24 @@ void World::deleteChunks() {
 		++it;
 	}
 
-
-	for (auto& chunkCoord : unloadedChunks) {
-		chunks.erase(chunkCoord);
+	for (auto& chunkCoord : *ChunkUnloadList) {
+		unsafeChunks->erase(chunkCoord);
 	}
 
-
 }
+
+void World::deleteChunks() {
+	std::thread t(deleteThread, &chunks, &ChunkUnloadList, &unsafeChunks);
+	if (t.joinable()) {
+		t.join();
+		chunks = unsafeChunks;
+	}
+
+	/*for (auto& chunkCoord : ChunkUnloadList) {
+		chunks.erase(chunkCoord);
+	}*/
+}
+
 
 void World::update() {
 	updateChunks();
@@ -180,4 +248,6 @@ void World::update() {
 
 
 
-
+bool World::ChunkExists(const ChunkCoord chunkCoord) {
+	return chunks.find(chunkCoord) != chunks.end();
+}

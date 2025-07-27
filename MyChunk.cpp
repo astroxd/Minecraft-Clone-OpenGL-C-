@@ -22,7 +22,7 @@ MyChunk::MyChunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise) {
 }
 
 
-void MyChunk::setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* worldChunks) {
+void MyChunk::setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks) {
 	MyChunk::worldChunks = worldChunks;
 
 	generateChunk();
@@ -70,11 +70,11 @@ void MyChunk::generateBlocks() {
 }
 
 bool MyChunk::getNeighbourChunkIndex(ChunkCoord neighbourChunkCoord, int neighbourBlockX, int neighbourBlockZ, int y) {
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>::iterator neighbourChunk;
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>::iterator neighbourChunk;
 
 	neighbourChunk = worldChunks->find(neighbourChunkCoord);
 	if (neighbourChunk == worldChunks->end()) {
-		return true;
+		return false;
 	}
 
 	int neighbourBlock = neighbourChunk->second->blocks[neighbourBlockX][neighbourBlockZ][y];
@@ -271,7 +271,8 @@ void MyChunk::generateFace(glm::vec3 position, unsigned int voxelId, BlockFace f
 
 
 void MyChunk::render(Camera* camera) {
-	//if (!isVisible) return;
+	if (!isMeshed) return;
+	//if (!isBuilt) return;
 
 	//if (!camera->isOnFrustum(position)) return;
 

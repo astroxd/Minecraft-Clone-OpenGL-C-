@@ -4,6 +4,7 @@
 #include "ShaderManager.h"
 #include "MyChunk.h"
 #include "VoxelHandler.h"
+#include <unordered_set>
 
 class VoxelMarker : public Mesh {
 public:
@@ -97,7 +98,8 @@ class World {
 public:
 
 
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>> chunks = {};
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>> chunks = {};
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>> unsafeChunks = {};
 
 	Camera* camera;
 
@@ -108,6 +110,11 @@ public:
 
 	VoxelHandler voxelHandler;
 	VoxelMarker voxelMarker = VoxelMarker(&voxelHandler);
+
+
+	std::vector<ChunkCoord> ChunkLoadList;
+	std::vector<ChunkCoord> ChunkRenderList;
+	std::vector<ChunkCoord> ChunkUnloadList;
 
 	World() {
 		FastNoiseLite noise;
@@ -125,8 +132,14 @@ public:
 	void updateChunks();
 	void deleteChunks();
 
+	void loadChunks();
+
 	void render();
 
+
+
+private:
+	bool ChunkExists(const ChunkCoord chunkCoord);
 };
 
 

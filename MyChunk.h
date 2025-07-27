@@ -46,9 +46,11 @@ public:
 
 	bool isVisible = false;
 	bool isBuilt = false;
+	bool forceRebuid = false;
+	bool isMeshed = false;
 
 
-	ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* worldChunks;
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks;
 	FastNoiseLite* noise;
 
 	MyChunk();
@@ -57,7 +59,7 @@ public:
 	~MyChunk() {
 	};
 
-	void setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* worldChunks);
+	void setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks);
 
 	void generateBlocks();
 	void generateChunk();
@@ -73,6 +75,8 @@ public:
 
 	int countIndices = 0;
 	void generateFace(glm::vec3 position, unsigned int voxelId, BlockFace faceId, std::vector<int> ao);
+
+
 };
 
 

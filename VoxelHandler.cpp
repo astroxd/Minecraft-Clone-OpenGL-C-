@@ -191,7 +191,7 @@ void VoxelHandler::input() {
 	}
 }
 
-void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::unique_ptr<MyChunk>>* chunks) {
+void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks) {
 	VoxelHandler::chunks = chunks;
 	rayCasting();
 }

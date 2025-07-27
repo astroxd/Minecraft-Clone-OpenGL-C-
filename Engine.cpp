@@ -5,7 +5,7 @@ Engine::Engine() {
 
 	LOG_INFO("Engine Created");
 
-	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 18.0f, 0.0f));
+	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 400.0f, 0.0f));
 	scene.setCamera(camera);
 
 	ShaderManager::AddShader("ShaderProgram", std::make_shared<Shader>("chunk.vert", "chunk.frag"));
