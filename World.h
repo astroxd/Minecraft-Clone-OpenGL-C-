@@ -1,10 +1,17 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+
+#include <thread>
+#include <mutex>
+
+
 #include "ShaderManager.h"
 #include "MyChunk.h"
 #include "VoxelHandler.h"
 #include <unordered_set>
+#include <queue>
+
 
 class VoxelMarker : public Mesh {
 public:
@@ -112,17 +119,12 @@ public:
 	VoxelMarker voxelMarker = VoxelMarker(&voxelHandler);
 
 
-	std::vector<ChunkCoord> ChunkLoadList;
-	std::vector<ChunkCoord> ChunkRenderList;
+	std::deque<ChunkCoord> ChunkLoadList;
+	std::deque<ChunkCoord> ChunkRenderList;
 	std::vector<ChunkCoord> ChunkUnloadList;
 
-	World() {
-		FastNoiseLite noise;
-		noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-		noise.SetSeed(122422);
-		chunks.reserve(13 * 13);
-	};
-
+	World();
+	~World();
 	void setCamera(Camera* camera);
 
 	void buildChunks();
@@ -131,14 +133,19 @@ public:
 
 	void updateChunks();
 	void deleteChunks();
+	void ThreadInsert();
 
 	void loadChunks();
 
 	void render();
 
-
+	void UpdateChunkThread();
 
 private:
+	std::thread chunkThread;
+	std::mutex chunkMutex;
+	bool isThreadRunning = false;
+
 	bool ChunkExists(const ChunkCoord chunkCoord);
 };
 

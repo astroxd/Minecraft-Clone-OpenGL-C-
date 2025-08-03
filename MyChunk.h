@@ -8,6 +8,7 @@
 #include "FastNoiseLite.h"
 #include "Camera.h"
 #include "Block.h"
+#include "Log.h"
 
 const int CHUNK_W = 16;
 const int CHUNK_D = 16;
@@ -45,11 +46,11 @@ public:
 	glm::vec3 position;
 
 	bool isVisible = false;
-	bool isBuilt = false;
+	bool isBuilt = false; //IL CHUNK PUò ESSERE RENDERIZZATO
 	bool forceRebuid = false;
-	bool isMeshed = false;
-
-
+	bool isMeshed = false; //POSSO CHIAMARE IL VAO PERCHé HO GENERATO TUTTE LE FACCE
+	bool isLoaded = false; //SIGNIFICA CHE è GIà STATO NELLA CHUNKLOADLIST
+	bool isMeshing = false; //è GIà STATO CHIAMATO generateChunks MA STA ANCORA PROCESSANDO
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks;
 	FastNoiseLite* noise;
 
@@ -57,6 +58,7 @@ public:
 	explicit MyChunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise);
 
 	~MyChunk() {
+		LOG_INFO("DELETING CHUNK");
 	};
 
 	void setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks);

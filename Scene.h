@@ -6,7 +6,7 @@
 class Scene {
 
 public:
-	World world;
+	World* world;
 	Scene();
 
 	void setMesh();

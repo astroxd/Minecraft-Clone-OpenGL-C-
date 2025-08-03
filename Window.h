@@ -42,6 +42,9 @@ private:
 
 	GLFWwindow* m_Window;
 	GLFWwindow* m_SecondContext;
+
+	// window resize callback
+	static void framebuffer_size_callback(GLFWwindow* window, GLint width, GLint height);
 };
 
 #endif;

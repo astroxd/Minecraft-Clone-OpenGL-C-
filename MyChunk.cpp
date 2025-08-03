@@ -25,7 +25,7 @@ MyChunk::MyChunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise) {
 void MyChunk::setWorldChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* worldChunks) {
 	MyChunk::worldChunks = worldChunks;
 
-	generateChunk();
+	//generateChunk();
 
 }
 
@@ -85,6 +85,10 @@ bool MyChunk::getNeighbourChunkIndex(ChunkCoord neighbourChunkCoord, int neighbo
 }
 
 
+//* IL PROBLEMA é CHE CHECKIFVOID FA LAGGARE
+// PER RISOLVERE CONVIENE SALVARE DIRETTAMENTE I 4 CHUNK ADIACENTI E PRENDERE I LORO BLOCCHI
+// PERCHé PER ORA PER OGNI BLOCCO DEL BORDO CERCO IL CHUNK ADIACENTE 
+//! QUESTA COSA é ANCORA VERA MA IL PROBLEMA DEL LAG é NEL FILE WORLD.cpp
 
 bool MyChunk::checkIfVoid(int x, int z, int y) {
 	if (y < 0) return true;
@@ -177,8 +181,7 @@ void MyChunk::generateChunk() {
 	indices.clear();
 	//std::cout << "SIZE: " << worldChunks->size() << std::endl;
 	countIndices = 0;
-
-
+	std::vector<int> ao = { 1, 1, 1, 1 };
 	for (int x = 0; x < CHUNK_W; x++)
 	{
 		for (int z = 0; z < CHUNK_D; z++)
@@ -191,52 +194,50 @@ void MyChunk::generateChunk() {
 
 				//TOP FACE
 				if (checkIfVoid(x, z, y + 1)) {
-					auto ao = getAo(x, z, y + 1, 'Y');
+					//auto ao = getAo(x, z, y + 1, 'Y');
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::TOP_FACE, ao);
 				}
 
 				//BOTTOM FACE
 				if (checkIfVoid(x, z, y - 1)) {
-					auto ao = getAo(x, z, y - 1, 'Y');
+					//auto ao = getAo(x, z, y - 1, 'Y');
 
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::BOTTOM_FACE, ao);
 				}
 
 				//RIGHT FACE
 				if (checkIfVoid(x + 1, z, y)) {
-					auto ao = getAo(x + 1, z, y, 'X');
+					//auto ao = getAo(x + 1, z, y, 'X');
 
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
 				}
 
 				//LEFT FACE
 				if (checkIfVoid(x - 1, z, y)) {
-					auto ao = getAo(x - 1, z, y, 'X');
+					//auto ao = getAo(x - 1, z, y, 'X');
 
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::LEFT_FACE, ao);
 				}
 
 				//FRONT FACE
 				if (checkIfVoid(x, z + 1, y)) {
-					auto ao = getAo(x, z + 1, y, 'Z');
+					//auto ao = getAo(x, z + 1, y, 'Z');
 
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::FRONT_FACE, ao);
 				}
 				//BACK FACE
 				if (checkIfVoid(x, z - 1, y)) {
-					auto ao = getAo(x, z - 1, y, 'Z');
+					//auto ao = getAo(x, z - 1, y, 'Z');
 
 					generateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
 				}
 			}
 		}
 	}
-
 	//setVAO();
 }
 
 void MyChunk::generateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
-
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
@@ -271,7 +272,6 @@ void MyChunk::generateFace(glm::vec3 position, unsigned int voxelId, BlockFace f
 
 
 void MyChunk::render(Camera* camera) {
-	if (!isMeshed) return;
 	//if (!isBuilt) return;
 
 	//if (!camera->isOnFrustum(position)) return;

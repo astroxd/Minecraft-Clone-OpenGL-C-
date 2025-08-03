@@ -4,6 +4,7 @@
 
 Scene::Scene() {
 	LOG_INFO("Scene Created");
+	world = new World();
 }
 
 void Scene::setMesh() {
@@ -11,15 +12,15 @@ void Scene::setMesh() {
 }
 
 void Scene::setCamera(Camera* camera) {
-	world.setCamera(camera);
+	world->setCamera(camera);
 }
 
 void Scene::render() {
 	//chunk.render(shader);
 
-	world.update();
-	world.render();
-	world.voxelMarker.render(world.voxelHandler.voxelWorldPos);
+	world->update();
+	world->render();
+	world->voxelMarker.render(world->voxelHandler.voxelWorldPos);
 
 	/*if (world.voxelHandler.voxelId) {
 		world.voxelMarker.render(voxelMarkerShader, world.voxelHandler.voxelWorldPos);
