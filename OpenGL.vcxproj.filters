@@ -69,7 +69,7 @@
     <ClCompile Include="World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MyChunk.cpp">
+    <ClCompile Include="Chunk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VoxelHandler.cpp">
@@ -136,7 +136,7 @@
     <ClInclude Include="VoxelHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyChunk.h">
+    <ClInclude Include="Chunk.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Input.h">

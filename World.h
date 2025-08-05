@@ -1,16 +1,13 @@
 #ifndef WORLD_H
 #define WORLD_H
 
+#include "ShaderManager.h"
+#include "Chunk.h"
+#include "VoxelHandler.h"
 
+#include <deque>
 #include <thread>
 #include <mutex>
-
-
-#include "ShaderManager.h"
-#include "MyChunk.h"
-#include "VoxelHandler.h"
-#include <unordered_set>
-#include <queue>
 
 
 class VoxelMarker : public Mesh {
@@ -105,8 +102,7 @@ class World {
 public:
 
 
-	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>> chunks = {};
-	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>> unsafeChunks = {};
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>> chunks = {};
 
 	Camera* camera;
 
@@ -121,23 +117,20 @@ public:
 
 	std::deque<ChunkCoord> ChunkLoadList;
 	std::deque<ChunkCoord> ChunkRenderList;
-	std::vector<ChunkCoord> ChunkUnloadList;
+	std::deque<ChunkCoord> ChunkUnloadList;
 
 	World();
 	~World();
 	void setCamera(Camera* camera);
 
-	void buildChunks();
 
 	void update();
+	void render();
 
 	void updateChunks();
-	void deleteChunks();
-	void ThreadInsert();
-
 	void loadChunks();
+	void deleteChunks();
 
-	void render();
 
 	void UpdateChunkThread();
 

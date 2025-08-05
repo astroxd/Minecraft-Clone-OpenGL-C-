@@ -153,7 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MeshClass.cpp" />
     <ClCompile Include="Mesh.h" />
-    <ClCompile Include="MyChunk.cpp" />
+    <ClCompile Include="Chunk.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -182,7 +182,7 @@
     <ClInclude Include="KeyCodes.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="MouseCodes.h" />
-    <ClInclude Include="MyChunk.h" />
+    <ClInclude Include="Chunk.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />

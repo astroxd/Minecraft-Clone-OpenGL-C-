@@ -117,7 +117,7 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		if (coord.first < 0) lx = (CHUNK_W - 1) - lx;
 		if (coord.second < 0) lz = (CHUNK_D - 1) - lz;
 
-		int voxelId = chunk->second->blocks[lx][lz][ly];
+		int voxelId = chunk->second->GetBlock(lx, lz, ly);
 
 		int values[] = { voxelId, lx, ly, lz, coord.first, coord.second };
 		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
@@ -137,25 +137,25 @@ void VoxelHandler::destroyVoxel() {
 	if (!canChangeBlock) return;
 
 	if (voxelId > 0) {
-		(*chunks)[chunkCoord]->blocks[voxelLocalPosition.x][voxelLocalPosition.z][voxelLocalPosition.y] = 0;
-		(*chunks)[chunkCoord]->generateChunk();
+		(*chunks)[chunkCoord]->SetBlock(voxelLocalPosition.x, voxelLocalPosition.z, voxelLocalPosition.y, 0);
+		(*chunks)[chunkCoord]->GenerateChunk();
 		(*chunks)[chunkCoord]->setVAO();
 
 		if (voxelLocalPosition.x == 0) {
-			(*chunks)[{chunkCoord.first - 1, chunkCoord.second}]->generateChunk();
+			(*chunks)[{chunkCoord.first - 1, chunkCoord.second}]->GenerateChunk();
 			(*chunks)[{chunkCoord.first - 1, chunkCoord.second}]->setVAO();
 		}
 		else if (voxelLocalPosition.x == CHUNK_W - 1) {
-			(*chunks)[{chunkCoord.first + 1, chunkCoord.second}]->generateChunk();
+			(*chunks)[{chunkCoord.first + 1, chunkCoord.second}]->GenerateChunk();
 			(*chunks)[{chunkCoord.first + 1, chunkCoord.second}]->setVAO();
 		}
 
 		if (voxelLocalPosition.z == 0) {
-			(*chunks)[{chunkCoord.first, chunkCoord.second - 1}]->generateChunk();
+			(*chunks)[{chunkCoord.first, chunkCoord.second - 1}]->GenerateChunk();
 			(*chunks)[{chunkCoord.first, chunkCoord.second - 1}]->setVAO();
 		}
 		else if (voxelLocalPosition.z == CHUNK_D - 1) {
-			(*chunks)[{chunkCoord.first, chunkCoord.second + 1}]->generateChunk();
+			(*chunks)[{chunkCoord.first, chunkCoord.second + 1}]->GenerateChunk();
 			(*chunks)[{chunkCoord.first, chunkCoord.second + 1}]->setVAO();
 		}
 		lastDestroyed = time;
@@ -173,8 +173,9 @@ void VoxelHandler::placeVoxel() {
 	if (voxelId > 0) {
 		std::vector<int> values = getVoxelId(voxelWorldPos + voxelNormal);
 		if (values[0] == 0) {
-			(*chunks)[{values[4], values[5]}]->blocks[values[1]][values[3]][values[2]] = 1;
-			(*chunks)[{values[4], values[5]}]->generateChunk();
+			//(*chunks)[{values[4], values[5]}]->blocks[values[1]][values[3]][values[2]] = 1;
+			(*chunks)[{values[4], values[5]}]->SetBlock(values[1], values[3], values[2], 1);
+			(*chunks)[{values[4], values[5]}]->GenerateChunk();
 			(*chunks)[{values[4], values[5]}]->setVAO();
 		}
 	}
@@ -191,7 +192,7 @@ void VoxelHandler::input() {
 	}
 }
 
-void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks) {
+void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks) {
 	VoxelHandler::chunks = chunks;
 	rayCasting();
 }

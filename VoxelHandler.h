@@ -1,7 +1,7 @@
 #ifndef VOXEL_HANDLER_H
 #define VOXEL_HANDLER_H
 
-#include "MyChunk.h"
+#include "Chunk.h"
 #include <chrono>
 
 class VoxelHandler {
@@ -11,7 +11,7 @@ public:
 	const int DELAY_DESTROY_BLOCK = 100;
 	const int DELAY_PLACE_BLOCK = 100;
 	Camera* camera;
-	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks;
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks;
 
 	int voxelId = 0;
 	std::chrono::milliseconds lastDestroyed;
@@ -33,7 +33,7 @@ public:
 
 
 	void input();
-	void update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<MyChunk>>* chunks);
+	void update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks);
 
 
 private:
