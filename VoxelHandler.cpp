@@ -114,12 +114,12 @@ std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
 		int ly = static_cast<int>(voxelWorldPos.y);
 		int lz = abs(static_cast<int>(voxelWorldPos.z) % CHUNK_D);
 
-		if (coord.first < 0) lx = (CHUNK_W - 1) - lx;
-		if (coord.second < 0) lz = (CHUNK_D - 1) - lz;
+		if (coord.x < 0) lx = (CHUNK_W - 1) - lx;
+		if (coord.y < 0) lz = (CHUNK_D - 1) - lz;
 
 		int voxelId = chunk->second->GetBlock(lx, lz, ly);
 
-		int values[] = { voxelId, lx, ly, lz, coord.first, coord.second };
+		int values[] = { voxelId, lx, ly, lz, coord.x, coord.y };
 		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
 		return vec;
 	}
@@ -142,21 +142,21 @@ void VoxelHandler::destroyVoxel() {
 		(*chunks)[chunkCoord]->setVAO();
 
 		if (voxelLocalPosition.x == 0) {
-			(*chunks)[{chunkCoord.first - 1, chunkCoord.second}]->GenerateChunk();
-			(*chunks)[{chunkCoord.first - 1, chunkCoord.second}]->setVAO();
+			(*chunks)[{chunkCoord.x - 1, chunkCoord.y}]->GenerateChunk();
+			(*chunks)[{chunkCoord.x - 1, chunkCoord.y}]->setVAO();
 		}
 		else if (voxelLocalPosition.x == CHUNK_W - 1) {
-			(*chunks)[{chunkCoord.first + 1, chunkCoord.second}]->GenerateChunk();
-			(*chunks)[{chunkCoord.first + 1, chunkCoord.second}]->setVAO();
+			(*chunks)[{chunkCoord.x + 1, chunkCoord.y}]->GenerateChunk();
+			(*chunks)[{chunkCoord.x + 1, chunkCoord.y}]->setVAO();
 		}
 
 		if (voxelLocalPosition.z == 0) {
-			(*chunks)[{chunkCoord.first, chunkCoord.second - 1}]->GenerateChunk();
-			(*chunks)[{chunkCoord.first, chunkCoord.second - 1}]->setVAO();
+			(*chunks)[{chunkCoord.x, chunkCoord.y - 1}]->GenerateChunk();
+			(*chunks)[{chunkCoord.x, chunkCoord.y - 1}]->setVAO();
 		}
 		else if (voxelLocalPosition.z == CHUNK_D - 1) {
-			(*chunks)[{chunkCoord.first, chunkCoord.second + 1}]->GenerateChunk();
-			(*chunks)[{chunkCoord.first, chunkCoord.second + 1}]->setVAO();
+			(*chunks)[{chunkCoord.x, chunkCoord.y + 1}]->GenerateChunk();
+			(*chunks)[{chunkCoord.x, chunkCoord.y + 1}]->setVAO();
 		}
 		lastDestroyed = time;
 	}

@@ -5,6 +5,17 @@
 
 using namespace std::chrono_literals;
 
+//void* operator new(size_t size) {
+//	s_AllocationMetrics.TotalAllocated += size;
+//	return malloc(size);
+//}
+//
+//void operator delete(void* memory, size_t size) {
+//	s_AllocationMetrics.TotalFreed += size;
+//	free(memory);
+//}
+
+
 World::World() {
 	LOG_INFO("World Created");
 	FastNoiseLite noise;
@@ -131,10 +142,10 @@ void World::UpdateChunkThread() {
 
 
 
-			const std::pair<int, int> xPos = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.first + 1, chunkCoord.second);
-			const std::pair<int, int> xNeg = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.first - 1, chunkCoord.second);
-			const std::pair<int, int> zPos = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.first, chunkCoord.second + 1);
-			const std::pair<int, int> zNeg = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.first, chunkCoord.second - 1);
+			const ChunkCoord xPos = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.x + 1, chunkCoord.y);
+			const ChunkCoord xNeg = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.x - 1, chunkCoord.y);
+			const ChunkCoord zPos = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.x, chunkCoord.y + 1);
+			const ChunkCoord zNeg = Chunk::GetChunkCoordFromWorldCoord(chunkCoord.x, chunkCoord.y - 1);
 
 
 			if (!chunks[chunkCoord]->forceRebuid) {
@@ -209,7 +220,7 @@ void World::deleteChunks() {
 
 	ChunkUnloadList.clear();
 	for (auto it = chunks.begin(); it != chunks.end(); it++) {
-		if (abs(it->second->GetChunkCoord().first - x) > distance || abs(it->second->GetChunkCoord().second - z) > distance) {
+		if (abs(it->second->GetChunkCoord().x - x) > distance || abs(it->second->GetChunkCoord().y - z) > distance) {
 			ChunkUnloadList.push_back(it->second->GetChunkCoord());
 		}
 	}

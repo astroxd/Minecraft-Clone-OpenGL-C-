@@ -63,7 +63,7 @@ void Chunk::SetWorldChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>
 bool Chunk::GetNeighbourChunkIndex(AdjacentChunkPos pos, int neighbourBlockX, int neighbourBlockZ, int y) {
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>::iterator neighbourChunk;
 
-	neighbourChunk = m_WorldChunks->find(m_AdjacentChunks[pos]);
+	neighbourChunk = m_WorldChunks->find(m_Coord + s_AdjacentChunks[pos]);
 	if (neighbourChunk == m_WorldChunks->end()) {
 		return false;
 	}
@@ -79,12 +79,28 @@ bool Chunk::CheckIfVoid(int x, int z, int y) {
 	if (y < 0) return true;
 	//LEFT FACE
 	if (x == -1) {
-		return GetNeighbourChunkIndex(XNEG, CHUNK_W - 1, z, y);
+		if (z == -1) {
+			return GetNeighbourChunkIndex(TOPRIGHT, CHUNK_W - 1, CHUNK_D - 1, y);
+		}
+		else if (z == CHUNK_D) {
+			return GetNeighbourChunkIndex(TOPLEFT, CHUNK_W - 1, 0, y);
+		}
+		else {
+			return GetNeighbourChunkIndex(XNEG, CHUNK_W - 1, z, y);
+		}
 	}
 
 	//RIGHT FACE
 	else if (x == CHUNK_W) {
-		return GetNeighbourChunkIndex(XPOS, 0, z, y);
+		if (z == -1) {
+			return GetNeighbourChunkIndex(BOTTOMRIGHT, 0, CHUNK_D - 1, y);
+		}
+		else if (z == CHUNK_D) {
+			return GetNeighbourChunkIndex(BOTTOMLEFT, 0, 0, y);
+		}
+		else {
+			return GetNeighbourChunkIndex(XPOS, 0, z, y);
+		}
 	}
 
 	//FRONT FACE
@@ -148,13 +164,6 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
 		a + b + c  // TOP LEFT
 	};
 
-	//std::cout << "X: " << x << " Z: " << z << " Y: " << y << " P: " << plane << std::endl;
-
-	/*std::cout << "[0]: " << ao[0] << std::endl;
-	std::cout << "[1]: " << ao[1] << std::endl;
-	std::cout << "[2]: " << ao[2] << std::endl;
-	std::cout << "[3]: " << ao[3] << std::endl;
-	*/
 	return ao;
 }
 
@@ -178,36 +187,36 @@ void Chunk::GenerateChunk() {
 
 				//TOP FACE
 				if (CheckIfVoid(x, z, y + 1)) {
-					//auto ao = GetAo(x, z, y + 1, 'Y');
+					auto ao = GetAo(x, z, y + 1, 'Y');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::TOP_FACE, ao);
 				}
 
 				//BOTTOM FACE
 				if (CheckIfVoid(x, z, y - 1)) {
-					//auto ao = GetAo(x, z, y - 1, 'Y');
+					auto ao = GetAo(x, z, y - 1, 'Y');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BOTTOM_FACE, ao);
 				}
 
 				//RIGHT FACE
 				if (CheckIfVoid(x + 1, z, y)) {
-					//auto ao = GetAo(x + 1, z, y, 'X');
+					auto ao = GetAo(x + 1, z, y, 'X');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
 				}
 
 				//LEFT FACE
 				if (CheckIfVoid(x - 1, z, y)) {
-					//auto ao = GetAo(x - 1, z, y, 'X');
+					auto ao = GetAo(x - 1, z, y, 'X');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::LEFT_FACE, ao);
 				}
 
 				//FRONT FACE
 				if (CheckIfVoid(x, z + 1, y)) {
-					//auto ao = GetAo(x, z + 1, y, 'Z');
+					auto ao = GetAo(x, z + 1, y, 'Z');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::FRONT_FACE, ao);
 				}
 				//BACK FACE
 				if (CheckIfVoid(x, z - 1, y)) {
-					//auto ao = GetAo(x, z - 1, y, 'Z');
+					auto ao = GetAo(x, z - 1, y, 'Z');
 					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
 				}
 			}

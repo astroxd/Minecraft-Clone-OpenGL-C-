@@ -98,6 +98,21 @@ public:
 
 
 
+//struct AllocationMetrics {
+//	uint32_t TotalAllocated = 0;
+//	uint32_t TotalFreed = 0;
+//
+//	uint32_t CurrentUsage() { return TotalAllocated - TotalFreed; }
+//};
+//
+//
+//static AllocationMetrics s_AllocationMetrics;
+//
+//static void PrintMemoryUsage() {
+//	std::cout << "Memory usage: " << s_AllocationMetrics.CurrentUsage() << std::endl;
+//}
+
+
 class World {
 public:
 

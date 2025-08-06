@@ -14,17 +14,18 @@ const int CHUNK_W = 16;
 const int CHUNK_D = 16;
 const int CHUNK_H = 16;
 
-typedef std::pair<int, int> ChunkCoord;
+//typedef std::pair<int, int> ChunkCoord;
+typedef glm::ivec2 ChunkCoord;
 
 // A hash function used to hash a pair of any kind
 struct hash_pair {
-	template <class T1, class T2>
-	size_t operator()(const std::pair<T1, T2>& p) const
+	//template <class T1, class T2>
+	size_t operator()(const glm::ivec2& p) const
 	{
 		// Hash the first element
-		size_t hash1 = std::hash<T1>{}(p.first);
+		size_t hash1 = std::hash<int>{}(p.x);
 		// Hash the second element
-		size_t hash2 = std::hash<T2>{}(p.second);
+		size_t hash2 = std::hash<int>{}(p.y);
 		// Combine the two hash values
 		return hash1
 			^ (hash2 + 0x9e3779b9 + (hash1 << 6)
@@ -40,8 +41,28 @@ enum AdjacentChunkPos {
 	XPOS,
 	XNEG,
 	ZPOS,
-	ZNEG
+	ZNEG,
+
+	TOPLEFT,
+	TOPRIGHT,
+	BOTTOMLEFT,
+	BOTTOMRIGHT
+
 };
+
+static ChunkCoord s_AdjacentChunks[8] = {
+		glm::ivec2(1, 0),
+		glm::ivec2(-1, 0),
+		glm::ivec2(0, 1),
+		glm::ivec2(0, -1),
+
+		glm::ivec2(-1,  +1),
+		glm::ivec2(-1,  -1),
+		glm::ivec2(+1,  +1),
+		glm::ivec2(+1,  -1)
+};
+
+
 
 class Chunk : public Mesh {
 public:
@@ -75,7 +96,8 @@ public:
 	void Render(Camera* camera);
 
 	static inline ChunkCoord GetChunkCoordFromWorldCoord(int worldX, int worldZ) {
-		return std::make_pair(worldX, worldZ);
+		//return std::make_pair(worldX, worldZ);
+		return glm::ivec2(worldX, worldZ);
 	}
 
 	static inline unsigned int GetBlockIndex(int x, int z, int y) {
@@ -87,13 +109,6 @@ private:
 	glm::vec3 m_Position;
 	ChunkCoord m_Coord;
 	FastNoiseLite* m_Noise;
-
-	ChunkCoord m_AdjacentChunks[4] = {
-		std::make_pair(m_Coord.first + 1, m_Coord.second),
-		std::make_pair(m_Coord.first - 1, m_Coord.second),
-		std::make_pair(m_Coord.first, m_Coord.second + 1),
-		std::make_pair(m_Coord.first, m_Coord.second - 1)
-	};
 
 	int m_CountIndices = 0;
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* m_WorldChunks;

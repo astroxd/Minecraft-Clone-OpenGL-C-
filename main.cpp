@@ -1,6 +1,10 @@
 #include "Engine.h"
 #include "Log.h"
 
+
+
+
+
 int main() {
 	//Initialize Logger
 	Log::Init();
