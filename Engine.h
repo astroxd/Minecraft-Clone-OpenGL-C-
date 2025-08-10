@@ -10,18 +10,15 @@
 #include "Scene.h"
 #include "Log.h"
 
-
-
-
-
 class Engine {
 
 public:
 
 	Camera* camera;
-	Scene scene;
+	Scene* scene;
 
 	Engine();
+	~Engine();
 	void run();
 
 private:

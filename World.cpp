@@ -16,14 +16,19 @@ using namespace std::chrono_literals;
 //}
 
 
-World::World() {
+World::World(Camera* camera)
+	: camera(camera)
+{
 	LOG_INFO("World Created");
-	FastNoiseLite noise;
-	noise.SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
-	noise.SetSeed(122422);
+
+	noise = new FastNoiseLite(122422);
+	noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
 	chunks.reserve(24 * 24);
 
+	voxelHandler = new VoxelHandler(camera);
+	voxelMarker = new VoxelMarker(voxelHandler);
 
+	//TODO replace with threadPool
 	//SPAWN A SINGLE THREAD FOR HANDLING WORLD CREATION
 	chunkThread = std::thread(&World::UpdateChunkThread, this);
 	isThreadRunning = true;
@@ -34,12 +39,15 @@ World::~World() {
 	isThreadRunning = false;
 	chunkThread.join();
 
+	delete noise;
+	delete voxelMarker;
+	delete voxelHandler;
+
 }
 
 
 void World::setCamera(Camera* camera) {
 	World::camera = camera;
-	voxelHandler.Init(camera);
 }
 
 void World::render() {
@@ -93,7 +101,7 @@ void World::updateChunks() {
 				}
 				else {
 					ChunkLoadList.push_back(coord);
-					chunks[coord] = std::make_shared<Chunk>(coord, glm::vec3(x + xx, 0, z + zz), &noise);
+					chunks[coord] = std::make_shared<Chunk>(coord, glm::vec3(x + xx, 0, z + zz), noise);
 					chunks[coord]->isLoaded = true;
 
 				}
@@ -238,10 +246,10 @@ void World::update() {
 	updateChunks();
 
 	if (m_cameraPosition != camera->Position) {
-		voxelHandler.UpdateChunks(&chunks);
+		voxelHandler->UpdateChunks(&chunks);
 	}
 
-	voxelHandler.RayCast();
+	voxelHandler->RayCast();
 
 	m_cameraPosition = camera->Position;
 	m_cameraOrientation = camera->Front;

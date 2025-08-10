@@ -22,7 +22,7 @@ public:
 	// Initializes the mesh
 	Mesh();
 	Mesh(std::vector <Vertex>& vertices);
-	~Mesh()
+	virtual ~Mesh()
 	{
 		VAO.Delete();
 		VBO.Delete();

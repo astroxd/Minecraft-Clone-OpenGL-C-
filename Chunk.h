@@ -75,7 +75,7 @@ public:
 
 
 
-	Chunk();
+	Chunk() = default;
 	explicit Chunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise);
 
 	~Chunk() {

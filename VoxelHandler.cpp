@@ -5,8 +5,10 @@
 #include <cmath>
 #include <glm/gtc/integer.hpp>
 
-void VoxelHandler::Init(Camera* camera) {
-	VoxelHandler::m_Camera = camera;
+VoxelHandler::VoxelHandler(Camera* camera)
+	: m_Camera(camera)
+{
+	LOG_INFO("VOXELHANDLER");
 }
 
 void VoxelHandler::UpdateChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks) {

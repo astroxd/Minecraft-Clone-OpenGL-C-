@@ -2,9 +2,16 @@
 #include "Log.h";
 #include "ShaderManager.h"
 
-Scene::Scene() {
+
+Scene::Scene(Camera* camera)
+{
 	LOG_INFO("Scene Created");
-	world = new World();
+
+	world = new World(camera);
+}
+
+Scene::~Scene() {
+	delete world;
 }
 
 void Scene::setMesh() {
@@ -20,7 +27,7 @@ void Scene::render() {
 
 	world->update();
 	world->render();
-	world->voxelMarker.render(world->voxelHandler.GetVoxelWorldPos());
+	world->voxelMarker->render(world->voxelHandler->GetVoxelWorldPos());
 
 	/*if (world.voxelHandler.voxelId) {
 		world.voxelMarker.render(voxelMarkerShader, world.voxelHandler.voxelWorldPos);

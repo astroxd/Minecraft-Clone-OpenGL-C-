@@ -8,8 +8,8 @@ class VoxelHandler {
 public:
 
 	VoxelHandler() = default;
+	VoxelHandler(Camera* camera);
 
-	void Init(Camera* camera);
 	void UpdateChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks);
 
 	void RayCast();

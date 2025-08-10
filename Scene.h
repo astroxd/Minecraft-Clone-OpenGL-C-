@@ -7,7 +7,10 @@ class Scene {
 
 public:
 	World* world;
-	Scene();
+
+	Scene() = default;
+	Scene(Camera* camera);
+	~Scene();
 
 	void setMesh();
 

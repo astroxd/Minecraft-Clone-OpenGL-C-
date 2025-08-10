@@ -2,10 +2,6 @@
 #include "Log.h"
 #include "ShaderManager.h"
 
-
-
-Chunk::Chunk() {}
-
 Chunk::Chunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise)
 	: m_Coord(coord), m_Position(glm::vec3(position.x* CHUNK_W, position.y* CHUNK_H, position.z* CHUNK_D)), m_Noise(noise)
 {
@@ -174,7 +170,6 @@ void Chunk::GenerateChunk() {
 	vertices.clear();
 	indices.clear();
 	m_CountIndices = 0;
-	std::vector<int> ao = { 1, 1, 1, 1 };
 	for (int x = 0; x < CHUNK_W; x++)
 	{
 		for (int z = 0; z < CHUNK_D; z++)
