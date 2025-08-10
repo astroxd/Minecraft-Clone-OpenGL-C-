@@ -219,7 +219,6 @@
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\..\Download\dirt.png" />
     <Image Include="..\..\..\..\Download\grass_side.png" />
     <Image Include="..\..\..\..\Download\grass_top.png" />
     <Image Include="C:\Users\andre\Desktop\heightmap.png" />

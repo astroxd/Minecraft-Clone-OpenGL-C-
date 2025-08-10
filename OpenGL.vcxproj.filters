@@ -234,9 +234,6 @@
     <Image Include="..\..\..\..\Download\grass_top.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="..\..\..\..\Download\dirt.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
     <Image Include="..\..\..\..\Download\grass_side.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>

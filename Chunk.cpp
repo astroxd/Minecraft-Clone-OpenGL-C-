@@ -220,11 +220,17 @@ void Chunk::GenerateChunk() {
 	//setVAO();
 }
 
+glm::vec2 UVs[4] = {
+	glm::vec2(0,0),
+	glm::vec2(1,0),
+	glm::vec2(1,1),
+	glm::vec2(0,1)
+};
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  glm::vec2(0,0) , ao[i] });
+		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  UVs[i], ao[i] });
 	}
 
 	//TODO check this after texture implementation

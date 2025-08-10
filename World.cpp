@@ -28,6 +28,8 @@ World::World(Camera* camera)
 	voxelHandler = new VoxelHandler(camera);
 	voxelMarker = new VoxelMarker(voxelHandler);
 
+	LoadTexture();
+
 	//TODO replace with threadPool
 	//SPAWN A SINGLE THREAD FOR HANDLING WORLD CREATION
 	chunkThread = std::thread(&World::UpdateChunkThread, this);
@@ -42,6 +44,7 @@ World::~World() {
 	delete noise;
 	delete voxelMarker;
 	delete voxelHandler;
+	delete texture;
 
 }
 
@@ -255,6 +258,14 @@ void World::update() {
 	m_cameraOrientation = camera->Front;
 }
 
+
+void World::LoadTexture() {
+	texture = new Texture("test.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	Shader shader = ShaderManager::GetShader("ShaderProgram");
+	shader.Activate();
+	glUniform1i(glGetUniformLocation(shader.ID, "tex0"), 0);
+	texture->Bind();
+}
 
 
 bool World::ChunkExists(const ChunkCoord chunkCoord) {

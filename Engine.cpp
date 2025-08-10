@@ -5,11 +5,12 @@ Engine::Engine() {
 
 	LOG_INFO("Engine Created");
 
+	ShaderManager::AddShader("ShaderProgram", std::make_shared<Shader>("chunk.vert", "chunk.frag"));
+	ShaderManager::AddShader("VoxelMarkerProgram", std::make_shared<Shader>("cube.vert", "cube.frag"));
+
 	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 20.0f, 0.0f));
 	scene = new Scene(camera);
 
-	ShaderManager::AddShader("ShaderProgram", std::make_shared<Shader>("chunk.vert", "chunk.frag"));
-	ShaderManager::AddShader("VoxelMarkerProgram", std::make_shared<Shader>("cube.vert", "cube.frag"));
 	glfwSetInputMode(Window::GetInstance().GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Setup Dear ImGui context

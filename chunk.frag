@@ -1,8 +1,11 @@
 #version 330 core
 
 out vec4 FragColor;
-in vec3 voxel_color;
+
 in float shading;
+flat in int voxelId;
+
+in vec2 texCoord;
 uniform sampler2D tex0;
 
 
@@ -12,12 +15,10 @@ const vec3 invGamma = 1 / gamma;
 void main()
 {
 
-	vec3 color = voxel_color;
+	vec3 texCol = texture(tex0, texCoord).rgb;
+	texCol = pow(texCol, gamma);
+	texCol *= shading; 
+	texCol = pow(texCol, invGamma);
 
-	color *= shading;
-
-	color = pow(color, invGamma);
-
-	FragColor = vec4(color, 1.0);
-	//FragColor = texture(tex0, texCoord);
+	FragColor = vec4(texCol, 1.0);
 };

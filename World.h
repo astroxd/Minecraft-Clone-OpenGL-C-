@@ -32,6 +32,7 @@ public:
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>> chunks = {};
 
 	Camera* camera;
+	Texture* texture;
 
 	glm::vec3 m_cameraPosition;
 	glm::vec3 m_cameraOrientation;
@@ -67,6 +68,8 @@ private:
 	std::thread chunkThread;
 	std::mutex chunkMutex;
 	bool isThreadRunning = false;
+
+	void LoadTexture();
 
 	bool ChunkExists(const ChunkCoord chunkCoord);
 };
