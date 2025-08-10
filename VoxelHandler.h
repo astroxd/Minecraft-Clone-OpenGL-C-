@@ -7,37 +7,50 @@
 class VoxelHandler {
 public:
 
+	VoxelHandler() = default;
+
+	void Init(Camera* camera);
+	void UpdateChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks);
+
+	void RayCast();
+
+	inline int GetVoxelId() const {
+		return m_VoxelId;
+	}
+	inline glm::vec3 GetVoxelWorldPos() const {
+		return m_VoxelWorldPos;
+	}
+
+private:
 	const int MAX_RAY_DIST = 6;
 	const int DELAY_DESTROY_BLOCK = 100;
 	const int DELAY_PLACE_BLOCK = 100;
-	Camera* camera;
-	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks;
-
-	int voxelId = 0;
-	std::chrono::milliseconds lastDestroyed;
-	std::chrono::milliseconds lastPlaced;
-
-	ChunkCoord chunkCoord;
-	glm::ivec3 voxelLocalPosition;
-	glm::vec3 voxelNormal;
-	glm::vec3 voxelWorldPos;
-
-	VoxelHandler() {};
-	void init(Camera* camera);
-
-	void rayCasting();
-	std::vector<int> getVoxelId(glm::vec3 voxelWorldPos);
-
-	void destroyVoxel();
-	void placeVoxel();
+	std::chrono::milliseconds m_LastDestroyed;
+	std::chrono::milliseconds m_LastPlaced;
 
 
-	void input();
-	void update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks);
+	Camera* m_Camera;
+	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* m_Chunks;
 
+	int m_VoxelId = 0;
+
+	ChunkCoord m_ChunkCoord;
+	glm::ivec3 m_VoxelLocalPosition;
+	glm::vec3 m_VoxelNormal;
+	glm::vec3 m_VoxelWorldPos;
 
 private:
-	std::chrono::milliseconds getMs();
+
+	void RayCasting();
+	int GetHitVoxelId(glm::vec3 voxelWorldPos);
+
+	void DestroyVoxel();
+	void PlaceVoxel();
+	void RebuildAdjacentChunk(AdjacentChunkPos pos);
+
+	void Input();
+
+	std::chrono::milliseconds GetMs();
 };
 
 #endif;

@@ -81,10 +81,10 @@ public:
 	};
 
 	void render(glm::vec3 position) {
-		if (handler->voxelId == 0) return;
+		if (handler->GetVoxelId() == 0) return;
 		glm::mat4 model = glm::mat4(1.0f);
 
-		model = glm::translate(model, floor(handler->voxelWorldPos));
+		model = glm::translate(model, floor(handler->GetVoxelWorldPos()));
 
 		Shader shader = ShaderManager::GetShader("VoxelMarkerProgram");
 		shader.Activate();

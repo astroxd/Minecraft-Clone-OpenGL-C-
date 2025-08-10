@@ -1,5 +1,6 @@
 #include"Camera.h"
 #include "Log.h"
+#include <format>
 
 // constructor with vectors
 Camera::Camera(int width, int height, glm::vec3 position, glm::vec3 up, float yaw, float pitch)
@@ -161,16 +162,11 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 
 
 std::string Camera::GetCameraPosition() const {
-	return std::to_string(Position.x) + "(" + std::to_string(std::floor(Position.x / 16)) + ")X  "
-		+ std::to_string(Position.y) + "(" + std::to_string(std::floor(Position.y / 50)) + ")Y  "
-		+ std::to_string(Position.z) + "(" + std::to_string(std::floor(Position.z / 16)) + ")Z  ";
-
+	return std::format("X: {:.2f} Y: {:.2f} Z: {:.2f}", Position.x, Position.y, Position.z);
 }
 
 std::string Camera::GetCameraOrientation() const {
-	return std::to_string(std::round(Front.x)) + "X  "
-		+ std::to_string(std::round(Front.y)) + "Y  "
-		+ std::to_string(std::round(Front.z)) + "Z  ";
+	return std::format("X: {} Y: {} Z: {}", std::round(Front.x), std::round(Front.y), std::round(Front.z));
 }
 
 // calculates the front vector from the Camera's (updated) Euler Angles

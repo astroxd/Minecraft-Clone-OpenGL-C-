@@ -25,7 +25,7 @@ void Chunk::GenerateBlocks() {
 		for (size_t z = 0; z < CHUNK_D; z++)
 		{
 			int wz = z + m_Position.z;
-			int height = 20 + (m_Noise->GetNoise(float(wx), float(wz))) * 20;
+			int height = ((1 + (m_Noise->GetNoise(float(wx), float(wz)))) / 2) * CHUNK_H;
 			//std::cout << "NOISE: " << height << std::endl;
 			//TODO add frustum culling
 			for (size_t y = 0; y < CHUNK_H; y++)
@@ -41,10 +41,10 @@ void Chunk::GenerateBlocks() {
 				if (y <= height) {
 					//blocks[x][z][y] = x + z + y + 1;
 					//blocks[x][z][y] = abs(coord.first + coord.second) + 1;
-					m_Blocks[GetBlockIndex(x, z, y)] = random;
+					SetBlock(x, z, y, random);
 				}
 				else {
-					m_Blocks[GetBlockIndex(x, z, y)] = 0;
+					SetBlock(x, z, y, 0);
 				}
 
 			}
@@ -262,6 +262,11 @@ unsigned int Chunk::GetBlock(int x, int z, int y) const {
 void Chunk::SetBlock(int x, int z, int y, unsigned int blockId) {
 	if (y > CHUNK_H || y < 0) return; //TEMPORARY FIX
 	m_Blocks[GetBlockIndex(x, z, y)] = blockId;
+}
+
+void Chunk::SetBlock(glm::ivec3 blockPos, unsigned int blockId) {
+	if (blockPos.y > CHUNK_H || blockPos.y < 0) return; //TEMPORARY FIX
+	m_Blocks[GetBlockIndex(blockPos)] = blockId;
 }
 
 

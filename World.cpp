@@ -39,7 +39,7 @@ World::~World() {
 
 void World::setCamera(Camera* camera) {
 	World::camera = camera;
-	voxelHandler.init(camera);
+	voxelHandler.Init(camera);
 }
 
 void World::render() {
@@ -237,11 +237,11 @@ void World::deleteChunks() {
 void World::update() {
 	updateChunks();
 
-	if (m_cameraPosition != camera->Position || m_cameraOrientation != camera->Front) {
-		voxelHandler.update(&chunks);
-
+	if (m_cameraPosition != camera->Position) {
+		voxelHandler.UpdateChunks(&chunks);
 	}
-	voxelHandler.input();
+
+	voxelHandler.RayCast();
 
 	m_cameraPosition = camera->Position;
 	m_cameraOrientation = camera->Front;

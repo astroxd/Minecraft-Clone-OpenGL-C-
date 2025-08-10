@@ -91,17 +91,23 @@ public:
 	const inline ChunkCoord& GetChunkCoord() { return m_Coord; }
 	unsigned int GetBlock(int x, int z, int y) const;
 	void SetBlock(int x, int z, int y, unsigned int blockId);
+	void SetBlock(glm::ivec3 blockPos, unsigned int blockId);
 
 	void Reset();
 	void Render(Camera* camera);
 
 	static inline ChunkCoord GetChunkCoordFromWorldCoord(int worldX, int worldZ) {
-		//return std::make_pair(worldX, worldZ);
 		return glm::ivec2(worldX, worldZ);
+	}
+	static inline ChunkCoord GetAdjacentChunkCoord(const ChunkCoord& chunkCoord, AdjacentChunkPos pos) {
+		return chunkCoord + s_AdjacentChunks[pos];
 	}
 
 	static inline unsigned int GetBlockIndex(int x, int z, int y) {
 		return x + CHUNK_W * (y + CHUNK_H * z);
+	}
+	static inline unsigned int GetBlockIndex(glm::ivec3 blockPos) {
+		return blockPos.x + CHUNK_W * (blockPos.y + CHUNK_H * blockPos.z);
 	}
 
 private:

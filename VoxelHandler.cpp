@@ -1,33 +1,38 @@
 #include "VoxelHandler.h"
 #include "Log.h"
 
+#include <imgui/imgui.h>
 #include <cmath>
+#include <glm/gtc/integer.hpp>
 
-void VoxelHandler::init(Camera* camera) {
-	VoxelHandler::camera = camera;
+void VoxelHandler::Init(Camera* camera) {
+	VoxelHandler::m_Camera = camera;
 }
 
-void VoxelHandler::rayCasting() {
+void VoxelHandler::UpdateChunks(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks) {
+	VoxelHandler::m_Chunks = chunks;
+}
+
+void VoxelHandler::RayCasting() {
 	float maxX, maxY, maxZ, deltaX, deltaY, deltaZ;
 
-	//WORKS WITH NEGATIVES TOO
-	//float x1 = abs(camera->Position.x);
-	//float y1 = abs(camera->Position.y);
-	//float z1 = abs(camera->Position.z);
+	float x1 = m_Camera->Position.x;
+	float y1 = m_Camera->Position.y;
+	float z1 = m_Camera->Position.z;
 
-	float x1 = camera->Position.x;
-	float y1 = camera->Position.y;
-	float z1 = camera->Position.z;
+	ImGui::Text((m_Camera->GetCameraPosition()).c_str());
+	ImGui::Text((m_Camera->GetCameraOrientation()).c_str());
+	ImGui::Text(("Look at: " + glm::to_string(m_VoxelWorldPos)).c_str());
 
-	auto normOri = glm::normalize(camera->Front);
+	auto normOri = glm::normalize(m_Camera->Front);
 
-	float x2 = x1 + camera->Front.x * MAX_RAY_DIST;
-	float y2 = y1 + camera->Front.y * MAX_RAY_DIST;
-	float z2 = z1 + camera->Front.z * MAX_RAY_DIST;
+	float x2 = x1 + m_Camera->Front.x * MAX_RAY_DIST;
+	float y2 = y1 + m_Camera->Front.y * MAX_RAY_DIST;
+	float z2 = z1 + m_Camera->Front.z * MAX_RAY_DIST;
 
-	glm::vec3 currentVoxelPos = glm::vec3(camera->Position.x, camera->Position.y, camera->Position.z);
-	voxelId = 0;
-	voxelNormal = glm::vec3(0);
+	glm::vec3 currentVoxelPos = m_Camera->Position;
+	m_VoxelId = 0;
+	m_VoxelNormal = glm::vec3(0);
 	int stepDir = -1;
 
 	int dx = glm::sign(x2 - x1);
@@ -42,25 +47,20 @@ void VoxelHandler::rayCasting() {
 	if (dz != 0) deltaZ = std::min(dz / (z2 - z1), 10000000.0f); else deltaZ = 10000000.0f;
 	if (dz > 0) maxZ = deltaZ * (1.0f - glm::fract(z1)); else maxZ = deltaZ * glm::fract(z1);
 
-	//std::cout << "X: " << maxX << " Y: " << maxY << " Z: " << maxZ << std::endl;
 	while (not(maxX > 1.0f && maxY > 1.0f && maxZ > 1.0f)) {
-		std::vector<int> values = getVoxelId(currentVoxelPos);
-		voxelId = values[0];
+		m_VoxelId = GetHitVoxelId(currentVoxelPos);
 
-		if (voxelId > 0) {
-			//LOG_TRACE("VOXELID: {0}", voxelId);
-			voxelLocalPosition = glm::ivec3(values[1], values[2], values[3]);
-			chunkCoord = { values[4], values[5] };
-			voxelWorldPos = currentVoxelPos;
+		if (m_VoxelId > 0) {
+			m_VoxelWorldPos = currentVoxelPos;
 
 			if (stepDir == 0) {
-				voxelNormal.x = -dx;
+				m_VoxelNormal.x = -dx;
 			}
 			else if (stepDir == 1) {
-				voxelNormal.y = -dy;
+				m_VoxelNormal.y = -dy;
 			}
 			else {
-				voxelNormal.z = -dz;
+				m_VoxelNormal.z = -dz;
 			}
 			return;
 		}
@@ -95,111 +95,115 @@ void VoxelHandler::rayCasting() {
 	return;
 }
 
-std::vector<int> VoxelHandler::getVoxelId(glm::vec3 voxelWorldPos) {
-	int values[6] = { 0,0,0,0,0,0 };
-	std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
+int VoxelHandler::GetHitVoxelId(glm::vec3 voxelWorldPos) {
+	//Prevent Block from being placed inside player
+	//I'm simulating that the player is 2 block tall 
+	if (voxelWorldPos == m_Camera->Position || voxelWorldPos == glm::vec3(m_Camera->Position.x, m_Camera->Position.y - 1, m_Camera->Position.z)) return -1;
 
 	//IF BLOCK POS Y ABOVE CHUNK HEIGHT DON'T CHECK FOR VOXELS
-	if (voxelWorldPos.y >= CHUNK_H) return vec;
+	if (voxelWorldPos.y >= CHUNK_H || voxelWorldPos.y < 0) return -1;
 
 	int cx = floor(voxelWorldPos.x / CHUNK_W);
 	int cz = floor(voxelWorldPos.z / CHUNK_D);
 
 	ChunkCoord coord = { cx, cz };
 
-	auto chunk = chunks->find(coord);
-	if (chunk != chunks->end()) {
+	auto chunk = m_Chunks->find(coord);
+	if (chunk != m_Chunks->end()) {
 
 		int lx = abs(static_cast<int>(voxelWorldPos.x) % CHUNK_W);
 		int ly = static_cast<int>(voxelWorldPos.y);
 		int lz = abs(static_cast<int>(voxelWorldPos.z) % CHUNK_D);
 
+		//Fix for negatives chunks
 		if (coord.x < 0) lx = (CHUNK_W - 1) - lx;
 		if (coord.y < 0) lz = (CHUNK_D - 1) - lz;
 
-		int voxelId = chunk->second->GetBlock(lx, lz, ly);
+		unsigned int voxelId = chunk->second->GetBlock(lx, lz, ly);
 
-		int values[] = { voxelId, lx, ly, lz, coord.x, coord.y };
-		std::vector<int> vec(values, values + sizeof(values) / sizeof(int));
-		return vec;
+		m_ChunkCoord = coord;
+		m_VoxelLocalPosition = glm::ivec3(lx, ly, lz);
+
+		return voxelId;
 	}
 
-	return vec;
+	return -1;
 
 }
 
-void VoxelHandler::destroyVoxel() {
-	std::chrono::milliseconds time = getMs();
+void VoxelHandler::DestroyVoxel() {
+	std::chrono::milliseconds time = GetMs();
 	bool canChangeBlock = false;
 
-	if ((time - lastDestroyed).count() > DELAY_DESTROY_BLOCK) canChangeBlock = true;
+	if ((time - m_LastDestroyed).count() > DELAY_DESTROY_BLOCK) canChangeBlock = true;
 
 	if (!canChangeBlock) return;
 
-	if (voxelId > 0) {
-		(*chunks)[chunkCoord]->SetBlock(voxelLocalPosition.x, voxelLocalPosition.z, voxelLocalPosition.y, 0);
-		(*chunks)[chunkCoord]->GenerateChunk();
-		(*chunks)[chunkCoord]->setVAO();
+	if (m_VoxelId > 0) {
+		(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, 0);
+		(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
+		(*m_Chunks)[m_ChunkCoord]->setVAO();
 
-		if (voxelLocalPosition.x == 0) {
-			(*chunks)[{chunkCoord.x - 1, chunkCoord.y}]->GenerateChunk();
-			(*chunks)[{chunkCoord.x - 1, chunkCoord.y}]->setVAO();
+		if (m_VoxelLocalPosition.x == 0) {
+			RebuildAdjacentChunk(XNEG);
 		}
-		else if (voxelLocalPosition.x == CHUNK_W - 1) {
-			(*chunks)[{chunkCoord.x + 1, chunkCoord.y}]->GenerateChunk();
-			(*chunks)[{chunkCoord.x + 1, chunkCoord.y}]->setVAO();
+		else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
+			RebuildAdjacentChunk(XPOS);
 		}
 
-		if (voxelLocalPosition.z == 0) {
-			(*chunks)[{chunkCoord.x, chunkCoord.y - 1}]->GenerateChunk();
-			(*chunks)[{chunkCoord.x, chunkCoord.y - 1}]->setVAO();
+		if (m_VoxelLocalPosition.z == 0) {
+			RebuildAdjacentChunk(ZNEG);
 		}
-		else if (voxelLocalPosition.z == CHUNK_D - 1) {
-			(*chunks)[{chunkCoord.x, chunkCoord.y + 1}]->GenerateChunk();
-			(*chunks)[{chunkCoord.x, chunkCoord.y + 1}]->setVAO();
+		else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
+			RebuildAdjacentChunk(ZPOS);
 		}
-		lastDestroyed = time;
+		m_LastDestroyed = time;
 	}
 }
 
-void VoxelHandler::placeVoxel() {
-	std::chrono::milliseconds time = getMs();
+void VoxelHandler::PlaceVoxel() {
+	std::chrono::milliseconds time = GetMs();
 	bool canChangeBlock = false;
 
-	if ((time - lastPlaced).count() > DELAY_PLACE_BLOCK) canChangeBlock = true;
+	if ((time - m_LastPlaced).count() > DELAY_PLACE_BLOCK) canChangeBlock = true;
 
 	if (!canChangeBlock) return;
 
-	if (voxelId > 0) {
-		std::vector<int> values = getVoxelId(voxelWorldPos + voxelNormal);
-		if (values[0] == 0) {
-			//(*chunks)[{values[4], values[5]}]->blocks[values[1]][values[3]][values[2]] = 1;
-			(*chunks)[{values[4], values[5]}]->SetBlock(values[1], values[3], values[2], 1);
-			(*chunks)[{values[4], values[5]}]->GenerateChunk();
-			(*chunks)[{values[4], values[5]}]->setVAO();
+	if (m_VoxelId > 0) {
+		int newVoxelId = GetHitVoxelId(m_VoxelWorldPos + m_VoxelNormal);
+		if (newVoxelId == 0) {
+			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, 1);
+			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
+			(*m_Chunks)[m_ChunkCoord]->setVAO();
 		}
 	}
-	lastPlaced = time;
+	m_LastPlaced = time;
 }
 
-void VoxelHandler::input() {
+void VoxelHandler::RebuildAdjacentChunk(AdjacentChunkPos pos) {
+	(*m_Chunks)[Chunk::GetAdjacentChunkCoord(m_ChunkCoord, pos)]->GenerateChunk();
+	(*m_Chunks)[Chunk::GetAdjacentChunkCoord(m_ChunkCoord, pos)]->setVAO();
+}
+
+
+void VoxelHandler::Input() {
 
 	if (Input::isMouseButtonPressed(Mouse::ButtonLeft)) {
-		destroyVoxel();
+		DestroyVoxel();
 	}
 	if (Input::isMouseButtonPressed(Mouse::ButtonRight)) {
-		placeVoxel();
+		PlaceVoxel();
 	}
 }
 
-void VoxelHandler::update(ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* chunks) {
-	VoxelHandler::chunks = chunks;
-	rayCasting();
+void VoxelHandler::RayCast() {
+	RayCasting();
+	Input();
 }
 
 
 
-std::chrono::milliseconds VoxelHandler::getMs() {
+std::chrono::milliseconds VoxelHandler::GetMs() {
 	return std::chrono::duration_cast<std::chrono::milliseconds>(
 		std::chrono::system_clock::now().time_since_epoch());
 }

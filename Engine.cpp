@@ -5,12 +5,26 @@ Engine::Engine() {
 
 	LOG_INFO("Engine Created");
 
-	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 400.0f, 0.0f));
+	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 20.0f, 0.0f));
 	scene.setCamera(camera);
 
 	ShaderManager::AddShader("ShaderProgram", std::make_shared<Shader>("chunk.vert", "chunk.frag"));
 	ShaderManager::AddShader("VoxelMarkerProgram", std::make_shared<Shader>("cube.vert", "cube.frag"));
 	glfwSetInputMode(Window::GetInstance().GetWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer backends
+	ImGui_ImplGlfw_InitForOpenGL(Window::GetInstance().GetWindow(), true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+	ImGui_ImplOpenGL3_Init("#version 330");
+
 
 	run();
 
@@ -20,18 +34,30 @@ Engine::Engine() {
 
 void Engine::run() {
 	while (!glfwWindowShouldClose(Window::GetInstance().GetWindow())) {
+		// Start the Dear ImGui frame
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+		ImGui::Begin("Debug");
+		ImGui::Text("This is some useful text.");
+
+
+		//ImGui::ShowDemoWindow(); // Show demo window! :)
+
+
 
 		currentTime = glfwGetTime();
 		timeDiff = currentTime - prevTime;
-
+		ImGui::Text("FPS: %.1f	ms: %.3f", FPS, ms);
 		counter++;
 		if (timeDiff >= 1.0 / 30.0) {
-			std::string FPS = std::to_string((1.0 / timeDiff) * counter);
-			std::string ms = std::to_string((timeDiff / counter) * 1000);
-			std::string newTitle = "Title " + FPS + "FPS / " + ms + "ms";
-			glfwSetWindowTitle(Window::GetInstance().GetWindow(), (newTitle + "  " + camera->GetCameraPosition() + "  " + camera->GetCameraOrientation()).c_str());
+			FPS = (1.0 / timeDiff) * counter;
+			ms = (timeDiff / counter) * 1000;
+
+			glfwSetWindowTitle(Window::GetInstance().GetWindow(), (camera->GetCameraPosition() + "  " + camera->GetCameraOrientation()).c_str());
 			prevTime = currentTime;
 			counter = 0;
+
 		}
 
 
@@ -58,6 +84,11 @@ void Engine::run() {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
+
+		ImGui::End();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(Window::GetInstance().GetWindow());
 		glfwSwapBuffers(Window::GetInstance().GetSecondContext());
 		glfwPollEvents();
@@ -69,6 +100,11 @@ void Engine::run() {
 	//VoxelMarkerProgram.Delete();
 	ShaderManager::GetShader("ShaderProgram").Delete();
 	ShaderManager::GetShader("VoxelMarkerProgram").Delete();
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
 
 	Window::GetInstance().DestroyWindow();
 

@@ -20,7 +20,7 @@ void Scene::render() {
 
 	world->update();
 	world->render();
-	world->voxelMarker.render(world->voxelHandler.voxelWorldPos);
+	world->voxelMarker.render(world->voxelHandler.GetVoxelWorldPos());
 
 	/*if (world.voxelHandler.voxelId) {
 		world.voxelMarker.render(voxelMarkerShader, world.voxelHandler.voxelWorldPos);
