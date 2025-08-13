@@ -218,12 +218,6 @@
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\..\Download\grass_side.png" />
-    <Image Include="..\..\..\..\Download\grass_top.png" />
-    <Image Include="C:\Users\andre\Desktop\heightmap.png" />
-    <Image Include="C:\Users\andre\Desktop\texture.png" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

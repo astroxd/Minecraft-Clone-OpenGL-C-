@@ -174,7 +174,7 @@ void VoxelHandler::PlaceVoxel() {
 	if (m_VoxelId > 0) {
 		int newVoxelId = GetHitVoxelId(m_VoxelWorldPos + m_VoxelNormal);
 		if (newVoxelId == 0) {
-			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, 1);
+			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, m_VoxelInHand);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->setVAO();
 		}
@@ -195,6 +195,9 @@ void VoxelHandler::Input() {
 	}
 	if (Input::isMouseButtonPressed(Mouse::ButtonRight)) {
 		PlaceVoxel();
+	}
+	if (Input::isMouseButtonPressed(Mouse::ButtonMiddle)) {
+		m_VoxelInHand = m_VoxelId;
 	}
 }
 

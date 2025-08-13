@@ -1,4 +1,5 @@
 #include"Texture.h"
+#include "Log.h"
 
 Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, GLenum pixelType) {
 	// Assigns the type of the texture ot the texture object
@@ -10,6 +11,7 @@ Texture::Texture(const char* image, GLenum texType, GLenum slot, GLenum format, 
 	stbi_set_flip_vertically_on_load(true);
 	// Reads the image from a file and stores it in bytes
 	unsigned char* bytes = stbi_load(image, &widthImg, &heightImg, &numColCh, 0);
+	LOG_INFO("WIDTH {0}, HEIGHT {1}", widthImg, heightImg);
 
 	// Generates an OpenGL texture object
 	glGenTextures(1, &ID);

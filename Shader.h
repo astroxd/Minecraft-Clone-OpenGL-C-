@@ -25,6 +25,7 @@ public:
 	void Delete();
 
 	//Set mat4 uniform
+	void SetInt(const std::string& u_name, const int value);
 	void SetMat4(const std::string& u_name, const glm::mat4& value);
 
 private:

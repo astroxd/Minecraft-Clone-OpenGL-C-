@@ -227,18 +227,4 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="C:\Users\andre\Desktop\texture.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Download\grass_top.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="..\..\..\..\Download\grass_side.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="C:\Users\andre\Desktop\heightmap.png">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-  </ItemGroup>
 </Project>

@@ -85,6 +85,12 @@ void Shader::compileErrors(unsigned int shader, const char* type) {
 	}
 }
 
+void Shader::SetInt(const std::string& u_name, const int value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniform1i(location, value);
+}
+
 void Shader::SetMat4(const std::string& u_name, const glm::mat4& value)
 {
 	GLint location = glGetUniformLocation(ID, u_name.c_str());

@@ -22,27 +22,24 @@ void Chunk::GenerateBlocks() {
 		{
 			int wz = z + m_Position.z;
 			int height = ((1 + (m_Noise->GetNoise(float(wx), float(wz)))) / 2) * CHUNK_H;
-			//std::cout << "NOISE: " << height << std::endl;
-			//TODO add frustum culling
+			height = height - 2 > 0 ? height : height + 2;
 			for (size_t y = 0; y < CHUNK_H; y++)
 			{
-				/*if (y > height) {
-					blocks[x][z][y] = 0;
+				if (y == 0) {
+					SetBlock(x, z, y, BEDROCK);
+				}
+				else if (y > 0 && y < height - 2) {
+					SetBlock(x, z, y, COBBLESTONE);
+				}
+				else if (y < height) {
+					SetBlock(x, z, y, DIRT);
+				}
+				else if (y == height) {
+					SetBlock(x, z, y, GRASS);
 				}
 				else {
-
-				blocks[x][z][y] = x + z + y + 1;
-				}*/
-
-				if (y <= height) {
-					//blocks[x][z][y] = x + z + y + 1;
-					//blocks[x][z][y] = abs(coord.first + coord.second) + 1;
-					SetBlock(x, z, y, random);
+					SetBlock(x, z, y, AIR);
 				}
-				else {
-					SetBlock(x, z, y, 0);
-				}
-
 			}
 		}
 	}
@@ -220,22 +217,39 @@ void Chunk::GenerateChunk() {
 	//setVAO();
 }
 
-glm::vec2 UVs[4] = {
-	glm::vec2(0,0),
-	glm::vec2(1,0),
-	glm::vec2(1,1),
-	glm::vec2(0,1)
-};
+const float offset = 15;
+const float atlasWidth = 512.0f, atlasHeight = 512.0f;
+const float textureWidth = 16.0f;
+
+std::array<glm::vec2, 4> GetBlockUV(BlockFace face, BlockType type) {
+	auto [x, y] = UVs.at(type).at(face);
+	y += offset;
+	//float x = 3, y = 4;
+	std::array<glm::vec2, 4> BlockUV = {
+	glm::vec2((x * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
+	  glm::vec2(((x + 1) * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
+	  glm::vec2(((x + 1) * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
+	  glm::vec2((x * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
+
+	};
+	return BlockUV;
+}
+
+
+
+
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
+	std::array<glm::vec2, 4> BlockUV = GetBlockUV(face, (BlockType)voxelId);
+	//std::cout << "UV:" << glm::to_string(BlockUV[1]) << std::endl;
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  UVs[i], ao[i] });
+		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i] });
 	}
 
 	//TODO check this after texture implementation
-	bool flipId = ao[2] + ao[0] > ao[3] + ao[1];
-	if (flipId) {
+	bool flipid = ao[2] + ao[0] > ao[3] + ao[1];
+	if (flipid) {
 		indices.push_back(m_CountIndices);
 		indices.push_back(m_CountIndices + 1);
 		indices.push_back(m_CountIndices + 3);
@@ -254,6 +268,7 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 		indices.push_back(m_CountIndices + 2);
 		indices.push_back(m_CountIndices + 3);
 	}
+
 	m_CountIndices += 4;
 }
 
@@ -295,3 +310,5 @@ void Chunk::Render(Camera* camera) {
 	//texture[0].Bind();
 	Draw(shader);
 }
+
+

@@ -111,7 +111,7 @@ void World::updateChunks() {
 			}
 		}
 	}
-	LOG_ERROR("LOAD LIST {0}", ChunkLoadList.size());
+	//LOG_ERROR("LOAD LIST {0}", ChunkLoadList.size());
 
 
 	lock.unlock();
@@ -201,7 +201,7 @@ void World::UpdateChunkThread() {
 
 void World::loadChunks()
 {
-	LOG_WARN("RENDER LIST: {0}", ChunkRenderList.size());
+	//LOG_WARN("RENDER LIST: {0}", ChunkRenderList.size());
 
 	std::unique_lock<std::mutex> lock(chunkMutex);
 	for (auto& chunkCoord : ChunkRenderList)
@@ -260,10 +260,10 @@ void World::update() {
 
 
 void World::LoadTexture() {
-	texture = new Texture("test.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+	texture = new Texture("atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
 	Shader shader = ShaderManager::GetShader("ShaderProgram");
 	shader.Activate();
-	glUniform1i(glGetUniformLocation(shader.ID, "tex0"), 0);
+	shader.SetInt("tex0", 0);
 	texture->Bind();
 }
 

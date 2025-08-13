@@ -33,6 +33,7 @@ private:
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>>* m_Chunks;
 
 	int m_VoxelId = 0;
+	int m_VoxelInHand = 1;
 
 	ChunkCoord m_ChunkCoord;
 	glm::ivec3 m_VoxelLocalPosition;
