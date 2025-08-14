@@ -9,6 +9,7 @@
 #include <deque>
 #include <thread>
 #include <mutex>
+#include "ChunkBorder.h"
 
 //struct AllocationMetrics {
 //	uint32_t TotalAllocated = 0;
@@ -41,6 +42,8 @@ public:
 
 	VoxelHandler* voxelHandler;
 	VoxelMarker* voxelMarker;
+
+	ChunkBorder ChunkBorder;
 
 
 	std::deque<ChunkCoord> ChunkLoadList;

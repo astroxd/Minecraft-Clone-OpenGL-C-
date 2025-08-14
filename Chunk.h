@@ -7,6 +7,7 @@
 #include "Mesh.h"
 #include "FastNoiseLite.h"
 #include "Camera.h"
+#include "ShaderManager.h"
 #include "Block.h"
 #include "Log.h"
 

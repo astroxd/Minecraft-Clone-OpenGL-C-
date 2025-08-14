@@ -58,12 +58,17 @@ void VoxelMarker::GenerateFace(BlockFace face)
 void VoxelMarker::render(glm::vec3 position) {
 	if (m_Handler->GetVoxelId() <= 0) return;
 	glm::mat4 model = glm::mat4(1.0f);
+	glm::mat4 scale = glm::mat4(1.0f);
 
 	model = glm::translate(model, floor(m_Handler->GetVoxelWorldPos()));
+	scale = glm::scale(scale, glm::vec3(1.003, 1.003, 1.003));
 
 	Shader shader = ShaderManager::GetShader("VoxelMarkerProgram");
+
 	shader.Activate();
 	shader.SetMat4("model", model);
+	shader.SetMat4("scale", scale);
+
 	VAO.Bind();
 
 	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);

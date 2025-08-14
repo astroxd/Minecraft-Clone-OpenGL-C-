@@ -27,6 +27,7 @@ World::World(Camera* camera)
 
 	voxelHandler = new VoxelHandler(camera);
 	voxelMarker = new VoxelMarker(voxelHandler);
+	ChunkBorder.Init(camera);
 
 	LoadTexture();
 
@@ -65,6 +66,7 @@ void World::render() {
 		++it;
 	}
 	//lock.unlock();
+	ChunkBorder.Render();
 }
 
 
@@ -256,6 +258,8 @@ void World::update() {
 
 	m_cameraPosition = camera->Position;
 	m_cameraOrientation = camera->Front;
+
+	ChunkBorder.Update();
 }
 
 

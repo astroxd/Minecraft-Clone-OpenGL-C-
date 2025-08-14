@@ -185,6 +185,7 @@
   <ItemGroup>
     <ClInclude Include="Block.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="ChunkBorder.h" />
     <ClInclude Include="EBO.h" />
     <ClInclude Include="CubeMesh.h" />
     <ClInclude Include="Engine.h" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="VAO.h" />
     <ClInclude Include="VBO.h" />
     <ClInclude Include="VoxelHandler.h" />

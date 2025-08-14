@@ -1,9 +1,10 @@
 #include "VoxelHandler.h"
 #include "Log.h"
+#include "Utils.h"
 
 #include <imgui/imgui.h>
 #include <cmath>
-#include <glm/gtc/integer.hpp>
+//#include <glm/gtc/integer.hpp>
 
 VoxelHandler::VoxelHandler(Camera* camera)
 	: m_Camera(camera)
@@ -134,7 +135,7 @@ int VoxelHandler::GetHitVoxelId(glm::vec3 voxelWorldPos) {
 }
 
 void VoxelHandler::DestroyVoxel() {
-	std::chrono::milliseconds time = GetMs();
+	std::chrono::milliseconds time = Utils::GetMs();
 	bool canChangeBlock = false;
 
 	if ((time - m_LastDestroyed).count() > DELAY_DESTROY_BLOCK) canChangeBlock = true;
@@ -164,7 +165,7 @@ void VoxelHandler::DestroyVoxel() {
 }
 
 void VoxelHandler::PlaceVoxel() {
-	std::chrono::milliseconds time = GetMs();
+	std::chrono::milliseconds time = Utils::GetMs();
 	bool canChangeBlock = false;
 
 	if ((time - m_LastPlaced).count() > DELAY_PLACE_BLOCK) canChangeBlock = true;
@@ -205,11 +206,3 @@ void VoxelHandler::RayCast() {
 	RayCasting();
 	Input();
 }
-
-
-
-std::chrono::milliseconds VoxelHandler::GetMs() {
-	return std::chrono::duration_cast<std::chrono::milliseconds>(
-		std::chrono::system_clock::now().time_since_epoch());
-}
-

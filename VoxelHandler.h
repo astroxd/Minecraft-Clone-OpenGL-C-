@@ -51,7 +51,6 @@ private:
 
 	void Input();
 
-	std::chrono::milliseconds GetMs();
 };
 
 #endif;

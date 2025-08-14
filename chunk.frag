@@ -17,6 +17,8 @@ void main()
 
 	vec3 texCol = texture(tex0, texCoord).rgb;
 	texCol = pow(texCol, gamma);
+	texCol = texCol * 0.001 + vec3(1);
+
 	texCol *= shading; 
 	texCol = pow(texCol, invGamma);
 

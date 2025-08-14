@@ -31,7 +31,8 @@ void main()
 {
 	gl_Position = camMatrix * model * vec4(aPos, 1.0);
     
-    shading =  aoValues[aoId] * faceShading[faceId] ;
+    //shading =  aoValues[aoId] * faceShading[faceId] ;
+    shading = faceShading[faceId] * aoValues[aoId];
     
     texCoord = vec2(aTex.x, aTex.y);
     voxelId = int(aVoxelId);

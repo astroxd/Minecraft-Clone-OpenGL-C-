@@ -1,6 +1,6 @@
 #include "Chunk.h"
 #include "Log.h"
-#include "ShaderManager.h"
+
 
 Chunk::Chunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise)
 	: m_Coord(coord), m_Position(glm::vec3(position.x* CHUNK_W, position.y* CHUNK_H, position.z* CHUNK_D)), m_Noise(noise)
@@ -69,7 +69,7 @@ bool Chunk::GetNeighbourChunkIndex(AdjacentChunkPos pos, int neighbourBlockX, in
 }
 
 bool Chunk::CheckIfVoid(int x, int z, int y) {
-	if (y < 0) return true;
+	if (y < 0 || y >= CHUNK_H) return true;
 	//LEFT FACE
 	if (x == -1) {
 		if (z == -1) {
@@ -115,7 +115,6 @@ bool Chunk::CheckIfVoid(int x, int z, int y) {
 	return true;
 }
 
-
 std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
 	bool a, b, c, d, e, f, g, h;
 
@@ -130,31 +129,62 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
 		h = CheckIfVoid(x + 1, z - 1, y);
 	}
 	else if (plane == 'X') {
-		a = CheckIfVoid(x, z - 1, y);
-		b = CheckIfVoid(x, z - 1, y - 1);
-		c = CheckIfVoid(x, z, y - 1);
+
+		a = CheckIfVoid(x, z, y + 1);
+		b = CheckIfVoid(x, z + 1, y + 1);
+		c = CheckIfVoid(x, z + 1, y);
+
 		d = CheckIfVoid(x, z + 1, y - 1);
-		e = CheckIfVoid(x, z + 1, y);
-		f = CheckIfVoid(x, z + 1, y + 1);
-		g = CheckIfVoid(x, z, y + 1);
+		e = CheckIfVoid(x, z, y - 1);
+		f = CheckIfVoid(x, z - 1, y - 1);
+
+		g = CheckIfVoid(x, z - 1, y);
 		h = CheckIfVoid(x, z - 1, y + 1);
+		//return { 1,1,1,1 };
+
+		/*a = CheckIfVoid(x, y, z - 1);
+		b = CheckIfVoid(x, y - 1, z - 1);
+		c = CheckIfVoid(x, y - 1, z);
+
+		d = CheckIfVoid(x, y - 1, z + 1);
+		e = CheckIfVoid(x, y, z + 1);
+		f = CheckIfVoid(x, y + 1, z + 1);
+
+		g = CheckIfVoid(x, y + 1, z);
+		h = CheckIfVoid(x, y + 1, z - 1);*/
+
+
 	}
 	else {
-		a = CheckIfVoid(x - 1, z, y);
-		b = CheckIfVoid(x - 1, z, y - 1);
-		c = CheckIfVoid(x, z, y - 1);
-		d = CheckIfVoid(x + 1, z, y - 1);
-		e = CheckIfVoid(x + 1, z, y);
-		f = CheckIfVoid(x + 1, z, y + 1);
-		g = CheckIfVoid(x, z, y + 1);
-		h = CheckIfVoid(x - 1, z, y + 1);
+		a = CheckIfVoid(x, z, y + 1);
+		b = CheckIfVoid(x - 1, z, y + 1);
+		c = CheckIfVoid(x - 1, z, y);
+
+		d = CheckIfVoid(x - 1, z, y - 1);
+		e = CheckIfVoid(x, z, y - 1);
+		f = CheckIfVoid(x + 1, z, y - 1);
+
+		g = CheckIfVoid(x + 1, z, y);
+		h = CheckIfVoid(x + 1, z, y + 1);
+
+		/*a = CheckIfVoid(x - 1, y, z);
+		b = CheckIfVoid(x - 1, y - 1, z);
+		c = CheckIfVoid(x, y - 1, z);
+
+		d = CheckIfVoid(x + 1, y - 1, z);
+		e = CheckIfVoid(x + 1, y, z);
+		f = CheckIfVoid(x + 1, y + 1, z);
+
+		g = CheckIfVoid(x, y + 1, z);
+		h = CheckIfVoid(x - 1, y + 1, z);*/
+		//return { 1,1,1,1 };
 	}
 
 	std::vector<int> ao = {
 		c + d + e, // BOTTOM LEFT 
 		e + f + g, // BOTTOM RIGHT
 		g + h + a, // TOP RIGHT
-		a + b + c  // TOP LEFT
+		a + b + c,  // TOP LEFT
 	};
 
 	return ao;
