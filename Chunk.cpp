@@ -1,5 +1,7 @@
 #include "Chunk.h"
 #include "Log.h"
+#include "TextureManager.h"
+#include "TextureAtlas.h"
 
 
 Chunk::Chunk(ChunkCoord coord, glm::vec3 position, FastNoiseLite* noise)
@@ -247,31 +249,16 @@ void Chunk::GenerateChunk() {
 	//setVAO();
 }
 
-const float offset = 15;
-const float atlasWidth = 512.0f, atlasHeight = 512.0f;
-const float textureWidth = 16.0f;
-
-std::array<glm::vec2, 4> GetBlockUV(BlockFace face, BlockType type) {
-	auto [x, y] = UVs.at(type).at(face);
-	y += offset;
-	//float x = 3, y = 4;
-	std::array<glm::vec2, 4> BlockUV = {
-	glm::vec2((x * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
-	  glm::vec2(((x + 1) * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
-	  glm::vec2(((x + 1) * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
-	  glm::vec2((x * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
-
-	};
-	return BlockUV;
+std::vector<glm::vec2> GetBlockUV(BlockFace face, BlockType type) {
+	const auto [x, y] = UVs.at(type).at(face);
+	return static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).GetUV(x, y);
 }
-
-
-
 
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
-	std::array<glm::vec2, 4> BlockUV = GetBlockUV(face, (BlockType)voxelId);
-	//std::cout << "UV:" << glm::to_string(BlockUV[1]) << std::endl;
+	std::vector<glm::vec2> BlockUV = GetBlockUV(face, (BlockType)voxelId);
+
+
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
 		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i] });

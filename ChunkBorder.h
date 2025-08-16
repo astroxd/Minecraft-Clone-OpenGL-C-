@@ -66,13 +66,10 @@ private:
 		indices.push_back(m_CountIndices + 2);
 
 		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices);
-
-		indices.push_back(m_CountIndices);
 		indices.push_back(m_CountIndices + 3);
 
 		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 2);
+		indices.push_back(m_CountIndices);
 
 		m_CountIndices += 4;
 	}

@@ -1,12 +1,13 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in unsigned int aVoxelId;
-layout (location = 2) in unsigned int faceId;
+layout (location = 2) in unsigned int aFaceId;
 layout (location = 3) in vec2 aTex;
 layout (location = 4) in int aoId;
 
 out float shading;
 flat out int voxelId;
+flat out int faceId;
 
 out vec2 texCoord;
 
@@ -32,8 +33,9 @@ void main()
 	gl_Position = camMatrix * model * vec4(aPos, 1.0);
     
     //shading =  aoValues[aoId] * faceShading[faceId] ;
-    shading = faceShading[faceId] * aoValues[aoId];
+    shading = faceShading[aFaceId] * aoValues[aoId];
     
     texCoord = vec2(aTex.x, aTex.y);
     voxelId = int(aVoxelId);
+    faceId = int(aFaceId);
 };

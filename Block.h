@@ -6,7 +6,7 @@
 
 
 enum BlockFace {
-	TOP_FACE,
+	TOP_FACE = 0,
 	BOTTOM_FACE,
 	RIGHT_FACE,
 	LEFT_FACE,
@@ -81,7 +81,7 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 
 
 enum BlockType {
-	AIR,
+	AIR = 0,
 	DIRT,
 	GRASS,
 	COBBLESTONE,

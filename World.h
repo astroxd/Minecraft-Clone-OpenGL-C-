@@ -10,6 +10,7 @@
 #include <thread>
 #include <mutex>
 #include "ChunkBorder.h"
+#include "TextureAtlas.h"
 
 //struct AllocationMetrics {
 //	uint32_t TotalAllocated = 0;
@@ -33,7 +34,7 @@ public:
 	ChunkUnorderedMap<ChunkCoord, std::shared_ptr<Chunk>> chunks = {};
 
 	Camera* camera;
-	Texture* texture;
+	TextureAtlas* texture;
 
 	glm::vec3 m_cameraPosition;
 	glm::vec3 m_cameraOrientation;

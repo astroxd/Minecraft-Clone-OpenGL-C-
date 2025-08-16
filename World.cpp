@@ -2,6 +2,8 @@
 #include "Log.h"
 
 #include <cmath>
+#include "TextureAtlas.h"
+#include "TextureManager.h"
 
 using namespace std::chrono_literals;
 
@@ -264,11 +266,10 @@ void World::update() {
 
 
 void World::LoadTexture() {
-	texture = new Texture("atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	Shader shader = ShaderManager::GetShader("ShaderProgram");
-	shader.Activate();
-	shader.SetInt("tex0", 0);
-	texture->Bind();
+
+	TextureManager::AddTexture("atlas.png", std::make_shared<TextureAtlas>("atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 15));
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).BindAtlas("ShaderProgram", "tex0", 0);
+
 }
 
 

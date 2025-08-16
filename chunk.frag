@@ -4,6 +4,7 @@ out vec4 FragColor;
 
 in float shading;
 flat in int voxelId;
+flat in int faceId;
 
 in vec2 texCoord;
 uniform sampler2D tex0;
@@ -16,11 +17,21 @@ void main()
 {
 
 	vec3 texCol = texture(tex0, texCoord).rgb;
+
+	if(voxelId == 2 && faceId == 0){
+		//texCol += vec3(0.45, 0.69, 0.28);
+		texCol.y = 0.3;
+	}
+
 	texCol = pow(texCol, gamma);
-	texCol = texCol * 0.001 + vec3(1);
+	//texCol = texCol * 0.001 + vec3(1);
+
+	
 
 	texCol *= shading; 
 	texCol = pow(texCol, invGamma);
+
+	
 
 	FragColor = vec4(texCol, 1.0);
 };
