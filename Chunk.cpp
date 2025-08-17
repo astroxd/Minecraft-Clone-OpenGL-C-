@@ -223,8 +223,9 @@ void Chunk::GenerateChunk() {
 
 				//RIGHT FACE
 				if (CheckIfVoid(x + 1, z, y)) {
-					auto ao = GetAo(x + 1, z, y, 'X');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
+					//auto ao = GetAo(x + 1, z, y, 'X');
+					std::vector<int> ao = { 1,1,1,1 };
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
 				}
 
 				//LEFT FACE
@@ -240,8 +241,9 @@ void Chunk::GenerateChunk() {
 				}
 				//BACK FACE
 				if (CheckIfVoid(x, z - 1, y)) {
-					auto ao = GetAo(x, z - 1, y, 'Z');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
+					//auto ao = GetAo(x, z - 1, y, 'Z');
+					std::vector<int> ao = { 1,1,1,1 };
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
 				}
 			}
 		}
@@ -254,6 +256,14 @@ std::vector<glm::vec2> GetBlockUV(BlockFace face, BlockType type) {
 	return static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).GetUV(x, y);
 }
 
+glm::vec3 colors[4] = {
+	{1,0,0},
+	{0,1,0},
+	{0,0,1},
+	{1,1,0}
+};
+
+
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	std::vector<glm::vec2> BlockUV = GetBlockUV(face, (BlockType)voxelId);
@@ -261,11 +271,12 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i] });
+		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i], colors[i] });
 	}
 
 	//TODO check this after texture implementation
 	bool flipid = ao[2] + ao[0] > ao[3] + ao[1];
+	flipid = false;
 	if (flipid) {
 		indices.push_back(m_CountIndices);
 		indices.push_back(m_CountIndices + 1);

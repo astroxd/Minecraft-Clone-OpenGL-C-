@@ -4,10 +4,14 @@ layout (location = 1) in unsigned int aVoxelId;
 layout (location = 2) in unsigned int aFaceId;
 layout (location = 3) in vec2 aTex;
 layout (location = 4) in int aoId;
+layout (location = 5) in vec3 aColor;
 
 out float shading;
 flat out int voxelId;
 flat out int faceId;
+
+out vec3 color;
+
 
 out vec2 texCoord;
 
@@ -28,6 +32,8 @@ vec3 hash31(float p) {
     return fract((p3.xxy + p3.yzz) * p3.zyx) + 0.05;
 }
 
+
+
 void main()
 {
 	gl_Position = camMatrix * model * vec4(aPos, 1.0);
@@ -38,4 +44,7 @@ void main()
     texCoord = vec2(aTex.x, aTex.y);
     voxelId = int(aVoxelId);
     faceId = int(aFaceId);
+
+    color = aColor;
+
 };
