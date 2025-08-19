@@ -127,14 +127,15 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane, BlockFace face) {
 		a = CheckIfVoid(x, z - 1, y);
 		b = CheckIfVoid(x - 1, z - 1, y);
 		c = CheckIfVoid(x - 1, z, y);
+
 		d = CheckIfVoid(x - 1, z + 1, y);
 		e = CheckIfVoid(x, z + 1, y);
 		f = CheckIfVoid(x + 1, z + 1, y);
+
 		g = CheckIfVoid(x + 1, z, y);
 		h = CheckIfVoid(x + 1, z - 1, y);
 	}
 	else if (plane == 'X') {
-
 		a = CheckIfVoid(x, z, y + 1);
 		b = CheckIfVoid(x, z - 1, y + 1);
 		c = CheckIfVoid(x, z - 1, y);
@@ -145,7 +146,6 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane, BlockFace face) {
 
 		g = CheckIfVoid(x, z + 1, y);
 		h = CheckIfVoid(x, z + 1, y + 1);
-
 	}
 	else {
 		a = CheckIfVoid(x, z, y + 1);
@@ -158,7 +158,6 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane, BlockFace face) {
 
 		g = CheckIfVoid(x + 1, z, y);
 		h = CheckIfVoid(x + 1, z, y + 1);
-
 	}
 
 	ao = {
@@ -269,6 +268,7 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i], colors[i] });
 	}
 
+	//! Higher values means lighter vertex
 	bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
 	if (flipId) {

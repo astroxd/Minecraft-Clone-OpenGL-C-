@@ -14,7 +14,10 @@ enum BlockFace {
 	FRONT_FACE,
 };
 
-
+//? ALL FACE VERTEXS ARE NOW WRITTEN SUCH AS THE FACE IS LOOKED FROM THE FRONT
+//! LearnOpenGL.com
+//! When defining your vertex order you visualize the corresponding triangle as if it was facing you, 
+//! so each triangle that you're specifying should be counter-clockwise as if you're directly facing that triangle.
 const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 {
 	{
@@ -31,68 +34,52 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 		BlockFace::BOTTOM_FACE,
 		std::vector<glm::vec3>
 		{
-	//glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
-	//glm::vec3(0.0f, 0.0f, 0.0f), // TOP LEFT
-	//glm::vec3(1.0f, 0.0f, 0.0f), // TOP RIGHT
-	//glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-	glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-	glm::vec3(1.0f, 0.0f, 0.0f), // TOP RIGHT
-	glm::vec3(0.0f, 0.0f, 0.0f), // TOP LEFT
-	glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
-}
-},
-{
-	BlockFace::RIGHT_FACE,
-	std::vector<glm::vec3>
+			glm::vec3(1.0f, 0.0f, 1.0f), // TOP RIGHT
+			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM RIGHT
+			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
+			glm::vec3(0.0f, 0.0f, 1.0f), // TOP LEFT
+		}
+	},
 	{
-	//QUESTO FUNZIONA L'AO MA NON IL CULL FACE
-	//glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM LEFT
-	//glm::vec3(1.0f, 1.0f, 0.0f), // TOP LEFT
-	//glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
-	//glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-
-		//QUESTO é PER IL CULL FACE
-		glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM LEFT		0
-		glm::vec3(1.0f, 1.0f, 1.0f), // TOP LEFT		1
-		glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT		2
-		glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM RIGHT	3
-}
-},
-{
-	BlockFace::LEFT_FACE,
-	std::vector<glm::vec3>
+		BlockFace::RIGHT_FACE,
+		std::vector<glm::vec3>
+		{
+			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM LEFT		
+			glm::vec3(1.0f, 1.0f, 1.0f), // TOP LEFT		
+			glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT		
+			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM RIGHT	
+		}
+	},
 	{
-		glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
-		glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
-		glm::vec3(0.0f, 1.0f, 1.0f), // TOP RIGHT
-		glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-	}
-},
-{
-	BlockFace::BACK_FACE,
-	std::vector<glm::vec3>
+		BlockFace::LEFT_FACE,
+		std::vector<glm::vec3>
+		{
+			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
+			glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
+			glm::vec3(0.0f, 1.0f, 1.0f), // TOP RIGHT
+			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM RIGHT
+		}
+	},
 	{
-	//glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
-	//glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
-	//glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT
-	//glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM RIGHT
-
-	glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM LEFT
-	glm::vec3(1.0f, 1.0f, 0.0f), // TOP LEFT
-	glm::vec3(0.0f, 1.0f, 0.0f), // TOP RIGHT
-	glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM RIGHT
-}
-},
-{
-	BlockFace::FRONT_FACE,
-	std::vector<glm::vec3>
+		BlockFace::BACK_FACE,
+		std::vector<glm::vec3>
+		{
+			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM LEFT
+			glm::vec3(1.0f, 1.0f, 0.0f), // TOP LEFT
+			glm::vec3(0.0f, 1.0f, 0.0f), // TOP RIGHT
+			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM RIGHT
+		}
+	},
 	{
-		glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
-		glm::vec3(0.0f, 1.0f, 1.0f), // TOP LEFT
-		glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
-		glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-	}
-},
+		BlockFace::FRONT_FACE,
+		std::vector<glm::vec3>
+		{
+			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
+			glm::vec3(0.0f, 1.0f, 1.0f), // TOP LEFT
+			glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
+			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
+		}
+	},
 };
 
 
