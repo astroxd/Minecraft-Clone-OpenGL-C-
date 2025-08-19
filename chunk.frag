@@ -23,7 +23,7 @@ const vec3 invGamma = 1 / gamma;
 void main()
 {
 
-	vec3 texCol = texture(tex0, texCoord).rgb;
+vec3 texCol = texture(tex0, texCoord).rgb;
 	
 	//vec3 texCol = color;
 

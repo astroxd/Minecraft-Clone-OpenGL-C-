@@ -90,7 +90,7 @@ public:
 	void GenerateChunk();
 
 	const inline ChunkCoord& GetChunkCoord() { return m_Coord; }
-	unsigned int GetBlock(int x, int z, int y) const;
+	int GetBlock(int x, int z, int y) const;
 	void SetBlock(int x, int z, int y, unsigned int blockId);
 	void SetBlock(glm::ivec3 blockPos, unsigned int blockId);
 
@@ -104,10 +104,10 @@ public:
 		return chunkCoord + s_AdjacentChunks[pos];
 	}
 
-	static inline unsigned int GetBlockIndex(int x, int z, int y) {
+	static inline int GetBlockIndex(int x, int z, int y) {
 		return x + CHUNK_W * (y + CHUNK_H * z);
 	}
-	static inline unsigned int GetBlockIndex(glm::ivec3 blockPos) {
+	static inline int GetBlockIndex(glm::ivec3 blockPos) {
 		return blockPos.x + CHUNK_W * (blockPos.y + CHUNK_H * blockPos.z);
 	}
 

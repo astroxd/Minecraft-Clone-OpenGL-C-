@@ -18,9 +18,9 @@ std::vector<glm::vec2> TextureAtlas::GetUV(int x, int y, float textureWidth, flo
 
 	std::vector<glm::vec2> FaceUV = {
 		glm::vec2((x * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
-		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
-		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
 		glm::vec2((x * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
 
 	};
 	return FaceUV;

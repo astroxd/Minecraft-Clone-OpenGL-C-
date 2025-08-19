@@ -40,7 +40,7 @@ void Chunk::GenerateBlocks() {
 					SetBlock(x, z, y, GRASS);
 				}
 				else {
-					SetBlock(x, z, y, AIR);
+					SetBlock(x, z, y, 0);
 				}
 			}
 		}
@@ -110,7 +110,7 @@ bool Chunk::CheckIfVoid(int x, int z, int y) {
 
 	//INSIDE
 	else if (x >= 0 && x < CHUNK_W && y >= 0 && y < CHUNK_H && z >= 0 && z < CHUNK_D) {
-		unsigned int block = GetBlock(x, z, y);
+		int block = GetBlock(x, z, y);
 		if (block > 0) return false;
 	}
 
@@ -118,7 +118,7 @@ bool Chunk::CheckIfVoid(int x, int z, int y) {
 }
 
 std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
-	bool a, b, c, d, e, f, g, h;
+	bool a = 0, b = 0, c = 0, d = 0, e = 0, f = 0, g = 0, h = 0;
 
 	if (plane == 'Y') {
 		a = CheckIfVoid(x, z - 1, y);
@@ -129,6 +129,18 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
 		f = CheckIfVoid(x + 1, z + 1, y);
 		g = CheckIfVoid(x + 1, z, y);
 		h = CheckIfVoid(x + 1, z - 1, y);
+
+		std::vector<int> ao = {
+		a + b + c,  // TOP LEFT
+		g + h + a, // TOP RIGHT
+		e + f + g, // BOTTOM RIGHT
+		c + d + e, // BOTTOM LEFT 
+		};
+
+		return ao;
+
+
+
 	}
 	else if (plane == 'X') {
 
@@ -180,17 +192,41 @@ std::vector<int> Chunk::GetAo(int x, int z, int y, char plane) {
 		g = CheckIfVoid(x, y + 1, z);
 		h = CheckIfVoid(x - 1, y + 1, z);*/
 		//return { 1,1,1,1 };
+
+		std::vector<int> ao = {
+		c + d + e, // BOTTOM LEFT 
+		a + b + c,  // TOP LEFT
+		g + h + a, // TOP RIGHT
+		e + f + g, // BOTTOM RIGHT
+		};
+
+		return ao;
+
+
 	}
 
 	std::vector<int> ao = {
-		c + d + e, // BOTTOM LEFT 
 		e + f + g, // BOTTOM RIGHT
 		g + h + a, // TOP RIGHT
 		a + b + c,  // TOP LEFT
+		c + d + e, // BOTTOM LEFT 
 	};
 
 	return ao;
 }
+
+
+std::vector<glm::vec2> GetBlockUV(BlockFace face, BlockType type) {
+	const auto [x, y] = UVs.at(type).at(face);
+	return static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).GetUV(x, y);
+}
+
+glm::vec3 colors[4] = {
+	{1,0,0},
+	{0,1,0},
+	{0,0,1},
+	{1,1,0}
+};
 
 
 void Chunk::GenerateChunk() {
@@ -212,38 +248,232 @@ void Chunk::GenerateChunk() {
 				//TOP FACE
 				if (CheckIfVoid(x, z, y + 1)) {
 					auto ao = GetAo(x, z, y + 1, 'Y');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::TOP_FACE, ao);
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::TOP_FACE, ao);
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::TOP_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::TOP_FACE, (BlockType)voxelId);
+
+
+					for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::TOP_FACE,  BlockUV[i], ao[i], colors[i] });
+					}
+
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 3);
+
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 2);
+					}
+					else {
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 2);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 1);
+
+					}
+					m_CountIndices += 4;
+
 				}
 
 				//BOTTOM FACE
 				if (CheckIfVoid(x, z, y - 1)) {
 					auto ao = GetAo(x, z, y - 1, 'Y');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BOTTOM_FACE, ao);
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BOTTOM_FACE, ao);
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::BOTTOM_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::BOTTOM_FACE, (BlockType)voxelId);
+
+
+					for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BOTTOM_FACE,  BlockUV[i], ao[i], colors[i] });
+					}
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices);
+
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 3);
+					}
+					else {
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 3);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+					}
+					m_CountIndices += 4;
 				}
+
 
 				//RIGHT FACE
 				if (CheckIfVoid(x + 1, z, y)) {
-					//auto ao = GetAo(x + 1, z, y, 'X');
-					std::vector<int> ao = { 1,1,1,1 };
+					auto ao = GetAo(x + 1, z, y, 'X');
+					//std::vector<int> ao = { 0,0,0,0 };
 					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::RIGHT_FACE, ao);
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::RIGHT_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::RIGHT_FACE, (BlockType)voxelId);
+
+
+					/*for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::RIGHT_FACE,  BlockUV[i], ao[i], colors[i] });
+					}*/
+
+					vertices.push_back(Vertex{ rawVertices[0] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::RIGHT_FACE,  BlockUV[0], ao[3], colors[0] });
+					vertices.push_back(Vertex{ rawVertices[1] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::RIGHT_FACE,  BlockUV[1], ao[2], colors[1] });
+					vertices.push_back(Vertex{ rawVertices[2] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::RIGHT_FACE,  BlockUV[2], ao[1], colors[2] });
+					vertices.push_back(Vertex{ rawVertices[3] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::RIGHT_FACE,  BlockUV[3], ao[0], colors[3] });
+
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 3);
+					}
+					else {
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+					}
+					m_CountIndices += 4;
 				}
+
 
 				//LEFT FACE
 				if (CheckIfVoid(x - 1, z, y)) {
 					auto ao = GetAo(x - 1, z, y, 'X');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::LEFT_FACE, ao);
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::LEFT_FACE, ao);
+
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::LEFT_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::LEFT_FACE, (BlockType)voxelId);
+
+					for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::LEFT_FACE,  BlockUV[i], ao[i], colors[i] });
+					}
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 3);
+					}
+					else {
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 1);
+
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 2);
+					}
+					m_CountIndices += 4;
+				}
+
+
+				//BACK FACE
+				if (CheckIfVoid(x, z - 1, y)) {
+					auto ao = GetAo(x, z - 1, y, 'Z');
+					//std::vector<int> ao = { 0,0,0,0 };
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::BACK_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::BACK_FACE, (BlockType)voxelId);
+
+
+					/*for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BACK_FACE,  BlockUV[i], ao[i], colors[i] });
+					}*/
+
+					vertices.push_back(Vertex{ rawVertices[0] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BACK_FACE,  BlockUV[0], ao[3], colors[0] });
+					vertices.push_back(Vertex{ rawVertices[1] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BACK_FACE,  BlockUV[1], ao[2], colors[1] });
+					vertices.push_back(Vertex{ rawVertices[2] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BACK_FACE,  BlockUV[2], ao[1], colors[2] });
+					vertices.push_back(Vertex{ rawVertices[3] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::BACK_FACE,  BlockUV[3], ao[0], colors[3] });
+
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 3);
+					}
+					else {
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 1);
+
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices + 2);
+
+
+					}
+					m_CountIndices += 4;
 				}
 
 				//FRONT FACE
 				if (CheckIfVoid(x, z + 1, y)) {
 					auto ao = GetAo(x, z + 1, y, 'Z');
-					GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::FRONT_FACE, ao);
-				}
-				//BACK FACE
-				if (CheckIfVoid(x, z - 1, y)) {
-					//auto ao = GetAo(x, z - 1, y, 'Z');
-					std::vector<int> ao = { 1,1,1,1 };
-					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::BACK_FACE, ao);
+					//GenerateFace(glm::vec3(x, y, z), voxelId, BlockFace::FRONT_FACE, ao);
+					std::vector<glm::vec3> rawVertices = rawVertexData.at(BlockFace::FRONT_FACE);
+					std::vector<glm::vec2> BlockUV = GetBlockUV(BlockFace::FRONT_FACE, (BlockType)voxelId);
+
+
+					for (int i = 0; i < rawVertices.size(); i++)
+					{
+						vertices.push_back(Vertex{ rawVertices[i] + glm::vec3(x, y, z), voxelId, (unsigned int)BlockFace::FRONT_FACE,  BlockUV[i], ao[i], colors[i] });
+					}
+					bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
+					if (flipId) {
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 2);
+
+						indices.push_back(m_CountIndices);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 1);
+					}
+					else {
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 1);
+						indices.push_back(m_CountIndices);
+
+						indices.push_back(m_CountIndices + 3);
+						indices.push_back(m_CountIndices + 2);
+						indices.push_back(m_CountIndices + 1);
+					}
+					m_CountIndices += 4;
 				}
 			}
 		}
@@ -251,17 +481,7 @@ void Chunk::GenerateChunk() {
 	//setVAO();
 }
 
-std::vector<glm::vec2> GetBlockUV(BlockFace face, BlockType type) {
-	const auto [x, y] = UVs.at(type).at(face);
-	return static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).GetUV(x, y);
-}
 
-glm::vec3 colors[4] = {
-	{1,0,0},
-	{0,1,0},
-	{0,0,1},
-	{1,1,0}
-};
 
 
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
@@ -300,16 +520,22 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 	m_CountIndices += 4;
 }
 
-unsigned int Chunk::GetBlock(int x, int z, int y) const {
+int Chunk::GetBlock(int x, int z, int y) const {
 	return m_Blocks[GetBlockIndex(x, z, y)];
 }
 void Chunk::SetBlock(int x, int z, int y, unsigned int blockId) {
-	if (y > CHUNK_H || y < 0) return; //TEMPORARY FIX
+	if (y > CHUNK_H || y < 0) {
+		LOG_ERROR("TEMPORARY FIX");
+		return;
+	}
 	m_Blocks[GetBlockIndex(x, z, y)] = blockId;
 }
 
 void Chunk::SetBlock(glm::ivec3 blockPos, unsigned int blockId) {
-	if (blockPos.y > CHUNK_H || blockPos.y < 0) return; //TEMPORARY FIX
+	if (blockPos.y > CHUNK_H || blockPos.y < 0) {
+		LOG_ERROR("TEMPORARY FIX");
+		return;
+	}
 	m_Blocks[GetBlockIndex(blockPos)] = blockId;
 }
 

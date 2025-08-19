@@ -10,8 +10,8 @@ enum BlockFace {
 	BOTTOM_FACE,
 	RIGHT_FACE,
 	LEFT_FACE,
+	BACK_FACE,
 	FRONT_FACE,
-	BACK_FACE
 };
 
 
@@ -21,20 +21,20 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 		BlockFace::TOP_FACE,
 		std::vector<glm::vec3>
 		{
-			glm::vec3(0.0f, 1.0f, 1.0f), // BOTTOM LEFT
-			glm::vec3(1.0f, 1.0f, 1.0f), // BOTTOM RIGHT
-			glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT
 			glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
+			glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT
+			glm::vec3(1.0f, 1.0f, 1.0f), // BOTTOM RIGHT
+			glm::vec3(0.0f, 1.0f, 1.0f), // BOTTOM LEFT
 		}
 	},
 	{
 		BlockFace::BOTTOM_FACE,
 		std::vector<glm::vec3>
 		{
-			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
-			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-			glm::vec3(1.0f, 0.0f, 0.0f), // TOP RIGHT
 			glm::vec3(0.0f, 0.0f, 0.0f), // TOP LEFT
+			glm::vec3(1.0f, 0.0f, 0.0f), // TOP RIGHT
+			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
+			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
 		}
 	},
 	{
@@ -42,9 +42,9 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 		std::vector<glm::vec3>
 		{
 			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM LEFT
-			glm::vec3(1.0f, 1.0f, 0.0f), // TOP LEFT
 			glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
+			glm::vec3(1.0f, 1.0f, 0.0f), // TOP LEFT
+			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM LEFT
 		}
 	},
 	{
@@ -52,19 +52,9 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 		std::vector<glm::vec3>
 		{
 			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
-			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-			glm::vec3(0.0f, 1.0f, 1.0f), // TOP RIGHT
 			glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
-		}
-	},
-	{
-		BlockFace::FRONT_FACE,
-		std::vector<glm::vec3>
-		{
-			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
-			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
-			glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
-			glm::vec3(0.0f, 1.0f, 1.0f), // TOP LEFT
+			glm::vec3(0.0f, 1.0f, 1.0f), // TOP RIGHT
+			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM RIGHT
 		}
 	},
 	{
@@ -72,9 +62,19 @@ const std::unordered_map<BlockFace, std::vector<glm::vec3>> rawVertexData =
 		std::vector<glm::vec3>
 		{
 			glm::vec3(1.0f, 0.0f, 0.0f), // BOTTOM RIGHT
-			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
-			glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
 			glm::vec3(1.0f, 1.0f, 0.0f), // TOP RIGHT
+			glm::vec3(0.0f, 1.0f, 0.0f), // TOP LEFT
+			glm::vec3(0.0f, 0.0f, 0.0f), // BOTTOM LEFT
+		}
+	},
+	{
+		BlockFace::FRONT_FACE,
+		std::vector<glm::vec3>
+		{
+			glm::vec3(0.0f, 0.0f, 1.0f), // BOTTOM LEFT
+			glm::vec3(0.0f, 1.0f, 1.0f), // TOP LEFT
+			glm::vec3(1.0f, 1.0f, 1.0f), // TOP RIGHT
+			glm::vec3(1.0f, 0.0f, 1.0f), // BOTTOM RIGHT
 		}
 	},
 };
@@ -127,7 +127,7 @@ const std::unordered_map<BlockType, std::unordered_map<BlockFace, std::pair<int,
 			},
 			{
 				BOTTOM_FACE,
-				{5,9}
+				{14,11}
 			},
 			{
 				RIGHT_FACE,
