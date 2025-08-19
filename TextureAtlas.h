@@ -10,7 +10,7 @@ public:
 
 	void BindAtlas(const std::string& shaderName, const char* uName, const int index);
 
-	std::vector<glm::vec2> GetUV(int x, int y, float textureWidth = 16.0f, float textureHeight = 16.0f) const;
+	std::vector<glm::vec2> GetUV(int x, int y, bool mirrored = false, float textureWidth = 16.0f, float textureHeight = 16.0f) const;
 
 private:
 	int m_HorizontalOffset;

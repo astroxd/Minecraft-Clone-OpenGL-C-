@@ -192,6 +192,20 @@ void VoxelHandler::PlaceVoxel() {
 			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, m_VoxelInHand);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->setVAO();
+
+			if (m_VoxelLocalPosition.x == 0) {
+				RebuildAdjacentChunk(XNEG);
+			}
+			else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
+				RebuildAdjacentChunk(XPOS);
+			}
+
+			if (m_VoxelLocalPosition.z == 0) {
+				RebuildAdjacentChunk(ZNEG);
+			}
+			else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
+				RebuildAdjacentChunk(ZPOS);
+			}
 		}
 	}
 	m_LastPlaced = time;
