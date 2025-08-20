@@ -12,16 +12,30 @@ void TextureAtlas::BindAtlas(const std::string& shaderName, const char* uniform,
 }
 
 
-std::vector<glm::vec2> TextureAtlas::GetUV(int x, int y, float textureWidth, float textureHeight) const {
+std::vector<glm::vec2> TextureAtlas::GetUV(int x, int y, bool mirrored, float textureWidth, float textureHeight) const {
 	x += m_HorizontalOffset;
 	y += m_VerticalOffset;
 
-	std::vector<glm::vec2> FaceUV = {
-		glm::vec2((x * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
-		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
-		glm::vec2(((x + 1) * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
-		glm::vec2((x * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+	std::vector<glm::vec2> FaceUV;
 
-	};
+	if (mirrored) {
+		FaceUV = {
+			glm::vec2(((x + 1) * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
+			glm::vec2(((x + 1) * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+			glm::vec2((x * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+			glm::vec2((x * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
+
+		};
+	}
+	else {
+		FaceUV = {
+			glm::vec2((x * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
+			glm::vec2((x * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+			glm::vec2(((x + 1) * textureWidth) / m_WidthImg, ((y + 1) * textureHeight) / m_HeightImg),
+			glm::vec2(((x + 1) * textureWidth) / m_WidthImg, (y * textureHeight) / m_HeightImg),
+
+		};
+	}
+
 	return FaceUV;
 }

@@ -24,7 +24,21 @@ void VoxelHandler::RayCasting() {
 	float z1 = m_Camera->Position.z;
 
 	ImGui::Text((m_Camera->GetCameraPosition()).c_str());
-	ImGui::Text((m_Camera->GetCameraOrientation()).c_str());
+	//ImGui::Text((m_Camera->GetCameraOrientation()).c_str());
+
+	if (std::roundf(m_Camera->Front.x) == 1) {
+		ImGui::Text("Facing Est");
+	}
+	else if (std::roundf(m_Camera->Front.x) == -1) {
+		ImGui::Text("Facing West");
+	}
+	else if (std::roundf(m_Camera->Front.z) == 1) {
+		ImGui::Text("Facing North");
+	}
+	else if (std::roundf(m_Camera->Front.z) == -1) {
+		ImGui::Text("Facing South");
+	}
+
 	ImGui::Text(("Look at: " + glm::to_string(m_VoxelWorldPos)).c_str());
 
 	auto normOri = glm::normalize(m_Camera->Front);
@@ -178,6 +192,20 @@ void VoxelHandler::PlaceVoxel() {
 			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, m_VoxelInHand);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->setVAO();
+
+			if (m_VoxelLocalPosition.x == 0) {
+				RebuildAdjacentChunk(XNEG);
+			}
+			else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
+				RebuildAdjacentChunk(XPOS);
+			}
+
+			if (m_VoxelLocalPosition.z == 0) {
+				RebuildAdjacentChunk(ZNEG);
+			}
+			else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
+				RebuildAdjacentChunk(ZPOS);
+			}
 		}
 	}
 	m_LastPlaced = time;

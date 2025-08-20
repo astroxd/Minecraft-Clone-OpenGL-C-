@@ -23,7 +23,7 @@ const float aoValues[4] = float[4](0.1, 0.25, 0.5, 1.0);
 const float faceShading[6] = float[6](
     1.0, 0.5,  // top bottom
     0.5, 0.8,  // right left
-    0.5, 0.8   // front back
+    0.5, 0.8   // back front
 );
 
 vec3 hash31(float p) {
@@ -38,7 +38,6 @@ void main()
 {
 	gl_Position = camMatrix * model * vec4(aPos, 1.0);
     
-    //shading =  aoValues[aoId] * faceShading[faceId] ;
     shading = faceShading[aFaceId] * aoValues[aoId];
     
     texCoord = vec2(aTex.x, aTex.y);
