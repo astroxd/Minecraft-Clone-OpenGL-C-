@@ -56,10 +56,10 @@ private:
 
 		for (int i = 0; i < rawVertices.size(); i++)
 		{
-			vertices.push_back(Vertex{ rawVertices[i] + position });
+			//vertices.push_back(Vertex{ rawVertices[i] + position });
 		}
 
-		indices.push_back(m_CountIndices);
+		/*indices.push_back(m_CountIndices);
 		indices.push_back(m_CountIndices + 1);
 
 		indices.push_back(m_CountIndices + 1);
@@ -69,7 +69,7 @@ private:
 		indices.push_back(m_CountIndices + 3);
 
 		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices);
+		indices.push_back(m_CountIndices);*/
 
 		m_CountIndices += 4;
 	}

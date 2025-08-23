@@ -8,12 +8,14 @@
 // Structure to standardize the vertices used in the meshes
 struct Vertex
 {
-	glm::vec3 position;
+	unsigned int compressed;
+	//glm::vec2 UV;
+	/*glm::vec3 position;
 	unsigned int voxelId;
 	unsigned int faceId;
 	glm::vec2 UV;
 	int aoId;
-	glm::vec3 color;
+	unsigned int compressed;*/
 };
 
 class VBO {

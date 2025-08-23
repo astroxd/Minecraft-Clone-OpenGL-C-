@@ -81,7 +81,7 @@ void World::updateChunks() {
 	int y = (static_cast<int>(camera->Position.y) / CHUNK_H);
 	int z = (static_cast<int>(camera->Position.z) / CHUNK_D);
 
-	int distance = 2;
+	int distance = 12;
 	if (ChunkLoadList.empty()) {
 
 

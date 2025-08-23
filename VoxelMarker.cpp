@@ -37,10 +37,10 @@ void VoxelMarker::GenerateFace(BlockFace face)
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		vertices.push_back(Vertex{ rawVertices[i] });
+		//vertices.push_back(Vertex{ rawVertices[i] });
 	}
 
-	indices.push_back(m_CountIndices);
+	/*indices.push_back(m_CountIndices);
 	indices.push_back(m_CountIndices + 1);
 
 	indices.push_back(m_CountIndices + 1);
@@ -50,7 +50,7 @@ void VoxelMarker::GenerateFace(BlockFace face)
 	indices.push_back(m_CountIndices + 3);
 
 	indices.push_back(m_CountIndices + 3);
-	indices.push_back(m_CountIndices);
+	indices.push_back(m_CountIndices);*/
 
 	m_CountIndices += 4;
 }

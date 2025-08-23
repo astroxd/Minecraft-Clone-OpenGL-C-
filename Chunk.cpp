@@ -188,12 +188,8 @@ std::vector<glm::vec2> Chunk::GetBlockUV(BlockFace face, BlockType type) const {
 	return static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).GetUV(x, y);
 }
 
-glm::vec3 colors[4] = {
-	{1,0,0},
-	{0,1,0},
-	{0,0,1},
-	{1,1,0}
-};
+
+
 
 
 void Chunk::GenerateChunk() {
@@ -208,7 +204,7 @@ void Chunk::GenerateChunk() {
 		{
 			for (int y = 0; y < CHUNK_H; y++)
 			{
-				unsigned int voxelId = GetBlock(x, z, y);
+				int voxelId = GetBlock(x, z, y);
 				if (voxelId <= 0) continue;
 
 
@@ -216,7 +212,6 @@ void Chunk::GenerateChunk() {
 				if (CheckIfVoid(x, z, y + 1)) {
 					auto ao = GetAo(x, z, y + 1, 'Y', TOP_FACE);
 					GenerateFace(glm::vec3(x, y, z), voxelId, TOP_FACE, ao);
-
 				}
 
 				//BOTTOM FACE
@@ -256,7 +251,35 @@ void Chunk::GenerateChunk() {
 }
 
 
+unsigned int CompressionTest(const glm::vec3& position, const unsigned int voxelId, const BlockFace face,
+	const int ao, const int vertexId, const int UVx, const int UVy) {
 
+	unsigned int posx = position.x;
+	unsigned int posy = position.y;
+	unsigned int posz = position.z;
+
+	//LOG_INFO("X {0}, Y {1}, Z{2}", posx, posy, posz);
+
+
+	//pos*		4bit
+	//voxelId	6bit
+	//face		3bit
+	//ao		2bit
+	//UV*		4bit
+
+
+	return (posx | posy << 4 | posz << 8 | voxelId << 12 | face << 18 | ao << 21 | UVx << 23 | UVy << 27);
+	//LOG_INFO(finalNum);
+
+	/*LOG_INFO(finalNum & 15);
+	LOG_INFO((finalNum >> 4) & 15);
+	LOG_INFO((finalNum >> 8) & 15);
+	LOG_INFO((finalNum >> 12) & 63);
+	LOG_INFO((finalNum >> 18) & 7);
+	LOG_INFO((finalNum >> 21) & 3);*/
+
+
+}
 
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
@@ -265,7 +288,13 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i], colors[i] });
+		unsigned int compressed = CompressionTest(position, voxelId, face, ao[i], i, UVs.at((BlockType)voxelId).at(face).first, UVs.at((BlockType)voxelId).at(face).second);
+		//unsigned int compressed = CompressionTest(position, voxelId, face, ao[i], i, 14, 14);
+		//vertices.push_back(Vertex{ rawVertices[i] + position, voxelId, (unsigned int)face,  BlockUV[i], ao[i], compressed });
+		vertices.push_back(Vertex{ compressed });
+		/*if (voxelId == GRASS && face == RIGHT_FACE) {
+			LOG_WARN("{0}: {1}", i, glm::to_string(BlockUV[i]));
+		}*/
 	}
 
 	//! Higher values means lighter vertex

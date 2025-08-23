@@ -211,16 +211,4 @@ const std::unordered_map<BlockType, std::unordered_map<BlockFace, std::pair<int,
 
 };
 
-//const glm::vec2 BlockUV[4] = {
-//	glm::vec2((x * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
-//	glm::vec2(((x + 1) * textureWidth) / atlasWidth, (y * textureWidth) / atlasHeight),
-//	glm::vec2(((x + 1) * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
-//	glm::vec2((x * textureWidth) / atlasWidth, ((y + 1) * textureWidth) / atlasHeight),
-//
-//	//glm::vec2(0,0), // BOTTOM LEFT
-//	//glm::vec2(1,0), // BOTTOM RIGHT
-//	//glm::vec2(1,1), // TOP RIGHT
-//	//glm::vec2(0,1)  // TOP LEFT
-//};
-
 #endif; 
