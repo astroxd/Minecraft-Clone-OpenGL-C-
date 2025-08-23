@@ -28,7 +28,6 @@ vec3 texCol = texture(tex0, texCoord).rgb;
 		texCol.y = 0.3;
 	}
 
-	//texCol = vec3(texCoord, 0.0);
 
 	texCol = pow(texCol, gamma);
 	//texCol = texCol * 0.001 + vec3(1);

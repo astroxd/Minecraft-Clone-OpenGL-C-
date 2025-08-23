@@ -124,7 +124,7 @@ private:
 	bool CheckIfVoid(int x, int z, int y);
 	bool GetNeighbourChunkIndex(AdjacentChunkPos pos, int neighbourBlockX, int neighbourBlockZ, int y);
 	std::vector<int> GetAo(int x, int z, int y, char plane, BlockFace face);
-	std::vector<glm::vec2> GetBlockUV(BlockFace face, BlockType type) const;
+	std::pair<int, int> GetBlockUV(BlockFace face, BlockType type) const;
 
 	void GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace faceId, std::vector<int> ao);
 

@@ -1,12 +1,5 @@
 #version 330 core
-/*layout (location = 0) in vec3 aPos;
-layout (location = 1) in unsigned int aVoxelId;
-layout (location = 2) in unsigned int aFaceId;
-layout (location = 3) in vec2 aTex;
-layout (location = 4) in int aoId;
-layout (location = 5) in unsigned int aCompressed;*/
 layout (location = 0) in uint aCompressed;
-//layout (location = 1) in vec2 aTex;
 
 out float shading;
 flat out int voxelId;

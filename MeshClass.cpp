@@ -40,19 +40,12 @@ void Mesh::setData(std::vector <Vertex>& vertices) {
 void Mesh::setVAO() {
 	VAO.Bind();
 	// Generates Vertex Buffer Object and links it to vertices
-	//std::cout << "VBO: " << vertices.size() << std::endl;
 	VBO.setVertices(vertices);
 	EBO.setIndices(indices);
 
 	// Links VBO attributes such as coordinates and colors to VAO
 	VAO.LinkAttrib(VBO, 0, 1, GL_FLOAT, sizeof(Vertex), (void*)0);
-	//VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(1 * sizeof(float)));
-	/*VAO.LinkAttrib(VBO, 1, 1, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-	VAO.LinkAttrib(VBO, 2, 1, GL_FLOAT, sizeof(Vertex), (void*)(4 * sizeof(float)));
-	VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(5 * sizeof(float)));
-	VAO.LinkAttrib(VBO, 4, 1, GL_FLOAT, sizeof(Vertex), (void*)(7 * sizeof(float)));
-	VAO.LinkAttrib(VBO, 5, 1, GL_FLOAT, sizeof(Vertex), (void*)(8 * sizeof(float)));*/
-	//VAO.LinkAttrib(VBO, 3, 2, GL_FLOAT, sizeof(Vertex), (void*)(6 * sizeof(float)));
+
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
 	VBO.Unbind();
