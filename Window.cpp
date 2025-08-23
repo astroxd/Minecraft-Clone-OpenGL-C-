@@ -9,8 +9,8 @@ Window::Window() {
 	LOG_INFO("Window created");
 	glfwInit();
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 
@@ -31,6 +31,10 @@ Window::Window() {
 	glfwMakeContextCurrent(m_Window);
 
 	gladLoadGL();
+
+	std::cout << "VERSION " << glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 
 #ifdef __APPLE__

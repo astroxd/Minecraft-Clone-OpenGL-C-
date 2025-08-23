@@ -19,6 +19,9 @@ public:
 	VAO VAO;
 	VBO VBO;
 	EBO EBO;
+
+	unsigned int ssbo;
+
 	// Initializes the mesh
 	Mesh();
 	Mesh(std::vector <Vertex>& vertices);

@@ -9,6 +9,7 @@
 struct Vertex
 {
 	unsigned int compressed;
+	unsigned int compressedUV;
 
 };
 

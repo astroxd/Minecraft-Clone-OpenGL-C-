@@ -252,17 +252,22 @@ void Chunk::GenerateChunk() {
 }
 
 
-unsigned int CompressionTest(const glm::vec3& position, const unsigned int voxelId, const BlockFace face,
-	const int ao, const int UVx, const int UVy) {
+Vertex& CompressionTest(const glm::vec3& position, const unsigned int voxelId, const BlockFace face,
+	const std::vector<int> ao, const bool flipId, const int UVx, const int UVy) {
 
 	//pos*		4bit
 	//voxelId	6bit
 	//face		3bit
-	//ao		2bit
-	//UV*		4bit
+	//ao*		2bit
+	//flipId	1bit
 
-	return (unsigned int(position.x) | unsigned int(position.y) << 4 | unsigned int(position.z) << 8 | voxelId << 12 | face << 18 | ao << 21 | UVx << 23 | UVy << 27);
+	//UV*		6bit
+	Vertex v{};
 
+	v.compressed = (unsigned int(position.x) | unsigned int(position.y) << 4 | unsigned int(position.z) << 8 | voxelId << 12 | face << 18 | ao[0] << 21 | ao[1] << 23 | ao[2] << 25 | ao[3] << 27 | flipId << 29);
+	v.compressedUV = (UVx | UVy << 6);
+
+	return v;
 	/*LOG_INFO(finalNum);
 	LOG_INFO(finalNum & 15);
 	LOG_INFO((finalNum >> 4) & 15);
@@ -275,39 +280,15 @@ unsigned int CompressionTest(const glm::vec3& position, const unsigned int voxel
 }
 
 void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace face, std::vector<int> ao) {
-	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	const auto& [UVx, UVy] = GetBlockUV(face, (BlockType)voxelId);
-
-
-	for (int i = 0; i < rawVertices.size(); i++)
-	{
-		unsigned int compressed = CompressionTest(position, voxelId, face, ao[i], UVx, UVy);
-		vertices.push_back(Vertex{ compressed });
-	}
 
 	//! Higher values means lighter vertex
 	bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
-	if (flipId) {
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 1);
-		indices.push_back(m_CountIndices);
+	Vertex& compressed = CompressionTest(position, voxelId, face, ao, flipId, UVx, UVy);
+	vertices.push_back(compressed);
 
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices + 1);
-	}
-	else {
-		indices.push_back(m_CountIndices);
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 2);
 
-		indices.push_back(m_CountIndices);
-		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices + 1);
-	}
-
-	m_CountIndices += 4;
 }
 
 int Chunk::GetBlock(int x, int z, int y) const {

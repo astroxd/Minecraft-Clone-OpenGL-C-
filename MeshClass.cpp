@@ -39,17 +39,17 @@ void Mesh::setData(std::vector <Vertex>& vertices) {
 
 void Mesh::setVAO() {
 	VAO.Bind();
-	// Generates Vertex Buffer Object and links it to vertices
-	VBO.setVertices(vertices);
-	EBO.setIndices(indices);
 
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 1, GL_FLOAT, sizeof(Vertex), (void*)0);
+	glCreateBuffers(1, &ssbo);
+
+
+	glNamedBufferStorage(ssbo, vertices.size() * sizeof(Vertex), (const void*)vertices.data(), NULL);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+
 
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, 0);
 }
 
 
@@ -57,10 +57,10 @@ void Mesh::Draw(Shader& shader) {
 	// Bind shader to be able to access uniforms
 	shader.Activate();
 	VAO.Bind();
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 
 	//std::cout << "Draw Mesh" << vertices.size() << " - " << indices.size() << std::endl;
 
 	// Draw the actual mesh
-	//glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-	glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+	glDrawArrays(GL_TRIANGLES, 0, vertices.size() * 6);
 }
