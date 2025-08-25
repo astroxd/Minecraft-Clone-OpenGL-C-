@@ -30,13 +30,7 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="VBO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="EBO.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="VAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stb.cpp">
@@ -50,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="Mesh.h">
       <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MeshClass.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CubeMesh.cpp">
       <Filter>Source Files</Filter>

@@ -64,8 +64,12 @@ static ChunkCoord s_AdjacentChunks[8] = {
 };
 
 
+struct Vertex {
+	unsigned int compressed;
+};
 
-class Chunk : public Mesh {
+
+class Chunk : public Mesh<Vertex> {
 public:
 
 	bool isBuilt = false; //IL CHUNK PUò ESSERE RENDERIZZATO
@@ -96,6 +100,8 @@ public:
 
 	void Reset();
 	void Render(Camera* camera);
+	void SetVAO() override;
+	void Draw() override;
 
 	static inline ChunkCoord GetChunkCoordFromWorldCoord(int worldX, int worldZ) {
 		return glm::ivec2(worldX, worldZ);

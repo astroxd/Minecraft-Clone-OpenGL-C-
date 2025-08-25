@@ -3,7 +3,11 @@
 #include "VoxelHandler.h"
 
 
-class VoxelMarker : public Mesh {
+struct VoxelMarkerVertex {
+	glm::vec3 pos;
+};
+
+class VoxelMarker : public Mesh<VoxelMarkerVertex> {
 public:
 
 	VoxelHandler* m_Handler;
@@ -13,7 +17,8 @@ public:
 	VoxelMarker(VoxelHandler* handler);
 
 
-	void setVAO() override;
+	void SetVAO() override;
+	void Draw() override;
 
 	void GenerateMesh();
 	void GenerateFace(BlockFace face);

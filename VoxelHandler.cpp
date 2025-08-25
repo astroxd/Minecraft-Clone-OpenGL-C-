@@ -159,7 +159,7 @@ void VoxelHandler::DestroyVoxel() {
 	if (m_VoxelId > 0) {
 		(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, 0);
 		(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
-		(*m_Chunks)[m_ChunkCoord]->setVAO();
+		(*m_Chunks)[m_ChunkCoord]->SetVAO();
 
 		if (m_VoxelLocalPosition.x == 0) {
 			RebuildAdjacentChunk(XNEG);
@@ -191,7 +191,7 @@ void VoxelHandler::PlaceVoxel() {
 		if (newVoxelId == 0) {
 			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, m_VoxelInHand);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
-			(*m_Chunks)[m_ChunkCoord]->setVAO();
+			(*m_Chunks)[m_ChunkCoord]->SetVAO();
 
 			if (m_VoxelLocalPosition.x == 0) {
 				RebuildAdjacentChunk(XNEG);
@@ -213,7 +213,7 @@ void VoxelHandler::PlaceVoxel() {
 
 void VoxelHandler::RebuildAdjacentChunk(AdjacentChunkPos pos) {
 	(*m_Chunks)[Chunk::GetAdjacentChunkCoord(m_ChunkCoord, pos)]->GenerateChunk();
-	(*m_Chunks)[Chunk::GetAdjacentChunkCoord(m_ChunkCoord, pos)]->setVAO();
+	(*m_Chunks)[Chunk::GetAdjacentChunkCoord(m_ChunkCoord, pos)]->SetVAO();
 }
 
 

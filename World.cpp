@@ -215,7 +215,7 @@ void World::loadChunks()
 
 			ChunkRenderList.pop_back();
 
-			chunks[chunkCoord]->setVAO();
+			chunks[chunkCoord]->SetVAO();
 			chunks[chunkCoord]->isBuilt = true;
 		}
 	}

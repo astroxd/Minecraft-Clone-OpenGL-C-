@@ -196,8 +196,8 @@ std::pair<int, int> Chunk::GetBlockUV(BlockFace face, BlockType type) const {
 void Chunk::GenerateChunk() {
 	//LOG_TRACE("GENERATING CHUNK");
 
-	vertices.clear();
-	indices.clear();
+	m_Vertices.clear();
+	m_Indices.clear();
 	m_CountIndices = 0;
 	for (int x = 0; x < CHUNK_W; x++)
 	{
@@ -282,29 +282,29 @@ void Chunk::GenerateFace(glm::vec3 position, unsigned int voxelId, BlockFace fac
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
 		unsigned int compressed = CompressionTest(position, voxelId, face, ao[i], UVx, UVy);
-		vertices.push_back(Vertex{ compressed });
+		m_Vertices.push_back(Vertex{ compressed });
 	}
 
 	//! Higher values means lighter vertex
 	bool flipId = ao[1] + ao[3] > ao[0] + ao[2];
 
 	if (flipId) {
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 1);
-		indices.push_back(m_CountIndices);
+		m_Indices.push_back(m_CountIndices + 3);
+		m_Indices.push_back(m_CountIndices + 1);
+		m_Indices.push_back(m_CountIndices);
 
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices + 1);
+		m_Indices.push_back(m_CountIndices + 3);
+		m_Indices.push_back(m_CountIndices + 2);
+		m_Indices.push_back(m_CountIndices + 1);
 	}
 	else {
-		indices.push_back(m_CountIndices);
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices + 2);
+		m_Indices.push_back(m_CountIndices);
+		m_Indices.push_back(m_CountIndices + 3);
+		m_Indices.push_back(m_CountIndices + 2);
 
-		indices.push_back(m_CountIndices);
-		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices + 1);
+		m_Indices.push_back(m_CountIndices);
+		m_Indices.push_back(m_CountIndices + 2);
+		m_Indices.push_back(m_CountIndices + 1);
 	}
 
 	m_CountIndices += 4;
@@ -339,6 +339,25 @@ void Chunk::Reset() {
 }
 
 
+void Chunk::SetVAO() {
+	VAO.Bind();
+	// Generates Vertex Buffer Object and links it to vertices
+	VBO.SetVertices(m_Vertices);
+	EBO.SetIndices(m_Indices);
+
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO.LinkAttrib(VBO, 0, 1, GL_FLOAT, sizeof(Vertex), (void*)0);
+
+	// Unbind all to prevent accidentally modifying them
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
+}
+
+void Chunk::Draw() {
+	VAO.Bind();
+	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+}
 
 void Chunk::Render(Camera* camera) {
 	//if (!isBuilt) return;
@@ -352,7 +371,9 @@ void Chunk::Render(Camera* camera) {
 	shader.SetMat4("model", model);
 	//texture[0].texUnit(shader, "tex0", 0);
 	//texture[0].Bind();
-	Draw(shader);
+	Draw();
 }
+
+
 
 

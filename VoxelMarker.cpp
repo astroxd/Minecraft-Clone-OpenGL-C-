@@ -4,27 +4,15 @@ VoxelMarker::VoxelMarker(VoxelHandler* handler)
 	: m_Handler(handler)
 {
 	GenerateMesh();
-	setVAO();
+	SetVAO();
 };
 
-void VoxelMarker::setVAO() {
-	VAO.Bind();
-	VBO.setVertices(vertices);
-	EBO.setIndices(indices);
 
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	// Unbind all to prevent accidentally modifying them
-	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
-}
 void VoxelMarker::GenerateMesh()
 {
-	vertices.clear();
-	indices.clear();
+	m_Vertices.clear();
+	m_Indices.clear();
 	m_CountIndices = 0;
-
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -32,27 +20,47 @@ void VoxelMarker::GenerateMesh()
 	}
 
 }
+
 void VoxelMarker::GenerateFace(BlockFace face)
 {
 	std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
 	for (int i = 0; i < rawVertices.size(); i++)
 	{
-		//vertices.push_back(Vertex{ rawVertices[i] });
+		m_Vertices.push_back(VoxelMarkerVertex{ rawVertices[i] });
 	}
 
-	/*indices.push_back(m_CountIndices);
-	indices.push_back(m_CountIndices + 1);
+	m_Indices.push_back(m_CountIndices);
+	m_Indices.push_back(m_CountIndices + 1);
 
-	indices.push_back(m_CountIndices + 1);
-	indices.push_back(m_CountIndices + 2);
+	m_Indices.push_back(m_CountIndices + 1);
+	m_Indices.push_back(m_CountIndices + 2);
 
-	indices.push_back(m_CountIndices + 2);
-	indices.push_back(m_CountIndices + 3);
+	m_Indices.push_back(m_CountIndices + 2);
+	m_Indices.push_back(m_CountIndices + 3);
 
-	indices.push_back(m_CountIndices + 3);
-	indices.push_back(m_CountIndices);*/
+	m_Indices.push_back(m_CountIndices + 3);
+	m_Indices.push_back(m_CountIndices);
 
 	m_CountIndices += 4;
+}
+
+void VoxelMarker::SetVAO() {
+	VAO.Bind();
+	VBO.SetVertices(m_Vertices);
+	EBO.SetIndices(m_Indices);
+
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(VoxelMarkerVertex), (void*)0);
+	// Unbind all to prevent accidentally modifying them
+	VAO.Unbind();
+	VBO.Unbind();
+	EBO.Unbind();
+}
+
+void VoxelMarker::Draw() {
+	VAO.Bind();
+
+	glDrawElements(GL_LINES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 }
 
 void VoxelMarker::render(glm::vec3 position) {
@@ -69,7 +77,5 @@ void VoxelMarker::render(glm::vec3 position) {
 	shader.SetMat4("model", model);
 	shader.SetMat4("scale", scale);
 
-	VAO.Bind();
-
-	glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
+	Draw();
 }

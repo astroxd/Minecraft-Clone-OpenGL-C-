@@ -8,35 +8,30 @@
 #include"Texture.h"
 
 
+template <typename VertexType>
 class Mesh {
 
 public:
-	std::vector <Vertex> vertices;
-	std::vector <GLuint> indices;
+	std::vector <VertexType> m_Vertices;
+	std::vector <GLuint> m_Indices;
 	std::vector <Texture> texture;
 
-	// Store VAO in public so it can be used in the Draw function
-	VAO VAO;
-	VBO VBO;
+	VAO<VertexType> VAO;
+	VBO<VertexType> VBO;
 	EBO EBO;
-	// Initializes the mesh
-	Mesh();
-	Mesh(std::vector <Vertex>& vertices);
+
+	Mesh() = default;
 	virtual ~Mesh()
 	{
 		VAO.Delete();
 		VBO.Delete();
 		EBO.Delete();
 	}
-	void setData(std::vector <Vertex>& vertices);
-	virtual void setVAO();
-	//Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& texture);
 
-	//Mesh(std::vector <Vertex>& vertices, std::vector <Texture>& texture);
-
-	//void setData(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::vector <Texture>& texture);
+	// Sets vertices and indices
+	virtual void SetVAO() = 0;
 
 	// Draws the mesh
-	void Draw(Shader& shader);
+	virtual void Draw() = 0;
 };
 #endif;

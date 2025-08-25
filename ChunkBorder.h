@@ -4,7 +4,11 @@
 #include "Chunk.h"
 #include "Utils.h"
 
-class ChunkBorder : public Mesh {
+struct ChunkBorderVertex {
+	glm::vec3 pos;
+};
+
+class ChunkBorder : public Mesh<ChunkBorderVertex> {
 public:
 
 	ChunkBorder() {
@@ -25,6 +29,25 @@ public:
 
 	}
 
+	void SetVAO() override {
+		VAO.Bind();
+		VBO.SetVertices(m_Vertices);
+		EBO.SetIndices(m_Indices);
+
+		// Links VBO attributes such as coordinates and colors to VAO
+		VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)0);
+		// Unbind all to prevent accidentally modifying them
+		VAO.Unbind();
+		VBO.Unbind();
+		EBO.Unbind();
+	}
+	void Draw() override {
+		VAO.Bind();
+
+		glDrawElements(GL_LINES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+	}
+
+
 	void Render() {
 		if (!shouldRender) return;
 
@@ -38,10 +61,7 @@ public:
 		shader.SetMat4("model", model);
 		shader.SetMat4("scale", scale);
 
-		VAO.Bind();
-		glDrawElements(GL_LINES, indices.size(), GL_UNSIGNED_INT, 0);
-
-
+		Draw();
 	}
 private:
 	Camera* camera;
@@ -56,27 +76,27 @@ private:
 
 		for (int i = 0; i < rawVertices.size(); i++)
 		{
-			//vertices.push_back(Vertex{ rawVertices[i] + position });
+			m_Vertices.push_back(ChunkBorderVertex{ rawVertices[i] + position });
 		}
 
-		/*indices.push_back(m_CountIndices);
-		indices.push_back(m_CountIndices + 1);
+		m_Indices.push_back(m_CountIndices);
+		m_Indices.push_back(m_CountIndices + 1);
 
-		indices.push_back(m_CountIndices + 1);
-		indices.push_back(m_CountIndices + 2);
+		m_Indices.push_back(m_CountIndices + 1);
+		m_Indices.push_back(m_CountIndices + 2);
 
-		indices.push_back(m_CountIndices + 2);
-		indices.push_back(m_CountIndices + 3);
+		m_Indices.push_back(m_CountIndices + 2);
+		m_Indices.push_back(m_CountIndices + 3);
 
-		indices.push_back(m_CountIndices + 3);
-		indices.push_back(m_CountIndices);*/
+		m_Indices.push_back(m_CountIndices + 3);
+		m_Indices.push_back(m_CountIndices);
 
 		m_CountIndices += 4;
 	}
 
 	void GenerateVertices() {
-		vertices.clear();
-		indices.clear();
+		m_Vertices.clear();
+		m_Indices.clear();
 
 		for (int x = 0; x < CHUNK_W; x++) {
 			for (int y = 0; y < 50; y++) {
@@ -87,11 +107,10 @@ private:
 			}
 		}
 
-		setVAO();
+		SetVAO();
 	}
 
 	void Input() {
-
 
 		if (Input::isKeyPressed(Key::F5)) {
 			std::chrono::milliseconds time = Utils::GetMs();
