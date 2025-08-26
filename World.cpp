@@ -81,7 +81,9 @@ void World::updateChunks() {
 	int y = (static_cast<int>(camera->Position.y) / CHUNK_H);
 	int z = (static_cast<int>(camera->Position.z) / CHUNK_D);
 
-	int distance = 12;
+	const int MAXCHUNKPERFRAME = 10;
+	int counter = 0;
+	int distance = 2;
 	if (ChunkLoadList.empty()) {
 
 
@@ -89,7 +91,7 @@ void World::updateChunks() {
 		{
 			for (int zz = -distance; zz < distance; zz++)
 			{
-
+				if (counter >= MAXCHUNKPERFRAME) goto AFTER;
 				ChunkCoord coord = Chunk::GetChunkCoordFromWorldCoord(x + xx, z + zz);
 
 				if (ChunkExists(coord)) {
@@ -112,11 +114,13 @@ void World::updateChunks() {
 					chunks[coord]->isLoaded = true;
 
 				}
+				counter++;
 			}
 		}
 	}
 	//LOG_ERROR("LOAD LIST {0}", ChunkLoadList.size());
 
+AFTER:
 
 	lock.unlock();
 

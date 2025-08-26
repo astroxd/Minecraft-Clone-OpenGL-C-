@@ -56,7 +56,6 @@ void VoxelMarker::SetVAO() {
 	VBO.Unbind();
 	EBO.Unbind();
 }
-
 void VoxelMarker::Draw() {
 	VAO.Bind();
 

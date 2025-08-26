@@ -6,6 +6,7 @@
 
 struct ChunkBorderVertex {
 	glm::vec3 pos;
+	glm::vec3 color;
 };
 
 class ChunkBorder : public Mesh<ChunkBorderVertex> {
@@ -36,17 +37,18 @@ public:
 
 		// Links VBO attributes such as coordinates and colors to VAO
 		VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)0);
+		VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)(3 * sizeof(float)));
 		// Unbind all to prevent accidentally modifying them
 		VAO.Unbind();
 		VBO.Unbind();
 		EBO.Unbind();
 	}
+
 	void Draw() override {
 		VAO.Bind();
 
 		glDrawElements(GL_LINES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 	}
-
 
 	void Render() {
 		if (!shouldRender) return;
@@ -61,6 +63,7 @@ public:
 		shader.SetMat4("model", model);
 		shader.SetMat4("scale", scale);
 
+		glLineWidth(1.2);
 		Draw();
 	}
 private:
@@ -70,42 +73,55 @@ private:
 	bool shouldRender = false;
 	std::chrono::milliseconds m_LastButton;
 
+	const int MAX_Y = 64;
+
 private:
-	void GenerateFace(BlockFace face, const glm::vec3& position) {
-		std::vector<glm::vec3> rawVertices = rawVertexData.at(face);
+	void GenerateLine(const glm::vec3& begin, const glm::vec3& end, const glm::vec3& color = glm::vec3(0)) {
 
-		for (int i = 0; i < rawVertices.size(); i++)
-		{
-			m_Vertices.push_back(ChunkBorderVertex{ rawVertices[i] + position });
-		}
+		m_Vertices.push_back(ChunkBorderVertex{ begin, color });
+		m_Vertices.push_back(ChunkBorderVertex{ end, color });
 
 		m_Indices.push_back(m_CountIndices);
 		m_Indices.push_back(m_CountIndices + 1);
 
-		m_Indices.push_back(m_CountIndices + 1);
-		m_Indices.push_back(m_CountIndices + 2);
-
-		m_Indices.push_back(m_CountIndices + 2);
-		m_Indices.push_back(m_CountIndices + 3);
-
-		m_Indices.push_back(m_CountIndices + 3);
-		m_Indices.push_back(m_CountIndices);
-
-		m_CountIndices += 4;
+		m_CountIndices += 2;
 	}
 
 	void GenerateVertices() {
 		m_Vertices.clear();
 		m_Indices.clear();
 
-		for (int x = 0; x < CHUNK_W; x++) {
-			for (int y = 0; y < 50; y++) {
-				GenerateFace(BACK_FACE, glm::vec3(x, y, 0.001));
-				GenerateFace(FRONT_FACE, glm::vec3(x, y, 14.999));
-				GenerateFace(RIGHT_FACE, glm::vec3(14.999, y, x));
-				GenerateFace(LEFT_FACE, glm::vec3(0.001, y, x));
-			}
+		for (int x = 0; x <= CHUNK_W; x += 2) {
+			double xx = x;
+			if (x == 0) xx = 0.001;
+			if (x == CHUNK_W) xx = 15.999;
+
+			glm::vec3 color = glm::vec3(1.0, 1.0, 0.0);
+
+			if ((x / 2) % 2 == 0) color = glm::vec3(0.0, 1.0, 1.0);
+
+			if (x == 0 || x == CHUNK_W) color = glm::vec3(0.0, 0.0, 1.0);
+
+			GenerateLine(glm::vec3(xx, 0, 0.001), glm::vec3(xx, MAX_Y, 0.001), color);		//BACKFACE
+			GenerateLine(glm::vec3(xx, 0, 15.999), glm::vec3(xx, MAX_Y, 15.999), color);	//FRONTFACE
+			GenerateLine(glm::vec3(15.999, 0, xx), glm::vec3(15.999, MAX_Y, xx), color);	//RIGHTFACE
+			GenerateLine(glm::vec3(0.001, 0, xx), glm::vec3(0.001, MAX_Y, xx), color);		//LEFTFACE
+
 		}
+
+		for (int y = 0; y <= MAX_Y; y += 2) {
+			glm::vec3 color = glm::vec3(1.0, 1.0, 0.0);
+
+			if (y % 8 == 0) color = glm::vec3(0.0, 1.0, 1.0);
+			if (y % 16 == 0) color = glm::vec3(0.0, 0.0, 1.0);
+
+			GenerateLine(glm::vec3(0.001, y, 0.001), glm::vec3(15.999, y, 0.001), color);
+			GenerateLine(glm::vec3(0.001, y, 15.999), glm::vec3(15.999, y, 15.999), color);
+			GenerateLine(glm::vec3(0.001, y, 0.001), glm::vec3(0.001, y, 15.999), color);
+			GenerateLine(glm::vec3(15.999, y, 0.001), glm::vec3(15.999, y, 15.999), color);
+		}
+
+		GenerateLine(glm::vec3(CHUNK_W / 2, 0.0, CHUNK_D / 2), glm::vec3(CHUNK_W / 2, MAX_Y, CHUNK_D / 2), glm::vec3(1.0, 0.0, 0.0));
 
 		SetVAO();
 	}
