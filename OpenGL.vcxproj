@@ -180,6 +180,8 @@
     <None Include="chunk.vert" />
     <None Include="cube.frag" />
     <None Include="cube.vert" />
+    <None Include="GUI.frag" />
+    <None Include="GUI.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
@@ -207,6 +209,7 @@
     <ClInclude Include="Log.h" />
     <ClInclude Include="MouseCodes.h" />
     <ClInclude Include="Chunk.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />

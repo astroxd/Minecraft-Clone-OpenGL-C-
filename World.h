@@ -11,6 +11,7 @@
 #include <mutex>
 #include "ChunkBorder.h"
 #include "TextureAtlas.h"
+#include "Player.h"
 
 //struct AllocationMetrics {
 //	uint32_t TotalAllocated = 0;
@@ -43,6 +44,9 @@ public:
 
 	VoxelHandler* voxelHandler;
 	VoxelMarker* voxelMarker;
+
+	Player* player;
+
 
 	ChunkBorder ChunkBorder;
 

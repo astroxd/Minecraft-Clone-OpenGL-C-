@@ -24,7 +24,7 @@ Shader::Shader() {
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
-	LOG_INFO("Shader Program Created");
+	LOG_INFO("{0} Shader Created", vertexFile);
 	Init(vertexFile, fragmentFile);
 }
 
@@ -96,5 +96,11 @@ void Shader::SetMat4(const std::string& u_name, const glm::mat4& value)
 	GLint location = glGetUniformLocation(ID, u_name.c_str());
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(value));
 
+}
+
+void Shader::SetVec3(const std::string& u_name, const glm::vec3& value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniform3f(location, value.x, value.y, value.z);
 }
 

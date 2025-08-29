@@ -22,6 +22,7 @@ World::World(Camera* camera)
 	: camera(camera)
 {
 	LOG_INFO("World Created");
+	LoadTexture();
 
 	noise = new FastNoiseLite(122422);
 	noise->SetNoiseType(FastNoiseLite::NoiseType_OpenSimplex2);
@@ -29,9 +30,10 @@ World::World(Camera* camera)
 
 	voxelHandler = new VoxelHandler(camera);
 	voxelMarker = new VoxelMarker(voxelHandler);
+	player = new Player();
 	ChunkBorder.Init(camera);
 
-	LoadTexture();
+
 
 	//TODO replace with threadPool
 	//SPAWN A SINGLE THREAD FOR HANDLING WORLD CREATION
@@ -47,6 +49,7 @@ World::~World() {
 	delete noise;
 	delete voxelMarker;
 	delete voxelHandler;
+	delete player;
 	delete texture;
 
 }
@@ -69,6 +72,7 @@ void World::render() {
 	}
 	//lock.unlock();
 	ChunkBorder.Render();
+	player->Draw();
 }
 
 
@@ -266,13 +270,17 @@ void World::update() {
 	m_cameraOrientation = camera->Front;
 
 	ChunkBorder.Update();
+	player->Update();
+
 }
 
 
 void World::LoadTexture() {
 
-	TextureManager::AddTexture("atlas.png", std::make_shared<TextureAtlas>("atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 15));
+	TextureManager::AddTexture("atlas.png", std::make_shared<TextureAtlas>("Assets/atlas.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE, 0, 15));
 	static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).BindAtlas("ShaderProgram", "tex0", 0);
+	TextureManager::AddTexture("widget.png", std::make_shared<TextureAtlas>("Assets/widget.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 0, 2));
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).BindAtlas("GUIProgram", "tex1", 1);
 
 }
 

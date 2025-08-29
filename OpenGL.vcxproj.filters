@@ -119,6 +119,12 @@
     <None Include="chunk.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="GUI.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="GUI.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -233,6 +239,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextureManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
