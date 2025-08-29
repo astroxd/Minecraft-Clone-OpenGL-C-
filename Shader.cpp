@@ -91,6 +91,18 @@ void Shader::SetInt(const std::string& u_name, const int value)
 	glUniform1i(location, value);
 }
 
+void Shader::SetFloat(const std::string& u_name, const float value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniform1f(location, value);
+}
+
+void Shader::SetBool(const std::string& u_name, const bool value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniform1i(location, value);
+}
+
 void Shader::SetMat4(const std::string& u_name, const glm::mat4& value)
 {
 	GLint location = glGetUniformLocation(ID, u_name.c_str());

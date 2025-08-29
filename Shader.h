@@ -26,6 +26,8 @@ public:
 
 	//Set mat4 uniform
 	void SetInt(const std::string& u_name, const int value);
+	void SetFloat(const std::string& u_name, const float value);
+	void SetBool(const std::string& u_name, const bool value);
 	void SetMat4(const std::string& u_name, const glm::mat4& value);
 	void SetVec3(const std::string& u_name, const glm::vec3& value);
 
