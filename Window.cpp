@@ -1,12 +1,18 @@
 #include "Window.h"
 #include "Log.h"
+#include "Input.h"
 
 //Window* Window::s_Instance = new Window();
 Window* Window::s_Instance = nullptr;
 std::mutex Window::s_Mutex;
 
+unsigned int Window::s_Width;
+unsigned int Window::s_Height;
+
 Window::Window() {
 	LOG_INFO("Window created");
+	s_Width = 1280;
+	s_Height = 720;
 	glfwInit();
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -32,6 +38,7 @@ Window::Window() {
 
 	gladLoadGL();
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
+	glfwSetScrollCallback(m_Window, scroll_callback);
 
 #ifdef __APPLE__
 	glViewport(0, 0, getWidth() * 2, getHeight() * 2); // Due to mac glitch resolution needs to be twice as big
@@ -45,8 +52,6 @@ Window::Window() {
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_BLEND);
 	glEnable(GL_CULL_FACE);
-	//glFrontFace(GL_CW);
-
 }
 
 void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint height) {
@@ -62,5 +67,12 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 	// make sure the viewport matches the new window dimensions; note that width and
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
+	s_Width = width;
+	s_Height = height;
+
 #endif
+}
+
+void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+	Input::setScrollWheel(yoffset);
 }

@@ -151,6 +151,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="glad.c" />
+    <ClCompile Include="Hotbar.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_demo.cpp" />
     <ClCompile Include="Libraries\include\imgui\imgui_draw.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="CubeMesh.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="FastNoiseLite.h" />
+    <ClInclude Include="Hotbar.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="KeyCodes.h" />
     <ClInclude Include="Libraries\include\imgui\backends\imgui_impl_glut.h" />

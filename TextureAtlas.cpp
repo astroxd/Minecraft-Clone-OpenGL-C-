@@ -39,3 +39,15 @@ std::vector<glm::vec2> TextureAtlas::GetUV(int x, int y, bool mirrored, float te
 
 	return FaceUV;
 }
+
+std::vector<glm::vec2> TextureAtlas::GetUV(float xOffset, float yOffset, float textureWidth, float textureHeight) const
+{
+	std::vector<glm::vec2> FaceUV = {
+			glm::vec2(xOffset / m_WidthImg, yOffset / m_HeightImg),
+			glm::vec2(xOffset / m_WidthImg, (yOffset + textureHeight) / m_HeightImg),
+			glm::vec2((xOffset + textureWidth) / m_WidthImg, (yOffset + textureHeight) / m_HeightImg),
+			glm::vec2((xOffset + textureWidth) / m_WidthImg,  yOffset / m_HeightImg),
+	};
+
+	return FaceUV;
+}

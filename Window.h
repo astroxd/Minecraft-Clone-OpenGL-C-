@@ -10,6 +10,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+
 //Singleton implementation of Window
 class Window {
 public:
@@ -28,8 +30,9 @@ public:
 
 	inline GLFWwindow* GetWindow() const { return m_Window; }
 	inline GLFWwindow* GetSecondContext() const { return m_SecondContext; }
-	inline unsigned int getWidth() const { return m_Width; }
-	inline unsigned int getHeight() const { return m_Height; }
+	inline unsigned int getWidth() const { return s_Width; }
+	inline unsigned int getHeight() const { return s_Height; }
+	inline glm::vec2 getWindowSize() const { return glm::vec2(s_Width, s_Height); }
 
 	inline void DestroyWindow() { glfwDestroyWindow(m_Window); }
 
@@ -40,14 +43,15 @@ private:
 	static Window* s_Instance;
 	static std::mutex s_Mutex;
 
-	const unsigned int m_Width = 1280;
-	const unsigned int m_Height = 720;
+	static unsigned int s_Width;
+	static unsigned int s_Height;
 
 	GLFWwindow* m_Window;
 	GLFWwindow* m_SecondContext;
 
 	// window resize callback
 	static void framebuffer_size_callback(GLFWwindow* window, GLint width, GLint height);
+	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 };
 
 #endif;

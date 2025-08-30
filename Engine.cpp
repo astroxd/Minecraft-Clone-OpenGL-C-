@@ -93,6 +93,9 @@ void Engine::run() {
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 
+		//Reset ScrollWheel
+		if (Input::getScrollWheel() != 0) Input::setScrollWheel(0);
+
 
 		ImGui::End();
 		ImGui::Render();

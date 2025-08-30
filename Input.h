@@ -27,6 +27,18 @@ public:
 		glfwGetCursorPos(window, &xpos, &ypos);
 		return { (float)xpos, (float)ypos };
 	}
+
+	inline static float getScrollWheel() {
+		return (float)s_ScrollWheelOffset;
+	}
+
+	inline static void setScrollWheel(double yoffset) {
+		s_ScrollWheelOffset = yoffset;
+	}
+
+private:
+	inline static double s_ScrollWheelOffset;
+
 };
 
 #endif;
