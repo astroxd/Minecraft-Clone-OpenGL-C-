@@ -156,6 +156,9 @@ public:
 			if (xy.y <= 720 - 10 && xy.y >= 720 - 54) {
 				LOG_WARN("INTERSECT");
 				shader.SetBool("show", true);
+				int slotIndex = std::min(int((xy.x - ((Window::GetInstance().getWidth() / 2) - 182)) / 40.0f), 8);
+				shader.SetFloat("offset", slotIndex * 20.0f);
+
 			}
 			else {
 				shader.SetBool("show", false);

@@ -21,7 +21,11 @@ void main()
 		pos.x += offset;
 		if(!show)
 			pos.w = 0;
-		color = vec4(1.0,0.0,0.0, 1.0);
+		color = vec4(0.0,0.0,0.0, 0.2);
+	}
+
+	if(gl_VertexID >= 4 && gl_VertexID < 8){
+		pos.x += offset;
 	}
 
 
