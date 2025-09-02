@@ -108,6 +108,9 @@
     <ClCompile Include="Hotbar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BlockItem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cube.vert">
@@ -126,6 +129,12 @@
       <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="GUI.frag">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Cube2D.vert">
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Cube2D.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
@@ -248,6 +257,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Hotbar.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BlockItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

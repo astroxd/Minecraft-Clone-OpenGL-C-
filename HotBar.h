@@ -1,12 +1,12 @@
 #ifndef HOTBAR_H
 #define HOTBAR_H
 
-#include <glm/glm.hpp>
 
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "TextureAtlas.h"
 #include "Input.h"
+#include "BlockItem.h"
 
 struct GUIVertex {
 	glm::vec3 pos;
@@ -88,17 +88,21 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
+	BlockItem block;
+
+
+
 private:
 	void UpdateWindowSize();
 
 	inline float GetScaledWidth() const { return m_HotBarWidth * m_Scale.x; }
 	inline float GetScaledHeight() const { return m_HotBarHeight * m_Scale.y; }
-	inline float GetHorizontalTraslation() const { return (m_WindowSize.x / 2.0f) - (GetScaledWidth() / 2.0f); }
-	inline float GetVerticalTraslation() const {
-		float VerticalTraslation = 10.0f;
-		return VerticalTraslation;
+	inline float GetHorizontalTranslation() const { return (m_WindowSize.x / 2.0f) - (GetScaledWidth() / 2.0f); }
+	inline float GetVerticalTranslation() const {
+		float VerticalTranslation = 10.0f;
+		return VerticalTranslation;
 	}
-	glm::vec3 GetTraslationVector() const;
+	glm::vec3 GetTranslationVector() const;
 
 	void HandleInput();
 

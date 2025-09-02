@@ -281,6 +281,8 @@ void World::LoadTexture() {
 	static_cast<TextureAtlas&>(TextureManager::GetTexture("atlas.png")).BindAtlas("ShaderProgram", "tex0", 0);
 	TextureManager::AddTexture("widget.png", std::make_shared<TextureAtlas>("Assets/widget.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_UNSIGNED_BYTE, 0, 2));
 	static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).BindAtlas("GUIProgram", "tex1", 1);
+	TextureManager::AddTexture("GUIatlas.png", std::make_shared<TextureAtlas>("Assets/atlas.png", GL_TEXTURE_2D, GL_TEXTURE2, GL_RGBA, GL_UNSIGNED_BYTE, 0, 15));
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("GUIatlas.png")).BindAtlas("Cube2DProgram", "tex2", 2);
 
 }
 

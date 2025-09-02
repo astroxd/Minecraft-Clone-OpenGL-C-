@@ -8,6 +8,7 @@ Engine::Engine() {
 	ShaderManager::AddShader("ShaderProgram", std::make_shared<Shader>("chunk.vert", "chunk.frag"));
 	ShaderManager::AddShader("VoxelMarkerProgram", std::make_shared<Shader>("cube.vert", "cube.frag"));
 	ShaderManager::AddShader("GUIProgram", std::make_shared<Shader>("GUI.vert", "GUI.frag"));
+	ShaderManager::AddShader("Cube2DProgram", std::make_shared<Shader>("Cube2D.vert", "Cube2D.frag"));
 
 	camera = new Camera(Window::GetInstance().getWidth(), Window::GetInstance().getHeight(), glm::vec3(0.0f, 20.0f, 0.0f));
 	scene = new Scene(camera);
@@ -78,8 +79,6 @@ void Engine::run() {
 		ShaderManager::GetShader("VoxelMarkerProgram").Activate();
 		camera->SetCamMatrix(55.0f, 0.1f, 6000.0f, ShaderManager::GetShader("VoxelMarkerProgram"), "camMatrix");
 
-		//ShaderManager::GetShader("GUIProgram").Activate();
-		//camera->SetCamMatrix(55.0f, 0.1f, 6000.0f, ShaderManager::GetShader("GUIProgram"), "camMatrix");
 
 		scene->render();
 

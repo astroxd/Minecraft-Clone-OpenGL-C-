@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BlockItem.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CubeMesh.cpp" />
     <ClCompile Include="EBO.cpp" />
@@ -181,11 +182,14 @@
     <None Include="chunk.vert" />
     <None Include="cube.frag" />
     <None Include="cube.vert" />
+    <None Include="Cube2D.frag" />
+    <None Include="Cube2D.vert" />
     <None Include="GUI.frag" />
     <None Include="GUI.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Block.h" />
+    <ClInclude Include="BlockItem.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChunkBorder.h" />
     <ClInclude Include="EBO.h" />

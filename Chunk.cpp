@@ -369,8 +369,6 @@ void Chunk::Render(Camera* camera) {
 
 	shader.Activate();
 	shader.SetMat4("model", model);
-	//texture[0].texUnit(shader, "tex0", 0);
-	//texture[0].Bind();
 	Draw();
 }
 

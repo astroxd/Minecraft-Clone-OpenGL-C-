@@ -71,7 +71,7 @@ void Hotbar::GenerateMesh() {
 
 void Hotbar::Transform() {
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, GetTraslationVector());
+	model = glm::translate(model, GetTranslationVector());
 	model = glm::scale(model, glm::vec3(m_Scale, 1.0));
 
 	glm::mat4 proj = glm::ortho(0.0f, m_WindowSize.x, 0.0f, m_WindowSize.y);
@@ -101,6 +101,9 @@ void Hotbar::Draw() {
 
 	VAO.Bind();
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+
+	block.Draw();
+
 };
 
 void Hotbar::Update() {
@@ -111,12 +114,12 @@ void Hotbar::Update() {
 	UpdateWindowSize();
 
 	//TODO to be implemented inside inventory
-	if (mousePos.x >= GetHorizontalTraslation() && mousePos.x <= GetHorizontalTraslation() + GetScaledWidth()) {
+	if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
 
-		if (mousePos.y >= m_WindowSize.y - (GetVerticalTraslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTraslation()) {
+		if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTranslation()) {
 			m_Shader.SetBool("show", true);
 
-			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTraslation()) / 40.0f)), 8);
+			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation()) / 40.0f)), 8);
 			m_Shader.SetFloat("offset", slotIndex * 20.0f);
 
 		}
@@ -138,8 +141,8 @@ void Hotbar::UpdateWindowSize() {
 	}
 }
 
-glm::vec3 Hotbar::GetTraslationVector() const {
-	return glm::vec3(GetHorizontalTraslation(), GetVerticalTraslation(), 0.0);
+glm::vec3 Hotbar::GetTranslationVector() const {
+	return glm::vec3(GetHorizontalTranslation(), GetVerticalTranslation(), 0.0);
 }
 
 void Hotbar::HandleInput() {
