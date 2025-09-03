@@ -102,7 +102,8 @@ void Hotbar::Draw() {
 	VAO.Bind();
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
-	block.Draw();
+	block1.Draw();
+	block2.Draw();
 
 };
 

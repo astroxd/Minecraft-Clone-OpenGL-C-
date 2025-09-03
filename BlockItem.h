@@ -14,10 +14,7 @@ struct BlockItemVertex {
 class BlockItem : public Mesh<BlockItemVertex> {
 public:
 	BlockItem();
-
-
-	void GenerateMesh();
-	void GenerateFace(BlockType type, BlockFace face);
+	BlockItem(glm::vec3 position);
 
 	void SetVAO() override;
 	void Draw() override;
@@ -27,6 +24,16 @@ public:
 private:
 	Shader m_Shader;
 	int m_CountIndices = 0;
+
+	glm::vec3 position;
+
+	glm::mat4 model, view, proj;
+
+
+private:
+	void GenerateMesh();
+	void GenerateFace(BlockType type, BlockFace face);
+	void UpdateTransform();
 
 };
 

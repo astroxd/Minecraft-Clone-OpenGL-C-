@@ -88,7 +88,8 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	BlockItem block;
+	BlockItem block1{ glm::vec3(680.0f, 20.0f, 0.0f) };
+	BlockItem block2{ glm::vec3(800.0f, 20.0f, 0.0f) };
 
 
 
