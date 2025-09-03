@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 
 #include "Mesh.h"
-
+#include "Block.h"
 
 struct BlockItemVertex {
 	glm::vec3 pos;
@@ -17,6 +17,7 @@ public:
 
 
 	void GenerateMesh();
+	void GenerateFace(BlockType type, BlockFace face);
 
 	void SetVAO() override;
 	void Draw() override;
@@ -25,6 +26,7 @@ public:
 
 private:
 	Shader m_Shader;
+	int m_CountIndices = 0;
 
 };
 
