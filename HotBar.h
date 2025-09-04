@@ -73,7 +73,7 @@ public:
 private:
 	float m_HotBarWidth = 182.0f;
 	float m_HotBarHeight = 22.0f;
-	glm::vec2 m_Scale = glm::vec2(2.0f, 2.0f);
+	glm::vec2 m_Scale = glm::vec2(3.0f, 3.0f);
 
 	//UVs offset in pixel
 	float m_xOffset = 0.0f;
@@ -88,9 +88,9 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	BlockItem block1{ glm::vec3(680.0f, 20.0f, 0.0f) };
-	BlockItem block2{ glm::vec3(800.0f, 20.0f, 0.0f) };
+	BlockItem block1;
 
+	std::unique_ptr<BlockItem> Items[9];
 
 
 private:
@@ -104,6 +104,7 @@ private:
 		return VerticalTranslation;
 	}
 	glm::vec3 GetTranslationVector() const;
+	glm::vec3 GetSlotTranslationVector(int slotIndex) const;
 
 	void HandleInput();
 

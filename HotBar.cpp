@@ -4,7 +4,18 @@
 Hotbar::Hotbar() {
 	LOG_INFO("HotBar Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
+
+	for (int i = 0; i < 9; i++)
+	{
+		Items[i] = std::make_unique<BlockItem>((BlockType)((i % 4) + 1));
+	}
+
+
 	GenerateMesh();
+
+
+
+
 }
 
 void Hotbar::GenerateMesh() {
@@ -80,6 +91,12 @@ void Hotbar::Transform() {
 	m_Shader.SetMat4("model", model);
 	m_Shader.SetMat4("proj", proj);
 	m_Shader.SetBool("show", true);
+
+	block1.UpdateTransformAndScale(GetSlotTranslationVector(1), m_Scale);
+	for (int i = 0; i < 9; i++)
+	{
+		Items[i]->UpdateTransformAndScale(GetSlotTranslationVector(i), m_Scale);
+	}
 }
 
 void Hotbar::SetVAO() {
@@ -103,7 +120,10 @@ void Hotbar::Draw() {
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
 	block1.Draw();
-	block2.Draw();
+	for (int i = 0; i < 9; i++)
+	{
+		Items[i]->Draw();
+	}
 
 };
 
@@ -114,14 +134,22 @@ void Hotbar::Update() {
 
 	UpdateWindowSize();
 
+	block1.UpdateTransformAndScale(GetSlotTranslationVector(1), m_Scale);
+	for (int i = 0; i < 9; i++)
+	{
+		Items[i]->UpdateTransformAndScale(GetSlotTranslationVector(i), m_Scale);
+	}
+
 	//TODO to be implemented inside inventory
 	if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
 
 		if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTranslation()) {
 			m_Shader.SetBool("show", true);
 
-			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation()) / 40.0f)), 8);
-			m_Shader.SetFloat("offset", slotIndex * 20.0f);
+			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation()) / 60.0f)), 8);
+			//m_Shader.SetFloat("offset", slotIndex * 20.0f);
+			//block1.UpdateTransformAndScale(GetTranslationVector() + (glm::vec3(11, 11, 0) * glm::vec3(m_Scale, 1)) + glm::vec3(slotIndex * 20.0f, 0, 0) * glm::vec3(m_Scale, 1), m_Scale);
+			//block1.UpdateTransformAndScale(GetSlotTranslationVector(slotIndex), m_Scale);
 
 		}
 		else {
@@ -144,6 +172,18 @@ void Hotbar::UpdateWindowSize() {
 
 glm::vec3 Hotbar::GetTranslationVector() const {
 	return glm::vec3(GetHorizontalTranslation(), GetVerticalTranslation(), 0.0);
+}
+
+glm::vec3 Hotbar::GetSlotTranslationVector(int slotIndex) const
+{
+	const glm::vec2 slotInnerOffset = glm::vec2(3);
+	const float slotInnerWidth = 16.0f;
+
+	glm::vec2 offsetToSlotCenter = glm::vec2(slotInnerWidth / 2);
+
+	return GetTranslationVector() + (glm::vec3(slotInnerOffset + offsetToSlotCenter, 0.0) + glm::vec3(slotIndex * 20.0f, 0, 0)) * glm::vec3(m_Scale, 1);
+
+	//GetTranslationVector() + (glm::vec3(11, 11, 0) * glm::vec3(m_Scale, 1)) + glm::vec3(slotIndex * 20.0f, 0, 0) * glm::vec3(m_Scale, 1);
 }
 
 void Hotbar::HandleInput() {
