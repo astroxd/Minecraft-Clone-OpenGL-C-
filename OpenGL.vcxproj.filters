@@ -111,6 +111,9 @@
     <ClCompile Include="BlockItem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Inventory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cube.vert">
@@ -261,6 +264,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BlockItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

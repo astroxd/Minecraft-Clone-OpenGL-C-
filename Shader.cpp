@@ -110,6 +110,12 @@ void Shader::SetMat4(const std::string& u_name, const glm::mat4& value)
 
 }
 
+void Shader::SetVec2(const std::string& u_name, const glm::vec2& value)
+{
+	GLint location = glGetUniformLocation(ID, u_name.c_str());
+	glUniform2f(location, value.x, value.y);
+}
+
 void Shader::SetVec3(const std::string& u_name, const glm::vec3& value)
 {
 	GLint location = glGetUniformLocation(ID, u_name.c_str());

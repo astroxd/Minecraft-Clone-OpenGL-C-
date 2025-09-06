@@ -6,7 +6,7 @@ Hotbar::Hotbar() {
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
 	m_HotBarItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
-	m_HotBarItems.SetItems(Inventory);
+	m_HotBarItems.SetItems(InventoryItems);
 
 	GenerateMesh();
 
@@ -84,7 +84,7 @@ void Hotbar::Transform() {
 	m_Shader.Activate();
 	m_Shader.SetMat4("model", model);
 	m_Shader.SetMat4("proj", proj);
-	m_Shader.SetBool("show", true);
+	//m_Shader.SetBool("show", true);
 }
 
 void Hotbar::SetVAO() {
@@ -105,6 +105,8 @@ void Hotbar::Draw() {
 	m_Shader.Activate();
 
 	VAO.Bind();
+	Transform();
+	m_Shader.SetBool("isInventoryOpen", false);
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
 	m_HotBarItems.Draw();
@@ -119,7 +121,7 @@ void Hotbar::Update() {
 	UpdateWindowSize();
 
 	//TODO to be implemented inside inventory
-	if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
+	/*if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
 
 		if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTranslation()) {
 			m_Shader.SetBool("show", true);
@@ -133,7 +135,7 @@ void Hotbar::Update() {
 	}
 	else {
 		m_Shader.SetBool("show", false);
-	}
+	}*/
 
 	HandleInput();
 }
@@ -169,7 +171,7 @@ void Hotbar::HandleInput() {
 		if (m_Offset > m_SlotSize * 8) m_Offset = 0.0f;
 
 		m_Shader.Activate();
-		m_Shader.SetFloat("offset", m_Offset);
+		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
 	}
 
 	if (Input::getScrollWheel() == 1) {
@@ -178,7 +180,7 @@ void Hotbar::HandleInput() {
 		if (m_Offset < 0.0f) m_Offset = m_SlotSize * 8;
 
 		m_Shader.Activate();
-		m_Shader.SetFloat("offset", m_Offset);
+		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
 	}
 
 	if (Input::isKeyPressed(Key::D1)) ChangeSelectedSlot(SLOT0);
@@ -192,7 +194,7 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::D9)) ChangeSelectedSlot(SLOT8);
 
 	else if (Input::isKeyPressed(Key::Q)) {
-		auto items = Inventory;
+		auto items = InventoryItems;
 		items.push_back(InventoryItem(2, 4, 5));
 		m_HotBarItems.SetItems(items);
 	}
@@ -204,7 +206,7 @@ void Hotbar::ChangeSelectedSlot(int slotIndex) {
 
 		m_Offset = m_SlotSize * slotIndex;
 		m_Shader.Activate();
-		m_Shader.SetFloat("offset", m_Offset);
+		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
 	}
 	m_LastButton = time;
 }

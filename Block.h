@@ -218,7 +218,7 @@ struct InventoryItem {
 	int slot;
 };
 
-const std::vector<InventoryItem> Inventory = {
+const std::vector<InventoryItem> InventoryItems = {
 	InventoryItem(1, 10, 0),
 	InventoryItem(2, 1, 2),
 	InventoryItem(3, 2, 4),
