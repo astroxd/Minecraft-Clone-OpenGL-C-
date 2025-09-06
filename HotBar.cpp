@@ -194,7 +194,7 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::Q)) {
 		auto items = Inventory;
 		items.push_back(InventoryItem(2, 4, 5));
-		block1.SetItems(items);
+		m_HotBarItems.SetItems(items);
 	}
 }
 
