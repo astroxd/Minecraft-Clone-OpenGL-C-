@@ -211,4 +211,20 @@ const std::unordered_map<BlockType, std::unordered_map<BlockFace, std::pair<int,
 
 };
 
+
+struct InventoryItem {
+	int id;
+	int count;
+	int slot;
+};
+
+const std::vector<InventoryItem> Inventory = {
+	InventoryItem(1, 10, 0),
+	InventoryItem(2, 1, 2),
+	InventoryItem(3, 2, 4),
+	InventoryItem(4, 4, 7),
+};
+
+
+
 #endif; 

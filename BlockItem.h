@@ -13,31 +13,32 @@ struct BlockItemVertex {
 
 class BlockItem : public Mesh<BlockItemVertex> {
 public:
-	BlockItem(BlockType type = DIRT);
-	//BlockItem(BlockType type);
+	BlockItem();
 
 	void SetVAO() override;
 	void Draw() override;
 
-	void Transform();
+	void SetItems(const std::vector<InventoryItem>& items);
+	void SetTransformAndScale(const glm::vec3& position, const glm::vec2& scale);
+
 	void UpdateTransformAndScale(const glm::vec3& position, const glm::vec2& scale);
 
 private:
 	Shader m_Shader;
-	int m_CountIndices = 0;
+	int m_CountIndices;
 
-	BlockType type;
+	glm::vec3 m_Position;
+	glm::vec2 m_Scale;
 
-	glm::vec3 position;
-	glm::vec2 scale;
-
-	glm::mat4 model, view, proj;
-
+	std::vector<InventoryItem> m_Items;
 
 private:
 	void GenerateMesh();
-	void GenerateFace(BlockType type, BlockFace face);
-	void UpdateTransform();
+	void GenerateBlock(BlockType type, const int slot);
+	void GenerateFace(BlockType type, BlockFace face, const int slot);
+	glm::vec3 TransformVertex(const glm::vec3& vertex, const int slot);
+
+	void Transform();
 
 };
 

@@ -5,16 +5,10 @@ Hotbar::Hotbar() {
 	LOG_INFO("HotBar Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
-	for (int i = 0; i < 9; i++)
-	{
-		Items[i] = std::make_unique<BlockItem>((BlockType)((i % 4) + 1));
-	}
-
+	m_HotBarItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+	m_HotBarItems.SetItems(Inventory);
 
 	GenerateMesh();
-
-
-
 
 }
 
@@ -91,12 +85,6 @@ void Hotbar::Transform() {
 	m_Shader.SetMat4("model", model);
 	m_Shader.SetMat4("proj", proj);
 	m_Shader.SetBool("show", true);
-
-	block1.UpdateTransformAndScale(GetSlotTranslationVector(1), m_Scale);
-	for (int i = 0; i < 9; i++)
-	{
-		Items[i]->UpdateTransformAndScale(GetSlotTranslationVector(i), m_Scale);
-	}
 }
 
 void Hotbar::SetVAO() {
@@ -119,11 +107,7 @@ void Hotbar::Draw() {
 	VAO.Bind();
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
-	block1.Draw();
-	for (int i = 0; i < 9; i++)
-	{
-		Items[i]->Draw();
-	}
+	m_HotBarItems.Draw();
 
 };
 
@@ -134,12 +118,6 @@ void Hotbar::Update() {
 
 	UpdateWindowSize();
 
-	block1.UpdateTransformAndScale(GetSlotTranslationVector(1), m_Scale);
-	for (int i = 0; i < 9; i++)
-	{
-		Items[i]->UpdateTransformAndScale(GetSlotTranslationVector(i), m_Scale);
-	}
-
 	//TODO to be implemented inside inventory
 	if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
 
@@ -147,9 +125,6 @@ void Hotbar::Update() {
 			m_Shader.SetBool("show", true);
 
 			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation()) / 60.0f)), 8);
-			//m_Shader.SetFloat("offset", slotIndex * 20.0f);
-			//block1.UpdateTransformAndScale(GetTranslationVector() + (glm::vec3(11, 11, 0) * glm::vec3(m_Scale, 1)) + glm::vec3(slotIndex * 20.0f, 0, 0) * glm::vec3(m_Scale, 1), m_Scale);
-			//block1.UpdateTransformAndScale(GetSlotTranslationVector(slotIndex), m_Scale);
 
 		}
 		else {
@@ -167,6 +142,8 @@ void Hotbar::UpdateWindowSize() {
 	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
 		m_WindowSize = Window::GetInstance().getWindowSize();
 		Transform();
+		m_HotBarItems.UpdateTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+
 	}
 }
 
@@ -183,7 +160,6 @@ glm::vec3 Hotbar::GetSlotTranslationVector(int slotIndex) const
 
 	return GetTranslationVector() + (glm::vec3(slotInnerOffset + offsetToSlotCenter, 0.0) + glm::vec3(slotIndex * 20.0f, 0, 0)) * glm::vec3(m_Scale, 1);
 
-	//GetTranslationVector() + (glm::vec3(11, 11, 0) * glm::vec3(m_Scale, 1)) + glm::vec3(slotIndex * 20.0f, 0, 0) * glm::vec3(m_Scale, 1);
 }
 
 void Hotbar::HandleInput() {
@@ -214,6 +190,12 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::D7)) ChangeSelectedSlot(SLOT6);
 	else if (Input::isKeyPressed(Key::D8)) ChangeSelectedSlot(SLOT7);
 	else if (Input::isKeyPressed(Key::D9)) ChangeSelectedSlot(SLOT8);
+
+	else if (Input::isKeyPressed(Key::Q)) {
+		auto items = Inventory;
+		items.push_back(InventoryItem(2, 4, 5));
+		block1.SetItems(items);
+	}
 }
 
 void Hotbar::ChangeSelectedSlot(int slotIndex) {
