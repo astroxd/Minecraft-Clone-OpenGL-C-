@@ -88,7 +88,7 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	BlockItem m_HotBarItems;
+	//BlockItem m_HotBarItems;
 
 private:
 	void UpdateWindowSize();

@@ -46,14 +46,14 @@ void VoxelMarker::GenerateFace(BlockFace face)
 
 void VoxelMarker::SetVAO() {
 	VAO.Bind();
-	VBO.SetVertices(m_Vertices);
+	m_VBO.SetVertices(m_Vertices);
 	EBO.SetIndices(m_Indices);
 
 	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(VoxelMarkerVertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(VoxelMarkerVertex), (void*)0);
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
-	VBO.Unbind();
+	m_VBO.Unbind();
 	EBO.Unbind();
 }
 void VoxelMarker::Draw() {

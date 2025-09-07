@@ -5,8 +5,8 @@ Hotbar::Hotbar() {
 	LOG_INFO("HotBar Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
-	m_HotBarItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
-	m_HotBarItems.SetItems(InventoryItems);
+	//m_HotBarItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+	//m_HotBarItems.SetItems(InventoryItems);
 
 	GenerateMesh();
 
@@ -74,15 +74,15 @@ void Hotbar::Transform() {
 
 void Hotbar::SetVAO() {
 	VAO.Bind();
-	VBO.SetVertices(m_Vertices);
+	m_VBO.SetVertices(m_Vertices);
 	EBO.SetIndices(m_Indices);
 
 	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
-	VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
-	VBO.Unbind();
+	m_VBO.Unbind();
 	EBO.Unbind();
 }
 
@@ -96,7 +96,7 @@ void Hotbar::Draw() {
 
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
-	m_HotBarItems.Draw();
+	//m_HotBarItems.Draw();
 
 }
 
@@ -109,7 +109,7 @@ void Hotbar::UpdateWindowSize() {
 	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
 		m_WindowSize = Window::GetInstance().getWindowSize();
 		Transform();
-		m_HotBarItems.UpdateTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+		//m_HotBarItems.UpdateTransformAndScale(GetSlotTranslationVector(0), m_Scale);
 
 	}
 }
@@ -161,7 +161,7 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::Q)) {
 		auto items = InventoryItems;
 		items.push_back(InventoryItem(2, 4, 5));
-		m_HotBarItems.SetItems(items);
+		//m_HotBarItems.SetItems(items);
 	}
 }
 

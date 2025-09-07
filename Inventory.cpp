@@ -7,7 +7,17 @@ Inventory::Inventory() {
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
-	m_InventoryItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+
+	std::vector<glm::vec2> UVs = static_cast<TextureAtlas&>(TextureManager::GetTexture("GUIatlas.png")).GetUV(14, 11);
+
+	std::vector<Temp> offsets = {
+		Temp{glm::vec3(400, 400, 0), glm::vec4(UVs[0], UVs[1]), glm::vec4(UVs[2], UVs[3])},
+		Temp{glm::vec3(450, 400, 0),glm::vec4(UVs[0], UVs[1]), glm::vec4(UVs[2], UVs[3])},
+		Temp{glm::vec3(500, 400, 0), glm::vec4(UVs[0], UVs[1]), glm::vec4(UVs[2], UVs[3])},
+	};
+
+
+	m_InventoryItems.SetTransformAndScale(offsets, m_Scale);
 	m_InventoryItems.SetItems(InventoryItems);
 
 
@@ -76,15 +86,15 @@ void Inventory::Transform() {
 
 void Inventory::SetVAO() {
 	VAO.Bind();
-	VBO.SetVertices(m_Vertices);
+	m_VBO.SetVertices(m_Vertices);
 	EBO.SetIndices(m_Indices);
 
 	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
-	VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
+	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
-	VBO.Unbind();
+	m_VBO.Unbind();
 	EBO.Unbind();
 };
 
@@ -156,7 +166,7 @@ void Inventory::UpdateWindowSize() {
 	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
 		m_WindowSize = Window::GetInstance().getWindowSize();
 		Transform();
-		m_InventoryItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+		//m_InventoryItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
 	}
 }
 

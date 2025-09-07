@@ -342,15 +342,15 @@ void Chunk::Reset() {
 void Chunk::SetVAO() {
 	VAO.Bind();
 	// Generates Vertex Buffer Object and links it to vertices
-	VBO.SetVertices(m_Vertices);
+	m_VBO.SetVertices(m_Vertices);
 	EBO.SetIndices(m_Indices);
 
 	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 1, GL_FLOAT, sizeof(Vertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 0, 1, GL_FLOAT, sizeof(Vertex), (void*)0);
 
 	// Unbind all to prevent accidentally modifying them
 	VAO.Unbind();
-	VBO.Unbind();
+	m_VBO.Unbind();
 	EBO.Unbind();
 }
 

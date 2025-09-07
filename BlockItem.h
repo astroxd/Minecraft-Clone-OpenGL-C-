@@ -8,7 +8,24 @@
 
 struct BlockItemVertex {
 	glm::vec3 pos;
-	glm::vec2 UV;
+	//glm::vec2 UV;
+};
+
+struct InstanceItemVertex {
+	glm::vec4 UV1;
+	glm::vec4 UV2;
+	glm::vec4 UV3;
+	glm::vec4 UV4;
+	glm::vec4 UV5;
+	glm::vec4 UV6;
+	glm::mat4 view;
+
+};
+
+struct Temp {
+	glm::vec3 transform;
+	glm::vec4 UV;
+	glm::vec4 UV1;
 };
 
 class BlockItem : public Mesh<BlockItemVertex> {
@@ -19,9 +36,14 @@ public:
 	void Draw() override;
 
 	void SetItems(const std::vector<InventoryItem>& items);
-	void SetTransformAndScale(const glm::vec3& position, const glm::vec2& scale);
+	void SetTransformAndScale(const std::vector<Temp>& instanceTransform,
+		const glm::vec2& scale);
 
 	void UpdateTransformAndScale(const glm::vec3& position, const glm::vec2& scale);
+
+	VBO<InstanceItemVertex> instanceBuffer;
+	std::vector <InstanceItemVertex> instanceVertices;
+
 
 private:
 	Shader m_Shader;
