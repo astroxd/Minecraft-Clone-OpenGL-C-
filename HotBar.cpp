@@ -13,27 +13,9 @@ Hotbar::Hotbar() {
 }
 
 void Hotbar::GenerateMesh() {
-	int m_WidthImg = 256;
-	int m_HeightImg = 256;
+	m_Vertices.clear();
+	m_Indices.clear();
 	int countIndices = 0;
-
-	std::vector<glm::vec2> FaceUV = static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).GetUV(m_xOffset, m_yOffset, m_HotBarWidth, m_HotBarHeight);
-
-	//TODO to be implemented inside inventory
-	m_Vertices.push_back(GUIVertex{ glm::vec3(3,3, 0),  glm::vec2(0, 0) });
-	m_Vertices.push_back(GUIVertex{ glm::vec3(3,19, 0) , glm::vec2(0,16.0f / m_HeightImg) });
-	m_Vertices.push_back(GUIVertex{ glm::vec3(19,19, 0) , glm::vec2(16.0f / m_WidthImg, 16.0f / m_HeightImg) });
-	m_Vertices.push_back(GUIVertex{ glm::vec3(19 ,3, 0) , glm::vec2(16.0f / m_WidthImg, 0) });
-
-	m_Indices.push_back(countIndices);
-	m_Indices.push_back(countIndices + 2);
-	m_Indices.push_back(countIndices + 1);
-
-	m_Indices.push_back(countIndices);
-	m_Indices.push_back(countIndices + 3);
-	m_Indices.push_back(countIndices + 2);
-
-	countIndices += 4;
 
 	//! SLOT SELECTOR
 	slotSelector.TransformVertices(glm::vec3(-1, -1, 0));
@@ -54,6 +36,8 @@ void Hotbar::GenerateMesh() {
 	////////////////////////////////////////////
 
 	//! HOTBAR
+	std::vector<glm::vec2> FaceUV = static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).GetUV(m_xOffset, m_yOffset, m_HotBarWidth, m_HotBarHeight);
+
 	m_Vertices.push_back(GUIVertex{ glm::vec3(0, 0, 0),  FaceUV[0] });
 	m_Vertices.push_back(GUIVertex{ glm::vec3(0, m_HotBarHeight, 0) , FaceUV[1] });
 	m_Vertices.push_back(GUIVertex{ glm::vec3(m_HotBarWidth,m_HotBarHeight, 0) , FaceUV[2] });
@@ -84,7 +68,8 @@ void Hotbar::Transform() {
 	m_Shader.Activate();
 	m_Shader.SetMat4("model", model);
 	m_Shader.SetMat4("proj", proj);
-	//m_Shader.SetBool("show", true);
+	m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
+	m_Shader.SetBool("isInventoryOpen", false);
 }
 
 void Hotbar::SetVAO() {
@@ -99,7 +84,7 @@ void Hotbar::SetVAO() {
 	VAO.Unbind();
 	VBO.Unbind();
 	EBO.Unbind();
-};
+}
 
 void Hotbar::Draw() {
 	m_Shader.Activate();
@@ -111,32 +96,10 @@ void Hotbar::Draw() {
 
 	m_HotBarItems.Draw();
 
-};
+}
 
 void Hotbar::Update() {
-	glm::vec2 mousePos = Input::getMousePosition();
-
-	m_Shader.Activate();
-
 	UpdateWindowSize();
-
-	//TODO to be implemented inside inventory
-	/*if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
-
-		if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTranslation()) {
-			m_Shader.SetBool("show", true);
-
-			int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation()) / 60.0f)), 8);
-
-		}
-		else {
-			m_Shader.SetBool("show", false);
-		}
-	}
-	else {
-		m_Shader.SetBool("show", false);
-	}*/
-
 	HandleInput();
 }
 
@@ -166,21 +129,21 @@ glm::vec3 Hotbar::GetSlotTranslationVector(int slotIndex) const
 
 void Hotbar::HandleInput() {
 	if (Input::getScrollWheel() == -1) {
-		m_Offset += m_SlotSize;
+		m_SlotOffset += m_SlotSize;
 
-		if (m_Offset > m_SlotSize * 8) m_Offset = 0.0f;
+		if (m_SlotOffset > m_SlotSize * 8) m_SlotOffset = 0.0f;
 
 		m_Shader.Activate();
-		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
+		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
 
 	if (Input::getScrollWheel() == 1) {
-		m_Offset -= m_SlotSize;
+		m_SlotOffset -= m_SlotSize;
 
-		if (m_Offset < 0.0f) m_Offset = m_SlotSize * 8;
+		if (m_SlotOffset < 0.0f) m_SlotOffset = m_SlotSize * 8;
 
 		m_Shader.Activate();
-		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
+		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
 
 	if (Input::isKeyPressed(Key::D1)) ChangeSelectedSlot(SLOT0);
@@ -204,9 +167,9 @@ void Hotbar::ChangeSelectedSlot(int slotIndex) {
 	std::chrono::milliseconds time = Utils::GetMs();
 	if ((time - m_LastButton).count() > 20) {
 
-		m_Offset = m_SlotSize * slotIndex;
+		m_SlotOffset = m_SlotSize * slotIndex;
 		m_Shader.Activate();
-		m_Shader.SetVec2("offset", glm::vec2(m_Offset, 0.0f));
+		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
 	m_LastButton = time;
 }

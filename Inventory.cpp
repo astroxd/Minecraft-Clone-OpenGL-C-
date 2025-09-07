@@ -1,5 +1,6 @@
 #include "Inventory.h"
 #include "Log.h"
+#include "Utils.h"
 
 
 Inventory::Inventory() {
@@ -16,7 +17,6 @@ void Inventory::GenerateMesh() {
 
 	std::vector<glm::vec2> FaceUV = static_cast<TextureAtlas&>(TextureManager::GetTexture("inventory.png")).GetUV(m_xOffset, m_yOffset, m_InventoryWidth, m_InventoryHeight);
 
-	//TODO to be implemented inside inventory
 	m_Vertices.push_back(GUIVertex{ glm::vec3(7,65, 0),  glm::vec2(0, 0) });
 	m_Vertices.push_back(GUIVertex{ glm::vec3(7,83, 0) , glm::vec2(0,16.0f / m_HeightImg) });
 	m_Vertices.push_back(GUIVertex{ glm::vec3(25,83, 0) , glm::vec2(16.0f / m_WidthImg, 16.0f / m_HeightImg) });
@@ -65,8 +65,8 @@ void Inventory::Transform() {
 	m_Shader.Activate();
 	m_Shader.SetMat4("model", model);
 	m_Shader.SetMat4("proj", proj);
-	//m_Shader.SetBool("show", true);
-	m_Shader.SetBool("isInventoryOpen", true);
+	m_Shader.SetVec2("slotOffset", m_SlotOffset);
+	m_Shader.SetBool("isInventoryOpen", isInventoryOpen);
 }
 
 void Inventory::SetVAO() {
@@ -84,6 +84,8 @@ void Inventory::SetVAO() {
 };
 
 void Inventory::Draw() {
+	if (!isInventoryOpen) return;
+
 	m_Shader.Activate();
 
 	VAO.Bind();
@@ -99,48 +101,78 @@ void Inventory::Update() {
 
 	m_Shader.Activate();
 
-	//UpdateWindowSize();
+	UpdateWindowSize();
+	HandleInput();
 
-	//INSIDE INVENTORY TEXTURE
-	if (mousePos.x >= GetHorizontalTranslation() && mousePos.x <= GetHorizontalTranslation() + GetScaledWidth()) {
-		if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) && mousePos.y <= m_WindowSize.y - GetVerticalTranslation()) {
+	if (!isInventoryOpen) return;
 
-			//INSIDE INVENTORY SLOTS
-			if (mousePos.x - GetHorizontalTranslation() - 21.0f >= 0 && mousePos.x - GetHorizontalTranslation() - 21.0f <= GetScaledWidth() - 42.0f) {
-				if (mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + GetScaledHeight()) + 249.0f && mousePos.y <= m_WindowSize.y - GetVerticalTranslation() - 21.0f) {
-					float localY = mousePos.y - (GetVerticalTranslation() + GetScaledHeight()) + 249.0f;
-					int ySlotIndex = std::min(int(localY / 54.0f), 3);
+	if (IsInSelectedArea(glm::vec2(7.0f, 30.0f), glm::vec2(169.0f, 83.0f)) ||
+		IsInSelectedArea(glm::vec2(7.0f, 7.0f), glm::vec2(169.0f, 25.0f)))
+	{
+		float localY = mousePos.y - (GetVerticalTranslation() + GetScaledSize(83.0f));
+		float localX = mousePos.x - (GetHorizontalTranslation() + GetScaledSize(7.0f));
 
-					m_Shader.SetBool("show", true);
-					int slotIndex = std::min(int(((mousePos.x - GetHorizontalTranslation() - 21.0f) / 54.0f)), 8);
-					//LOG_WARN(((mousePos.x - GetHorizontalTranslation() - 21.0f)));
-					LOG_WARN("{0}, {1}", slotIndex, ySlotIndex);
-					if (ySlotIndex >= 3) {
+		int ySlotIndex = std::min(int(localY / GetScaledSize(m_SlotSize)), m_Rows - 1);
+		int xslotIndex = std::min(int((localX / GetScaledSize(m_SlotSize))), m_Columns - 1);
 
-						m_Shader.SetVec2("offset", glm::vec2(slotIndex * 18.0f, (-ySlotIndex) * 18.0f - 4.0f));
-					}
-					else {
-						m_Shader.SetVec2("offset", glm::vec2(slotIndex * 18.0f, (-ySlotIndex) * 18.0f));
-					}
-				}
-				else {
-					m_Shader.SetBool("show", false);
-				}
-			}
-			else {
-				m_Shader.SetBool("show", false);
-			}
+		int slot = xslotIndex + ySlotIndex * 8 + ySlotIndex;
+
+		if (ySlotIndex >= 3) {
+			m_SlotOffset = glm::vec2(xslotIndex, -ySlotIndex) * m_SlotSize - glm::vec2(0.0f, 4.0f);
 		}
 		else {
-			m_Shader.SetBool("show", false);
+			m_SlotOffset = glm::vec2(xslotIndex, -ySlotIndex) * m_SlotSize;
 		}
+
+		m_Shader.SetVec2("slotOffset", m_SlotOffset);
+		m_Shader.SetBool("highlightSlot", true);
 	}
 	else {
-		m_Shader.SetBool("show", false);
+		m_Shader.SetBool("highlightSlot", false);
 	}
 }
 
+bool Inventory::IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& topRight) {
+	glm::vec2 mousePos = Input::getMousePosition();
 
+	glm::vec2 scaledBottomLeft = bottomLeft * m_Scale;
+	glm::vec2 scaledTopRight = topRight * m_Scale;
+
+	if ((mousePos.x >= GetHorizontalTranslation() + scaledBottomLeft.x && mousePos.x <= GetHorizontalTranslation() + scaledTopRight.x) &&
+		(mousePos.y >= m_WindowSize.y - (GetVerticalTranslation() + scaledTopRight.y) && mousePos.y <= m_WindowSize.y - (GetVerticalTranslation() + scaledBottomLeft.y))) {
+
+		return true;
+	}
+	return false;
+}
+
+void Inventory::UpdateWindowSize() {
+	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
+		m_WindowSize = Window::GetInstance().getWindowSize();
+		Transform();
+	}
+}
+
+void Inventory::HandleInput() {
+
+	if (Input::isKeyPressed(Key::E)) {
+		std::chrono::milliseconds time = Utils::GetMs();
+		if ((time - m_LastButton).count() > 20) {
+			isInventoryOpen = !isInventoryOpen;
+			m_Shader.Activate();
+			m_Shader.SetBool("isInventoryOpen", isInventoryOpen);
+
+			if (!isInventoryOpen) m_Shader.SetBool("highlightSlot", false);
+		}
+		m_LastButton = time;
+	}
+	else if (Input::isKeyPressed(Key::Escape)) {
+		isInventoryOpen = false;
+		m_Shader.Activate();
+		m_Shader.SetBool("isInventoryOpen", isInventoryOpen);
+		m_Shader.SetBool("highlightSlot", false);
+	}
+}
 
 
 glm::vec3 Inventory::GetTranslationVector() const {

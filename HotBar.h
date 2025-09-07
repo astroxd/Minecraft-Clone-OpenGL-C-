@@ -80,7 +80,7 @@ private:
 	float m_yOffset = 234.0f;
 
 	SlotSelector slotSelector;
-	float m_Offset = 0.0f;
+	float m_SlotOffset = 0.0f;
 	float m_SlotSize = 20.0f;
 
 	Shader m_Shader;
