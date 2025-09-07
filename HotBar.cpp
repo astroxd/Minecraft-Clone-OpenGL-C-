@@ -92,6 +92,8 @@ void Hotbar::Draw() {
 	VAO.Bind();
 	Transform();
 	m_Shader.SetBool("isInventoryOpen", false);
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).BindAtlas("GUIProgram", "tex1", 1);
+
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
 	m_HotBarItems.Draw();

@@ -49,7 +49,7 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	//BlockItem m_HotBarItems;
+	BlockItem m_InventoryItems;
 
 private:
 	void UpdateWindowSize();
@@ -67,7 +67,7 @@ private:
 
 	void HandleInput();
 
-	void ChangeSelectedSlot(int slotIndex);
+	//void ChangeSelectedSlot(int slotIndex);
 
 	/// @param bottomLeft: Local pixel coordinates of bottom left corner
 	/// @param topRight Local pixel coordinates of top right corner

@@ -223,6 +223,7 @@ const std::vector<InventoryItem> InventoryItems = {
 	InventoryItem(2, 1, 2),
 	InventoryItem(3, 2, 4),
 	InventoryItem(4, 4, 7),
+	InventoryItem(4, 4, 14),
 };
 
 

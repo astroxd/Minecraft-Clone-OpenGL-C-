@@ -6,6 +6,11 @@
 Inventory::Inventory() {
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
+
+	m_InventoryItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+	m_InventoryItems.SetItems(InventoryItems);
+
+
 	GenerateMesh();
 
 }
@@ -90,9 +95,10 @@ void Inventory::Draw() {
 
 	VAO.Bind();
 	Transform();
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("inventory.png")).BindAtlas("GUIProgram", "tex1", 3);
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 
-	//m_HotBarItems.Draw();
+	m_InventoryItems.Draw();
 
 };
 
@@ -150,6 +156,7 @@ void Inventory::UpdateWindowSize() {
 	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
 		m_WindowSize = Window::GetInstance().getWindowSize();
 		Transform();
+		m_InventoryItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
 	}
 }
 
@@ -177,4 +184,15 @@ void Inventory::HandleInput() {
 
 glm::vec3 Inventory::GetTranslationVector() const {
 	return glm::vec3(GetHorizontalTranslation(), GetVerticalTranslation(), 0.0);
+}
+
+glm::vec3 Inventory::GetSlotTranslationVector(int slotIndex) const
+{
+	const glm::vec2 slotInnerOffset = glm::vec2(7.0f, 65.0f);
+	const float slotInnerWidth = 18.0f;
+
+	glm::vec2 offsetToSlotCenter = glm::vec2(slotInnerWidth / 2);
+
+	return GetTranslationVector() + (glm::vec3(slotInnerOffset + offsetToSlotCenter, 0.0) + glm::vec3(slotIndex * m_SlotSize, 0, 0)) * glm::vec3(m_Scale, 1);
+
 }

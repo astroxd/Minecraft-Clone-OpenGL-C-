@@ -80,7 +80,7 @@ glm::vec3 BlockItem::TransformVertex(const glm::vec3& vertex, const int slot) {
 	glm::mat4 view = glm::mat4(1.0f);
 	float zOffset = 1.8f * size;
 
-	glm::vec3 slotPosition = m_Position + glm::vec3(slot * 20.0f, 0, 0) * glm::vec3(m_Scale, 1);
+	glm::vec3 slotPosition = m_Position + glm::vec3(slot * 18.0f, 0, 0) * glm::vec3(m_Scale, 1);
 
 	view = glm::translate(view, glm::vec3(slotPosition.x, slotPosition.y, -zOffset));
 
