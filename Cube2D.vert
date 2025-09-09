@@ -1,80 +1,49 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec4 aTex1;
-layout (location = 2) in vec4 aTex2;
-layout (location = 3) in vec4 aTex3;
-layout (location = 4) in vec4 aTex4;
-layout (location = 5) in vec4 aTex5;
-layout (location = 6) in vec4 aTex6;
-layout (location = 7) in mat4 aInstanceMatrix;
+layout (location = 1) in vec4 aTopBottomTex;
+layout (location = 2) in vec4 aRightLeftTex;
+layout (location = 3) in vec4 aFrontBackTex;
+layout (location = 4) in mat4 aInstanceMatrix;
 
 out vec2 texCoord;
 
 uniform mat4 proj;
 uniform mat4 model;
 
-void main()
-{	
 
-	gl_Position = proj * aInstanceMatrix * model * vec4(aPos, 1.0);
-	//texCoord = aTex[gl_VertexID].xy;
+const float deltaX = 0.03125;
+const float deltaY = 0.03125;
 
-	int face = gl_VertexID / 4;
-	int vertexId;
-	switch(face){
+
+vec2 texUV[6] = vec2[6](
+	aTopBottomTex.xy, aTopBottomTex.zw,
+	aRightLeftTex.xy, aRightLeftTex.zw,
+	aFrontBackTex.xy, aFrontBackTex.zw
+);
+
+void setTexCoord(int face){
+	texCoord = texUV[face];
+
+	int vertexId = gl_VertexID % 4;
+	switch(vertexId){
 		case 0:
-			vertexId = gl_VertexID % 4;
-			switch(vertexId){
-				case 0:
-					texCoord = aTex1.xy;
-					break;
-				case 1:
-					texCoord = aTex1.zw;
-					break;
-				case 2:
-					texCoord = aTex2.xy;
-					break;
-				case 3:
-					texCoord = aTex2.zw;
-					break;
-			}
+			//texCoord = aTex1.xy;
 			break;
 		case 1:
-			vertexId = gl_VertexID % 4;
-			switch(vertexId){
-				case 0:
-					texCoord = aTex3.xy;
-					break;
-				case 1:
-					texCoord = aTex3.zw;
-					break;
-				case 2:
-					texCoord = aTex4.xy;
-					break;
-				case 3:
-					texCoord = aTex4.zw;
-					break;
-			}
+			texCoord.y += deltaY;
 			break;
 		case 2:
-			vertexId = gl_VertexID % 4;
-			switch(vertexId){
-				case 0:
-					texCoord = aTex5.xy;
-					break;
-				case 1:
-					texCoord = aTex5.zw;
-					break;
-				case 2:
-					texCoord = aTex6.xy;
-					break;
-				case 3:
-					texCoord = aTex6.zw;
-					break;
-			}
+			texCoord += vec2(deltaX, deltaY);
 			break;
-	
-	
+		case 3:
+			texCoord.x += deltaX;
+			break;
 	}
+}
+
+void main()
+{	
+	gl_Position = proj * aInstanceMatrix * model * vec4(aPos, 1.0);
+	setTexCoord(gl_VertexID / 4);
 
 }

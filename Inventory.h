@@ -8,11 +8,6 @@
 #include "Input.h"
 #include "BlockItem.h"
 #include "Hotbar.h"
-//struct GUIVertex {
-//	glm::vec3 pos;
-//	glm::vec2 UV;
-//};
-
 
 
 class Inventory : public Mesh<GUIVertex> {
@@ -28,28 +23,28 @@ public:
 	void Update();
 
 private:
-	float m_InventoryWidth = 176.0f;
-	float m_InventoryHeight = 166.0f;
+	const float m_InventoryWidth = 176.0f;
+	const float m_InventoryHeight = 166.0f;
 	glm::vec2 m_Scale = glm::vec2(3.0f);
 
 	//UVs offset in pixel
-	float m_xOffset = 0.0f;
-	float m_yOffset = 90.0f;
+	const float m_xOffset = 0.0f;
+	const float m_yOffset = 90.0f;
 
 	glm::vec2 m_SlotOffset = glm::vec2(0.0f);
-	float m_SlotSize = 18.0f;
+	const float m_SlotSize = 18.0f;
 
 	int m_Rows = 4;
 	int m_Columns = 9;
 
-	bool isInventoryOpen = false;
+	bool m_IsInventoryOpen = false;
 
 	Shader m_Shader;
 	glm::vec2 m_WindowSize = Window::GetInstance().getWindowSize();
 
 	std::chrono::milliseconds m_LastButton;
 
-	BlockItem m_InventoryItems;
+	BlockItem m_InventoryItems{ m_Scale };
 
 private:
 	void UpdateWindowSize();
@@ -67,11 +62,13 @@ private:
 
 	void HandleInput();
 
-	//void ChangeSelectedSlot(int slotIndex);
-
 	/// @param bottomLeft: Local pixel coordinates of bottom left corner
 	/// @param topRight Local pixel coordinates of top right corner
 	bool IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& topRight);
+
+
+	std::vector<glm::vec3> CreateItemOffsets();
+	void SetItemOffsets(const std::vector<glm::vec3>& offsets);
 
 };
 
