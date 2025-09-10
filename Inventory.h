@@ -44,7 +44,13 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
+	std::vector<InventoryItem> Items;
 	BlockItem m_InventoryItems{ m_Scale };
+
+	bool picked = false;
+	int slotPicked = -1;
+
+
 
 private:
 	void UpdateWindowSize();

@@ -62,9 +62,8 @@ void BlockItem::SetItems(const std::vector<InventoryItem>& items) {
 }
 
 void BlockItem::SetTransform(const std::vector<glm::vec3>& instancePositions) {
-
+	m_InstanceVertices.clear();
 	for (int i = 0; i < instancePositions.size(); i++) {
-
 		glm::mat4 view = GenerateInstanceView(instancePositions[i]);
 		BlockUVs BlockUVs = GenerateBlockTexture(i);
 
@@ -78,7 +77,6 @@ void BlockItem::UpdateTransform(const std::vector<glm::vec3>& instancePositions)
 {
 
 	for (int i = 0; i < instancePositions.size(); i++) {
-
 		glm::mat4 view = GenerateInstanceView(instancePositions[i]);
 
 		m_InstanceVertices[i].view = view;
