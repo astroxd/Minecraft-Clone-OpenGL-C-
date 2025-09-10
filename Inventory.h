@@ -15,9 +15,7 @@ public:
 	Inventory();
 
 	void GenerateMesh();
-	void Transform();
 
-	void SetVAO() override;
 	void Draw() override;
 
 	void Update();
@@ -44,27 +42,26 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	std::vector<InventoryItem> Items;
+	std::vector<InventoryItem> m_Items;
 	BlockItem m_InventoryItems{ m_Scale };
 
-	bool picked = false;
-	int slotPicked = -1;
-
-
+	int m_HoveredSlot = -1;
+	bool m_IsItemPicked = false;
+	int m_PickedSlot = -1;
 
 private:
+	void SetVAO() override;
+	void Transform();
+
 	void UpdateWindowSize();
 
 	inline float GetScaledSize(const float size) const { return size * m_Scale.x; }
-
 	inline float GetScaledWidth() const { return m_InventoryWidth * m_Scale.x; }
 	inline float GetScaledHeight() const { return m_InventoryHeight * m_Scale.y; }
 	inline float GetHorizontalTranslation() const { return (m_WindowSize.x / 2.0f) - (GetScaledWidth() / 2.0f); }
-	inline float GetVerticalTranslation() const {
-		return (m_WindowSize.y / 2.0f) - (GetScaledHeight() / 2.0f);
-	}
-	glm::vec3 GetTranslationVector() const;
-	glm::vec3 GetSlotTranslationVector(int slotIndex) const;
+	inline float GetVerticalTranslation() const { return (m_WindowSize.y / 2.0f) - (GetScaledHeight() / 2.0f); }
+	inline glm::vec3 GetTranslationVector() const { return glm::vec3(GetHorizontalTranslation(), GetVerticalTranslation(), 0.0); };
+	glm::vec3 GetSlotTranslationVector(const int slotIndex) const;
 
 	void HandleInput();
 
@@ -76,6 +73,8 @@ private:
 	std::vector<glm::vec3> CreateItemOffsets();
 	void SetItemOffsets(const std::vector<glm::vec3>& offsets);
 
+	void SwapItems(const int i, const  int j);
+	void SendItems();
 };
 
 #endif 

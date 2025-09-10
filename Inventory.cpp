@@ -7,23 +7,20 @@ Inventory::Inventory() {
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
-
-	Items.reserve(36 + 1);
+	//36 = Number of Slots
+	//1 = The extra slot for the picked item
+	m_Items.reserve(36 + 1);
 	for (int i = 0; i < 36 + 1; i++)
 	{
-		Items.emplace_back(InventoryItem{ 0, 0, i });
-	}
-	for (auto& item : InventoryItems)
-	{
-		Items[item.slot] = item;
+		m_Items.emplace_back(InventoryItem{ 0, 0, i });
 	}
 
-	std::vector<InventoryItem> toSend{};
-	for (auto& item : Items)
+	for (auto& item : InventoryItems)
 	{
-		if (item.id > 0) toSend.push_back(item);
+		m_Items[item.slot] = item;
 	}
-	m_InventoryItems.SetItems(toSend);
+
+	SendItems();
 	SetItemOffsets(CreateItemOffsets());
 
 	GenerateMesh();
@@ -75,48 +72,6 @@ void Inventory::GenerateMesh() {
 	Transform();
 }
 
-void Inventory::Transform() {
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, GetTranslationVector());
-	model = glm::scale(model, glm::vec3(m_Scale, 1.0));
-
-	glm::mat4 proj = glm::ortho(0.0f, m_WindowSize.x, 0.0f, m_WindowSize.y);
-
-	m_Shader.Activate();
-	m_Shader.SetMat4("model", model);
-	m_Shader.SetMat4("proj", proj);
-	m_Shader.SetVec2("slotOffset", m_SlotOffset);
-	m_Shader.SetBool("isInventoryOpen", m_IsInventoryOpen);
-}
-
-void Inventory::SetVAO() {
-	VAO.Bind();
-	m_VBO.SetVertices(m_Vertices);
-	EBO.SetIndices(m_Indices);
-
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
-	VAO.LinkAttrib(m_VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
-	// Unbind all to prevent accidentally modifying them
-	VAO.Unbind();
-	m_VBO.Unbind();
-	EBO.Unbind();
-};
-
-void Inventory::Draw() {
-	if (!m_IsInventoryOpen) return;
-
-	m_Shader.Activate();
-
-	VAO.Bind();
-	Transform();
-	static_cast<TextureAtlas&>(TextureManager::GetTexture("inventory.png")).BindAtlas("GUIProgram", "tex1", 3);
-	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
-
-	m_InventoryItems.Draw();
-
-};
-
 void Inventory::Update() {
 	glm::vec2 mousePos = Input::getMousePosition();
 
@@ -136,7 +91,7 @@ void Inventory::Update() {
 		int ySlotIndex = std::min(int(localY / GetScaledSize(m_SlotSize)), m_Rows - 1);
 		int xSlotIndex = std::min(int((localX / GetScaledSize(m_SlotSize))), m_Columns - 1);
 
-		int slot = xSlotIndex + ySlotIndex * 8 + ySlotIndex;
+		m_HoveredSlot = xSlotIndex + ySlotIndex * 8 + ySlotIndex;
 
 		if (ySlotIndex >= 3) {
 			m_SlotOffset = glm::vec2(xSlotIndex, -ySlotIndex) * m_SlotSize - glm::vec2(0.0f, 4.0f);
@@ -147,85 +102,16 @@ void Inventory::Update() {
 
 		m_Shader.SetVec2("slotOffset", m_SlotOffset);
 		m_Shader.SetBool("highlightSlot", true);
-
-
-		if (Input::isMouseButtonPressed(Mouse::Button0)) {
-			std::chrono::milliseconds time = Utils::GetMs();
-			if ((time - m_LastButton).count() > 20) {
-
-				if (!picked) {
-					if (Items[slot].id > 0) {
-						slotPicked = 36;
-						picked = true;
-						LOG_WARN("PICEKD");
-						LOG_WARN("{0}, {1}", slotPicked, picked);
-						Items[36] = Items[slot];
-						Items[36].slot = 36;
-						Items[slot] = InventoryItem{ 0,0,slot };
-
-						std::vector<InventoryItem> toSend{};
-						for (auto& item : Items)
-						{
-							if (item.id > 0) toSend.push_back(item);
-						}
-						m_InventoryItems.SetItems(toSend);
-						m_InventoryItems.SetTransform(CreateItemOffsets());
-					}
-				}
-				else {
-					InventoryItem previousItem = Items[slot];
-					Items[slot] = Items[slotPicked];
-					Items[slot].slot = slot;
-					Items[slotPicked] = previousItem;
-					Items[slotPicked].slot = slotPicked;
-
-					std::vector<InventoryItem> toSend{};
-					for (auto& item : Items)
-					{
-						if (item.id > 0) toSend.push_back(item);
-					}
-					m_InventoryItems.SetItems(toSend);
-
-
-					if (previousItem.id <= 0) {
-						/*LOG_WARN("TRUE");
-						Items[slot] = Items[slotPicked];
-						Items[slot].slot = slot;
-						Items[slotPicked] = InventoryItem{ 0,0,slotPicked };
-						std::vector<InventoryItem> toSend{};
-						for (auto& item : Items)
-						{
-							if (item.id > 0) toSend.push_back(item);
-						}
-						m_InventoryItems.SetItems(toSend);*/
-						picked = false;
-						slotPicked = -1;
-					}
-					m_InventoryItems.SetTransform(CreateItemOffsets());
-				}
-			}
-			m_LastButton = time;
-
-		}
-
-
-
-
-
-
-
-
 	}
 	else {
 		m_Shader.SetBool("highlightSlot", false);
+		m_HoveredSlot = -1;
 	}
 
 	//If Item is Picked update its position every frame
-	if (picked) {
+	if (m_IsItemPicked) {
 		m_InventoryItems.UpdateTransform(CreateItemOffsets());
 	}
-
-
 }
 
 void Inventory::UpdateWindowSize() {
@@ -256,14 +142,45 @@ void Inventory::HandleInput() {
 		m_Shader.SetBool("highlightSlot", false);
 	}
 
-	/*if (Input::isMouseButtonPressed(Mouse::Button0)) {
-		picked = true;
-		LOG_WARN("PICEKD");
-	}*/
+	if (Input::isMouseButtonPressed(Mouse::Button0)) {
+		std::chrono::milliseconds time = Utils::GetMs();
+		if ((time - m_LastButton).count() > 20) {
 
+			if (!m_IsItemPicked && m_HoveredSlot != -1) {
+				if (m_Items[m_HoveredSlot].id > 0) {
+					m_PickedSlot = 36;
+					m_IsItemPicked = true;
 
+					SwapItems(m_HoveredSlot, m_PickedSlot);
+					SendItems();
+					m_InventoryItems.SetTransform(CreateItemOffsets());
+				}
+			}
+			else if (m_IsItemPicked) {
 
+				//Outside Inventory Area
+				if (m_HoveredSlot == -1) {
+					//! Should Drop Item
+					m_Items[m_PickedSlot] = InventoryItem{ 0, 0, m_PickedSlot };
+				}
+				else {
+					SwapItems(m_HoveredSlot, m_PickedSlot);
+				}
 
+				SendItems();
+
+				//This means that i placed the PickedItem in an empty slot, so
+				//the new PickedItem has id = 0
+				if (m_Items[m_PickedSlot].id <= 0) {
+					m_IsItemPicked = false;
+					m_PickedSlot = -1;
+				}
+
+				m_InventoryItems.SetTransform(CreateItemOffsets());
+			}
+		}
+		m_LastButton = time;
+	}
 }
 
 bool Inventory::IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& topRight) {
@@ -280,15 +197,8 @@ bool Inventory::IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& t
 	return false;
 }
 
-glm::vec3 Inventory::GetTranslationVector() const {
-	return glm::vec3(GetHorizontalTranslation(), GetVerticalTranslation(), 0.0);
-}
-
-glm::vec3 Inventory::GetSlotTranslationVector(int slotIndex) const
+glm::vec3 Inventory::GetSlotTranslationVector(const int slotIndex) const
 {
-
-	//if (Items[slotIndex].id <= 0) return glm::vec3(0);
-
 	const glm::vec2 slotInnerOffset = glm::vec2(7.0f, 65.0f);
 
 	const glm::vec2 offsetToSlotCenter = glm::vec2(m_SlotSize / 2);
@@ -305,19 +215,17 @@ glm::vec3 Inventory::GetSlotTranslationVector(int slotIndex) const
 
 std::vector<glm::vec3> Inventory::CreateItemOffsets() {
 
-	std::vector<glm::vec3> offsets = {};
+	std::vector<glm::vec3> offsets{};
 
-	for (auto& item : Items) {
+	for (auto& item : m_Items) {
 		if (item.id <= 0) continue;
 
-		if (item.slot == slotPicked) {
+		if (item.slot == m_PickedSlot) {
 			glm::vec2 mousePos = Input::getMousePosition();
 			offsets.push_back(glm::vec3(mousePos.x, m_WindowSize.y - mousePos.y, 0));
-			//LOG_WARN("SLOTPICKED");
 		}
 		else {
 			offsets.push_back(GetSlotTranslationVector(item.slot));
-			//LOG_WARN("{0}, {1}", item.slot, glm::to_string(GetSlotTranslationVector(item.slot)));
 		}
 	}
 
@@ -329,3 +237,63 @@ void Inventory::SetItemOffsets(const std::vector<glm::vec3>& offsets)
 	m_InventoryItems.SetTransform(offsets);
 }
 
+void Inventory::SwapItems(const int i, const int j) {
+	InventoryItem previousItem = m_Items[i];
+
+	m_Items[i] = m_Items[j];
+	m_Items[i].slot = i;
+
+	m_Items[j] = previousItem;
+	m_Items[j].slot = j;
+}
+
+void Inventory::SendItems() {
+	std::vector<InventoryItem> toSend{};
+	for (auto& item : m_Items)
+	{
+		if (item.id > 0) toSend.push_back(item);
+	}
+	m_InventoryItems.SetItems(toSend);
+}
+
+void Inventory::SetVAO() {
+	VAO.Bind();
+	m_VBO.SetVertices(m_Vertices);
+	EBO.SetIndices(m_Indices);
+
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
+	// Unbind all to prevent accidentally modifying them
+	VAO.Unbind();
+	m_VBO.Unbind();
+	EBO.Unbind();
+};
+
+void Inventory::Transform() {
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, GetTranslationVector());
+	model = glm::scale(model, glm::vec3(m_Scale, 1.0));
+
+	glm::mat4 proj = glm::ortho(0.0f, m_WindowSize.x, 0.0f, m_WindowSize.y);
+
+	m_Shader.Activate();
+	m_Shader.SetMat4("model", model);
+	m_Shader.SetMat4("proj", proj);
+	m_Shader.SetVec2("slotOffset", m_SlotOffset);
+	m_Shader.SetBool("isInventoryOpen", m_IsInventoryOpen);
+}
+
+void Inventory::Draw() {
+	if (!m_IsInventoryOpen) return;
+
+	m_Shader.Activate();
+
+	VAO.Bind();
+	Transform();
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("inventory.png")).BindAtlas("GUIProgram", "tex1", 3);
+	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+
+	m_InventoryItems.Draw();
+
+};
