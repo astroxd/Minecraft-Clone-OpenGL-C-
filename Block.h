@@ -220,11 +220,11 @@ struct InventoryItem {
 
 const std::vector<InventoryItem> InventoryItems = {
 	InventoryItem(2, 10, 0),
-	//InventoryItem(2, 1, 2),
-	//InventoryItem(3, 2, 4),
-	//InventoryItem(4, 4, 7),
-	//InventoryItem(4, 4, 14),
-	//InventoryItem(3, 4, 33),
+	InventoryItem(2, 1, 2),
+	InventoryItem(3, 2, 4),
+	InventoryItem(4, 4, 7),
+	InventoryItem(4, 4, 14),
+	InventoryItem(3, 4, 33),
 };
 
 

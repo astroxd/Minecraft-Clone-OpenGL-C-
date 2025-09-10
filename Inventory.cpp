@@ -8,8 +8,8 @@ Inventory::Inventory() {
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
 
-	Items.reserve(36);
-	for (int i = 0; i < 36; i++)
+	Items.reserve(36 + 1);
+	for (int i = 0; i < 36 + 1; i++)
 	{
 		Items.emplace_back(InventoryItem{ 0, 0, i });
 	}
@@ -152,19 +152,43 @@ void Inventory::Update() {
 		if (Input::isMouseButtonPressed(Mouse::Button0)) {
 			std::chrono::milliseconds time = Utils::GetMs();
 			if ((time - m_LastButton).count() > 20) {
-				//picked = !picked;
 
 				if (!picked) {
 					if (Items[slot].id > 0) {
-						slotPicked = slot;
+						slotPicked = 36;
 						picked = true;
 						LOG_WARN("PICEKD");
-						LOG_WARN("{0}, {1}, {2}", slot, slotPicked, picked);
+						LOG_WARN("{0}, {1}", slotPicked, picked);
+						Items[36] = Items[slot];
+						Items[36].slot = 36;
+						Items[slot] = InventoryItem{ 0,0,slot };
+
+						std::vector<InventoryItem> toSend{};
+						for (auto& item : Items)
+						{
+							if (item.id > 0) toSend.push_back(item);
+						}
+						m_InventoryItems.SetItems(toSend);
+						m_InventoryItems.SetTransform(CreateItemOffsets());
 					}
 				}
 				else {
-					LOG_WARN("TRUE");
-					if (Items[slot].id <= 0) {
+					InventoryItem previousItem = Items[slot];
+					Items[slot] = Items[slotPicked];
+					Items[slot].slot = slot;
+					Items[slotPicked] = previousItem;
+					Items[slotPicked].slot = slotPicked;
+
+					std::vector<InventoryItem> toSend{};
+					for (auto& item : Items)
+					{
+						if (item.id > 0) toSend.push_back(item);
+					}
+					m_InventoryItems.SetItems(toSend);
+
+
+					if (previousItem.id <= 0) {
+						/*LOG_WARN("TRUE");
 						Items[slot] = Items[slotPicked];
 						Items[slot].slot = slot;
 						Items[slotPicked] = InventoryItem{ 0,0,slotPicked };
@@ -173,11 +197,11 @@ void Inventory::Update() {
 						{
 							if (item.id > 0) toSend.push_back(item);
 						}
-						m_InventoryItems.SetItems(toSend);
+						m_InventoryItems.SetItems(toSend);*/
 						picked = false;
 						slotPicked = -1;
-						m_InventoryItems.SetTransform(CreateItemOffsets());
 					}
+					m_InventoryItems.SetTransform(CreateItemOffsets());
 				}
 			}
 			m_LastButton = time;
@@ -188,32 +212,7 @@ void Inventory::Update() {
 
 
 
-		/*if (!picked) {
-			if (Input::isMouseButtonPressed(Mouse::Button0)) {
-				std::chrono::milliseconds time = Utils::GetMs();
-				if ((time - m_LastButton).count() > 20) {
-					if (Items[slot].id > 0) {
-						picked = true;
-						slotPicked = slot;
-						LOG_WARN("PICEKD");
-					}
-				}
-				m_LastButton = time;
-			}
-		}
-		else {
-			if (Input::isMouseButtonPressed(Mouse::Button0)) {
-				std::chrono::milliseconds time = Utils::GetMs();
-				if ((time - m_LastButton).count() > 20) {
-					if (Items[slot].id <= 0) {
-						Items[slot] = Items[slotPicked];
-						Items[slotPicked] = InventoryItem{ 0,0,slotPicked };
-						picked = false;
-					}
-				}
-				m_LastButton = time;
-			}
-		}*/
+
 
 
 	}
@@ -314,11 +313,11 @@ std::vector<glm::vec3> Inventory::CreateItemOffsets() {
 		if (item.slot == slotPicked) {
 			glm::vec2 mousePos = Input::getMousePosition();
 			offsets.push_back(glm::vec3(mousePos.x, m_WindowSize.y - mousePos.y, 0));
-			LOG_WARN("SLOTPICKED");
+			//LOG_WARN("SLOTPICKED");
 		}
 		else {
 			offsets.push_back(GetSlotTranslationVector(item.slot));
-			LOG_WARN("{0}, {1}", item.slot, glm::to_string(GetSlotTranslationVector(item.slot)));
+			//LOG_WARN("{0}, {1}", item.slot, glm::to_string(GetSlotTranslationVector(item.slot)));
 		}
 	}
 
