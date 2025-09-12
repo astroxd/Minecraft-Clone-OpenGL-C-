@@ -14,16 +14,16 @@ public:
 	}
 	~Player() {};
 
-	Hotbar hotbar;
+	//Hotbar hotbar;
 	Inventory inventory;
 
 	void Draw() {
-		hotbar.Draw();
+		//hotbar.Draw();
 		inventory.Draw();
 	}
 
 	void Update() {
-		hotbar.Update();
+		//hotbar.Update();
 		inventory.Update();
 	}
 

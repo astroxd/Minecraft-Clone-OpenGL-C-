@@ -23,6 +23,10 @@ Inventory::Inventory() {
 	SendItems();
 	SetItemOffsets(CreateItemOffsets());
 
+	HotBar.SetInventoryOpen(m_IsInventoryOpen);
+	SendHotbarItems();
+
+
 	GenerateMesh();
 
 }
@@ -73,6 +77,9 @@ void Inventory::GenerateMesh() {
 }
 
 void Inventory::Update() {
+
+	HotBar.Update();
+
 	glm::vec2 mousePos = Input::getMousePosition();
 
 	m_Shader.Activate();
@@ -130,6 +137,7 @@ void Inventory::HandleInput() {
 			m_IsInventoryOpen = !m_IsInventoryOpen;
 			m_Shader.Activate();
 			m_Shader.SetBool("isInventoryOpen", m_IsInventoryOpen);
+			HotBar.SetInventoryOpen(m_IsInventoryOpen);
 
 			if (!m_IsInventoryOpen) m_Shader.SetBool("highlightSlot", false);
 		}
@@ -140,20 +148,37 @@ void Inventory::HandleInput() {
 		m_Shader.Activate();
 		m_Shader.SetBool("isInventoryOpen", m_IsInventoryOpen);
 		m_Shader.SetBool("highlightSlot", false);
+		HotBar.SetInventoryOpen(m_IsInventoryOpen);
+	}
+	else if (Input::isKeyPressed(Key::Q)) {
+		if (m_IsInventoryOpen) {
+			if (m_HoveredSlot == -1) return;
+			m_Items[m_HoveredSlot] = InventoryItem{ 0, 0, m_HoveredSlot };
+		}
+		else {
+			m_Items[m_SelectedHotbarSlot + 27] = InventoryItem{ 0, 0, m_SelectedHotbarSlot + 27 };
+		}
+
+		SendItems();
+		SetItemOffsets(CreateItemOffsets());
+
+		SendHotbarItems();
 	}
 
 	if (Input::isMouseButtonPressed(Mouse::Button0)) {
 		std::chrono::milliseconds time = Utils::GetMs();
 		if ((time - m_LastButton).count() > 20) {
-
 			if (!m_IsItemPicked && m_HoveredSlot != -1) {
 				if (m_Items[m_HoveredSlot].id > 0) {
 					m_PickedSlot = 36;
 					m_IsItemPicked = true;
 
 					SwapItems(m_HoveredSlot, m_PickedSlot);
+
 					SendItems();
-					m_InventoryItems.SetTransform(CreateItemOffsets());
+					SetItemOffsets(CreateItemOffsets());
+
+					SendHotbarItems();
 				}
 			}
 			else if (m_IsItemPicked) {
@@ -176,11 +201,29 @@ void Inventory::HandleInput() {
 					m_PickedSlot = -1;
 				}
 
-				m_InventoryItems.SetTransform(CreateItemOffsets());
+				SetItemOffsets(CreateItemOffsets());
+
+				SendHotbarItems();
+
 			}
 		}
 		m_LastButton = time;
 	}
+
+	if (Input::getScrollWheel() == -1) {
+		if (m_IsInventoryOpen) return;
+
+		m_SelectedHotbarSlot += 1;
+		if (m_SelectedHotbarSlot > 8) m_SelectedHotbarSlot = 0;
+
+	}
+	else if (Input::getScrollWheel() == 1) {
+		if (m_IsInventoryOpen) return;
+
+		m_SelectedHotbarSlot -= 1;
+		if (m_SelectedHotbarSlot < 0) m_SelectedHotbarSlot = 8;
+	}
+
 }
 
 bool Inventory::IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& topRight) {
@@ -256,6 +299,10 @@ void Inventory::SendItems() {
 	m_InventoryItems.SetItems(toSend);
 }
 
+void Inventory::SendHotbarItems() {
+	HotBar.SetItems(std::vector<InventoryItem>(m_Items.begin() + 27, m_Items.begin() + 27 + 9));
+}
+
 void Inventory::SetVAO() {
 	VAO.Bind();
 	m_VBO.SetVertices(m_Vertices);
@@ -285,6 +332,7 @@ void Inventory::Transform() {
 }
 
 void Inventory::Draw() {
+	HotBar.Draw();
 	if (!m_IsInventoryOpen) return;
 
 	m_Shader.Activate();

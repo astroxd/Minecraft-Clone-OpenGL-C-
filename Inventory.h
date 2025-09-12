@@ -20,6 +20,9 @@ public:
 
 	void Update();
 
+	Hotbar HotBar;
+
+
 private:
 	const float m_InventoryWidth = 176.0f;
 	const float m_InventoryHeight = 166.0f;
@@ -49,6 +52,9 @@ private:
 	bool m_IsItemPicked = false;
 	int m_PickedSlot = -1;
 
+	int m_SelectedHotbarSlot = 0;
+
+
 private:
 	void SetVAO() override;
 	void Transform();
@@ -75,6 +81,9 @@ private:
 
 	void SwapItems(const int i, const  int j);
 	void SendItems();
+
+	void SendHotbarItems();
+
 };
 
 #endif 

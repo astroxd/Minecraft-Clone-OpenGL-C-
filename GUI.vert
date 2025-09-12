@@ -28,7 +28,6 @@ void main()
 		}
 	}
 	else{
-
 		if(gl_VertexID >= 0 && gl_VertexID < 4){
 			pos += vec4(slotOffset, 0.0, 0.0);
 		}

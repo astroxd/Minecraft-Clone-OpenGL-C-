@@ -69,7 +69,6 @@ void BlockItem::SetTransform(const std::vector<glm::vec3>& instancePositions) {
 
 		m_InstanceVertices.push_back(InstanceItemVertex(BlockUVs, view));
 	}
-
 	GenerateMesh();
 }
 
@@ -165,7 +164,9 @@ void BlockItem::SetVAO()
 
 void BlockItem::Draw()
 {
+
 	m_Shader.Activate();
 	VAO.Bind();
+	//Transform();
 	glDrawElementsInstanced(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0, m_Items.size());
 }
