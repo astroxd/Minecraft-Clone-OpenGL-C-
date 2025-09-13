@@ -32,15 +32,15 @@ public:
 
 	void SetVAO() override {
 		VAO.Bind();
-		VBO.SetVertices(m_Vertices);
+		m_VBO.SetVertices(m_Vertices);
 		EBO.SetIndices(m_Indices);
 
 		// Links VBO attributes such as coordinates and colors to VAO
-		VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)0);
-		VAO.LinkAttrib(VBO, 1, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)(3 * sizeof(float)));
+		VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)0);
+		VAO.LinkAttrib(m_VBO, 1, 3, GL_FLOAT, sizeof(ChunkBorderVertex), (void*)(3 * sizeof(float)));
 		// Unbind all to prevent accidentally modifying them
 		VAO.Unbind();
-		VBO.Unbind();
+		m_VBO.Unbind();
 		EBO.Unbind();
 	}
 

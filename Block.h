@@ -130,7 +130,7 @@ const std::unordered_map<BlockType, std::unordered_map<BlockFace, std::pair<int,
 			},
 			{
 				BOTTOM_FACE,
-				{14,11}
+				{14,14}
 			},
 			{
 				RIGHT_FACE,
@@ -219,11 +219,12 @@ struct InventoryItem {
 };
 
 const std::vector<InventoryItem> InventoryItems = {
-	InventoryItem(1, 10, 0),
+	InventoryItem(2, 10, 0),
 	InventoryItem(2, 1, 2),
 	InventoryItem(3, 2, 4),
 	InventoryItem(4, 4, 7),
 	InventoryItem(4, 4, 14),
+	InventoryItem(3, 4, 33),
 };
 
 

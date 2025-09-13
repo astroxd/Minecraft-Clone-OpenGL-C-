@@ -5,7 +5,7 @@
 
 #include "VBO.h"
 
-template <typename T>
+
 class VAO {
 public:
 	GLuint ID;
@@ -17,6 +17,7 @@ public:
 		Delete();
 	}
 
+	template <typename T>
 	void LinkAttrib(VBO<T>& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset) {
 		VBO.Bind();
 		glVertexAttribPointer(layout, numComponents, type, GL_FALSE, stride, offset);

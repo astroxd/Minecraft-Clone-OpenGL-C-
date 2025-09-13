@@ -16,15 +16,15 @@ public:
 	std::vector <GLuint> m_Indices;
 	std::vector <Texture> texture;
 
-	VAO<VertexType> VAO;
-	VBO<VertexType> VBO;
+	VAO VAO;
+	VBO<VertexType> m_VBO;
 	EBO EBO;
 
 	Mesh() = default;
 	virtual ~Mesh()
 	{
 		VAO.Delete();
-		VBO.Delete();
+		m_VBO.Delete();
 		EBO.Delete();
 	}
 

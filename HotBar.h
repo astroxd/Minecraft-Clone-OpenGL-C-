@@ -1,7 +1,6 @@
 #ifndef HOTBAR_H
 #define HOTBAR_H
 
-
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "TextureAtlas.h"
@@ -63,12 +62,13 @@ public:
 	Hotbar();
 
 	void GenerateMesh();
-	void Transform();
 
-	void SetVAO() override;
 	void Draw() override;
 
 	void Update();
+
+	void SetItems(const std::vector<InventoryItem>& items);
+	void SetInventoryOpen(bool inventoryOpen);
 
 private:
 	float m_HotBarWidth = 182.0f;
@@ -88,9 +88,15 @@ private:
 
 	std::chrono::milliseconds m_LastButton;
 
-	BlockItem m_HotBarItems;
+	std::vector<InventoryItem> m_Items;
+	BlockItem m_HotBarItems{ m_Scale };
+
+	bool m_IsInventoryOpen;
 
 private:
+	void SetVAO() override;
+	void Transform();
+
 	void UpdateWindowSize();
 
 	inline float GetScaledWidth() const { return m_HotBarWidth * m_Scale.x; }
@@ -105,7 +111,10 @@ private:
 
 	void HandleInput();
 
-	void ChangeSelectedSlot(int slotIndex);
+	void ChangeSelectedSlot(const int slotIndex);
+
+	void SendItems();
+	std::vector<glm::vec3> CreateItemOffsets();
 
 };
 

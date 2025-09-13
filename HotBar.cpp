@@ -5,11 +5,7 @@ Hotbar::Hotbar() {
 	LOG_INFO("HotBar Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
-	m_HotBarItems.SetTransformAndScale(GetSlotTranslationVector(0), m_Scale);
-	m_HotBarItems.SetItems(InventoryItems);
-
 	GenerateMesh();
-
 }
 
 void Hotbar::GenerateMesh() {
@@ -58,48 +54,6 @@ void Hotbar::GenerateMesh() {
 	Transform();
 }
 
-void Hotbar::Transform() {
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, GetTranslationVector());
-	model = glm::scale(model, glm::vec3(m_Scale, 1.0));
-
-	glm::mat4 proj = glm::ortho(0.0f, m_WindowSize.x, 0.0f, m_WindowSize.y);
-
-	m_Shader.Activate();
-	m_Shader.SetMat4("model", model);
-	m_Shader.SetMat4("proj", proj);
-	m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
-	m_Shader.SetBool("isInventoryOpen", false);
-}
-
-void Hotbar::SetVAO() {
-	VAO.Bind();
-	VBO.SetVertices(m_Vertices);
-	EBO.SetIndices(m_Indices);
-
-	// Links VBO attributes such as coordinates and colors to VAO
-	VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
-	VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
-	// Unbind all to prevent accidentally modifying them
-	VAO.Unbind();
-	VBO.Unbind();
-	EBO.Unbind();
-}
-
-void Hotbar::Draw() {
-	m_Shader.Activate();
-
-	VAO.Bind();
-	Transform();
-	m_Shader.SetBool("isInventoryOpen", false);
-	static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).BindAtlas("GUIProgram", "tex1", 1);
-
-	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
-
-	m_HotBarItems.Draw();
-
-}
-
 void Hotbar::Update() {
 	UpdateWindowSize();
 	HandleInput();
@@ -109,7 +63,7 @@ void Hotbar::UpdateWindowSize() {
 	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
 		m_WindowSize = Window::GetInstance().getWindowSize();
 		Transform();
-		m_HotBarItems.UpdateTransformAndScale(GetSlotTranslationVector(0), m_Scale);
+		m_HotBarItems.UpdateTransform(CreateItemOffsets());
 
 	}
 }
@@ -122,14 +76,16 @@ glm::vec3 Hotbar::GetSlotTranslationVector(int slotIndex) const
 {
 	const glm::vec2 slotInnerOffset = glm::vec2(3);
 	const float slotInnerWidth = 16.0f;
+	slotIndex -= 27; //slotIndex ranges from 0-36, need to have them between 0-9
 
 	glm::vec2 offsetToSlotCenter = glm::vec2(slotInnerWidth / 2);
-
 	return GetTranslationVector() + (glm::vec3(slotInnerOffset + offsetToSlotCenter, 0.0) + glm::vec3(slotIndex * 20.0f, 0, 0)) * glm::vec3(m_Scale, 1);
 
 }
 
 void Hotbar::HandleInput() {
+	if (m_IsInventoryOpen) return;
+
 	if (Input::getScrollWheel() == -1) {
 		m_SlotOffset += m_SlotSize;
 
@@ -138,8 +94,7 @@ void Hotbar::HandleInput() {
 		m_Shader.Activate();
 		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
-
-	if (Input::getScrollWheel() == 1) {
+	else if (Input::getScrollWheel() == 1) {
 		m_SlotOffset -= m_SlotSize;
 
 		if (m_SlotOffset < 0.0f) m_SlotOffset = m_SlotSize * 8;
@@ -157,15 +112,9 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::D7)) ChangeSelectedSlot(SLOT6);
 	else if (Input::isKeyPressed(Key::D8)) ChangeSelectedSlot(SLOT7);
 	else if (Input::isKeyPressed(Key::D9)) ChangeSelectedSlot(SLOT8);
-
-	else if (Input::isKeyPressed(Key::Q)) {
-		auto items = InventoryItems;
-		items.push_back(InventoryItem(2, 4, 5));
-		m_HotBarItems.SetItems(items);
-	}
 }
 
-void Hotbar::ChangeSelectedSlot(int slotIndex) {
+void Hotbar::ChangeSelectedSlot(const int slotIndex) {
 	std::chrono::milliseconds time = Utils::GetMs();
 	if ((time - m_LastButton).count() > 20) {
 
@@ -174,4 +123,78 @@ void Hotbar::ChangeSelectedSlot(int slotIndex) {
 		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
 	m_LastButton = time;
+}
+
+void Hotbar::SetItems(const std::vector<InventoryItem>& items) {
+	m_Items = items;
+
+	SendItems();
+	m_HotBarItems.SetTransform(CreateItemOffsets());
+}
+
+void Hotbar::SendItems() {
+	std::vector<InventoryItem> toSend{};
+	for (auto& item : m_Items)
+	{
+		if (item.id > 0) toSend.push_back(item);
+	}
+	m_HotBarItems.SetItems(toSend);
+}
+
+std::vector<glm::vec3> Hotbar::CreateItemOffsets() {
+
+	std::vector<glm::vec3> offsets{};
+
+	for (auto& item : m_Items) {
+		if (item.id <= 0) continue;
+		offsets.push_back(GetSlotTranslationVector(item.slot));
+	}
+
+	return offsets;
+}
+
+void Hotbar::SetInventoryOpen(bool inventoryOpen) {
+	m_IsInventoryOpen = inventoryOpen;
+}
+
+void Hotbar::SetVAO() {
+	VAO.Bind();
+	m_VBO.SetVertices(m_Vertices);
+	EBO.SetIndices(m_Indices);
+
+	// Links VBO attributes such as coordinates and colors to VAO
+	VAO.LinkAttrib(m_VBO, 0, 3, GL_FLOAT, sizeof(GUIVertex), (void*)0);
+	VAO.LinkAttrib(m_VBO, 1, 2, GL_FLOAT, sizeof(GUIVertex), (void*)(3 * sizeof(float)));
+	// Unbind all to prevent accidentally modifying them
+	VAO.Unbind();
+	m_VBO.Unbind();
+	EBO.Unbind();
+}
+
+void Hotbar::Transform() {
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, GetTranslationVector());
+	model = glm::scale(model, glm::vec3(m_Scale, 1.0));
+
+	glm::mat4 proj = glm::ortho(0.0f, m_WindowSize.x, 0.0f, m_WindowSize.y);
+
+	m_Shader.Activate();
+	m_Shader.SetMat4("model", model);
+	m_Shader.SetMat4("proj", proj);
+	m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
+	m_Shader.SetBool("isInventoryOpen", false);
+}
+
+void Hotbar::Draw() {
+	m_Shader.Activate();
+
+	VAO.Bind();
+	Transform();
+	m_Shader.SetBool("isInventoryOpen", false);
+	static_cast<TextureAtlas&>(TextureManager::GetTexture("widget.png")).BindAtlas("GUIProgram", "tex1", 1);
+
+	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+
+	m_HotBarItems.Draw();
+
 }

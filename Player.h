@@ -3,7 +3,6 @@
 
 #include <glm/glm.hpp>
 
-#include "Hotbar.h"
 #include "Inventory.h"
 
 class Player {
@@ -14,16 +13,13 @@ public:
 	}
 	~Player() {};
 
-	Hotbar hotbar;
 	Inventory inventory;
 
 	void Draw() {
-		hotbar.Draw();
 		inventory.Draw();
 	}
 
 	void Update() {
-		hotbar.Update();
 		inventory.Update();
 	}
 

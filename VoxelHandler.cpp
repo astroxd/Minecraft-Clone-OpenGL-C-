@@ -4,7 +4,8 @@
 
 #include <imgui/imgui.h>
 #include <cmath>
-//#include <glm/gtc/integer.hpp>
+
+#include "Player.h"
 
 VoxelHandler::VoxelHandler(Camera* camera)
 	: m_Camera(camera)
@@ -189,9 +190,10 @@ void VoxelHandler::PlaceVoxel() {
 	if (m_VoxelId > 0) {
 		int newVoxelId = GetHitVoxelId(m_VoxelWorldPos + m_VoxelNormal);
 		if (newVoxelId == 0) {
-			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, m_VoxelInHand);
+			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, Inventory::s_SelectedHotbarItem->id);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->SetVAO();
+			//TODO Should Launch a BlockPlaced Event to decrease item quantity
 
 			if (m_VoxelLocalPosition.x == 0) {
 				RebuildAdjacentChunk(XNEG);
@@ -226,7 +228,7 @@ void VoxelHandler::Input() {
 		PlaceVoxel();
 	}
 	if (Input::isMouseButtonPressed(Mouse::ButtonMiddle)) {
-		m_VoxelInHand = m_VoxelId;
+		//Should Pickup the block is looking
 	}
 }
 
