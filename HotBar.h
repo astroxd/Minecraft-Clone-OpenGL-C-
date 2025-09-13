@@ -1,7 +1,6 @@
 #ifndef HOTBAR_H
 #define HOTBAR_H
 
-
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "TextureAtlas.h"

@@ -1,5 +1,5 @@
 #include "Inventory.h"
-#include "Log.h"
+
 #include "Utils.h"
 
 Inventory::Inventory() {
@@ -29,12 +29,11 @@ Inventory::Inventory() {
 	HotBar.SetInventoryOpen(m_IsInventoryOpen);
 	SendHotbarItems();
 
-
 	GenerateMesh();
-
 }
 
 void Inventory::GenerateMesh() {
+	//Temp Values for generating a black texture used for slot highlighter
 	int m_WidthImg = 256;
 	int m_HeightImg = 256;
 	int countIndices = 0;
@@ -337,7 +336,6 @@ void Inventory::ChangeSelectedHotbarSlot(const int hotbarSlotIndex) {
 	}
 	m_LastButton = time;
 }
-
 
 void Inventory::SetVAO() {
 	VAO.Bind();

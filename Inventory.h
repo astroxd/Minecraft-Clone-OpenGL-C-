@@ -1,11 +1,6 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-#include "Mesh.h"
-#include "TextureManager.h"
-#include "TextureAtlas.h"
-#include "Input.h"
-#include "BlockItem.h"
 #include "Hotbar.h"
 
 class Inventory : public Mesh<GUIVertex> {
@@ -55,8 +50,6 @@ private:
 
 	int m_SelectedHotbarSlot = 0;
 
-
-
 private:
 	void SetVAO() override;
 	void Transform();
@@ -76,7 +69,6 @@ private:
 	/// @param bottomLeft: Local pixel coordinates of bottom left corner
 	/// @param topRight Local pixel coordinates of top right corner
 	bool IsInSelectedArea(const glm::vec2& bottomLeft, const glm::vec2& topRight);
-
 
 	std::vector<glm::vec3> CreateItemOffsets();
 	void SetItemOffsets(const std::vector<glm::vec3>& offsets);

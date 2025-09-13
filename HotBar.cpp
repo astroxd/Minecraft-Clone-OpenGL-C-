@@ -103,7 +103,6 @@ void Hotbar::HandleInput() {
 		m_Shader.SetVec2("slotOffset", glm::vec2(m_SlotOffset, 0.0f));
 	}
 
-	//NOT WORKING, JUST GRAPHICS
 	if (Input::isKeyPressed(Key::D1)) ChangeSelectedSlot(SLOT0);
 	else if (Input::isKeyPressed(Key::D2)) ChangeSelectedSlot(SLOT1);
 	else if (Input::isKeyPressed(Key::D3)) ChangeSelectedSlot(SLOT2);
@@ -113,8 +112,6 @@ void Hotbar::HandleInput() {
 	else if (Input::isKeyPressed(Key::D7)) ChangeSelectedSlot(SLOT6);
 	else if (Input::isKeyPressed(Key::D8)) ChangeSelectedSlot(SLOT7);
 	else if (Input::isKeyPressed(Key::D9)) ChangeSelectedSlot(SLOT8);
-
-
 }
 
 void Hotbar::ChangeSelectedSlot(const int slotIndex) {

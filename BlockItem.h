@@ -37,7 +37,7 @@ private:
 	Shader m_Shader;
 	int m_CountIndices;
 
-	glm::vec2 m_Scale;
+	glm::vec2 m_Scale{ glm::vec2(1) };
 
 	VBO<InstanceItemVertex> m_InstanceVBO;
 	std::vector<InstanceItemVertex> m_InstanceVertices;
