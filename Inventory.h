@@ -1,14 +1,12 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
-
 #include "Mesh.h"
 #include "TextureManager.h"
 #include "TextureAtlas.h"
 #include "Input.h"
 #include "BlockItem.h"
 #include "Hotbar.h"
-
 
 class Inventory : public Mesh<GUIVertex> {
 public:
@@ -22,7 +20,9 @@ public:
 
 	Hotbar HotBar;
 
-	inline static InventoryItem s_SelectedHotbarItem;
+	//! Pointer get invalidated if m_Items vector changes dimension
+	//! this shouldn't be a problem because the vector keeps its size
+	inline static InventoryItem* s_SelectedHotbarItem;
 
 private:
 	const float m_InventoryWidth = 176.0f;

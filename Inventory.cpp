@@ -21,7 +21,7 @@ Inventory::Inventory() {
 		m_Items[item.slot] = item;
 	}
 
-	s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
+	s_SelectedHotbarItem = &m_Items[m_SelectedHotbarSlot + 27];
 
 	SendItems();
 	SetItemOffsets(CreateItemOffsets());
@@ -156,12 +156,9 @@ void Inventory::HandleInput() {
 		if (m_IsInventoryOpen) {
 			if (m_HoveredSlot == -1) return;
 			m_Items[m_HoveredSlot] = InventoryItem{ 0, 0, m_HoveredSlot };
-			if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
-				s_SelectedHotbarItem = m_Items[m_HoveredSlot];
 		}
 		else {
 			m_Items[m_SelectedHotbarSlot + 27] = InventoryItem{ 0, 0, m_SelectedHotbarSlot + 27 };
-			s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 		}
 
 		SendItems();
@@ -180,10 +177,6 @@ void Inventory::HandleInput() {
 
 					SwapItems(m_HoveredSlot, m_PickedSlot);
 
-					//! Update SelectedHotbarItem
-					if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
-						s_SelectedHotbarItem = m_Items[m_HoveredSlot];
-
 					SendItems();
 					SetItemOffsets(CreateItemOffsets());
 
@@ -200,10 +193,6 @@ void Inventory::HandleInput() {
 				else {
 					SwapItems(m_HoveredSlot, m_PickedSlot);
 				}
-
-				//! Update SelectedHotbarItem
-				if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
-					s_SelectedHotbarItem = m_Items[m_HoveredSlot];
 
 				SendItems();
 
@@ -228,15 +217,16 @@ void Inventory::HandleInput() {
 
 		m_SelectedHotbarSlot += 1;
 		if (m_SelectedHotbarSlot > 8) m_SelectedHotbarSlot = 0;
-		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 
+		s_SelectedHotbarItem = &m_Items[m_SelectedHotbarSlot + 27];
 	}
 	else if (Input::getScrollWheel() == 1) {
 		if (m_IsInventoryOpen) return;
 
 		m_SelectedHotbarSlot -= 1;
 		if (m_SelectedHotbarSlot < 0) m_SelectedHotbarSlot = 8;
-		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
+
+		s_SelectedHotbarItem = &m_Items[m_SelectedHotbarSlot + 27];
 	}
 
 	if (Input::isKeyPressed(Key::D1))	   ChangeSelectedHotbarSlot(SLOT0);
@@ -342,11 +332,8 @@ void Inventory::ChangeSelectedHotbarSlot(const int hotbarSlotIndex) {
 		}
 		else {
 			m_SelectedHotbarSlot = hotbarSlotIndex;
-
+			s_SelectedHotbarItem = &m_Items[m_SelectedHotbarSlot + 27];
 		}
-
-		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
-
 	}
 	m_LastButton = time;
 }

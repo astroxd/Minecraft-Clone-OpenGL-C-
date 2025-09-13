@@ -190,7 +190,7 @@ void VoxelHandler::PlaceVoxel() {
 	if (m_VoxelId > 0) {
 		int newVoxelId = GetHitVoxelId(m_VoxelWorldPos + m_VoxelNormal);
 		if (newVoxelId == 0) {
-			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, Inventory::s_SelectedHotbarItem.id);
+			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, Inventory::s_SelectedHotbarItem->id);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->SetVAO();
 			//TODO Should Launch a BlockPlaced Event to decrease item quantity
