@@ -22,6 +22,7 @@ public:
 
 	Hotbar HotBar;
 
+	inline static InventoryItem s_SelectedHotbarItem;
 
 private:
 	const float m_InventoryWidth = 176.0f;
@@ -55,6 +56,7 @@ private:
 	int m_SelectedHotbarSlot = 0;
 
 
+
 private:
 	void SetVAO() override;
 	void Transform();
@@ -83,7 +85,7 @@ private:
 	void SendItems();
 
 	void SendHotbarItems();
-
+	void ChangeSelectedHotbarSlot(const int hotbarSlotIndex);
 };
 
 #endif 

@@ -2,13 +2,14 @@
 #include "Log.h"
 #include "Utils.h"
 
-
 Inventory::Inventory() {
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
 
 	//36 = Number of Slots
 	//1 = The extra slot for the picked item
+	//The slot 0 is in the top left corner
+	//The slot 35 is the bottom right cornero of hotbar
 	m_Items.reserve(36 + 1);
 	for (int i = 0; i < 36 + 1; i++)
 	{
@@ -19,6 +20,8 @@ Inventory::Inventory() {
 	{
 		m_Items[item.slot] = item;
 	}
+
+	s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 
 	SendItems();
 	SetItemOffsets(CreateItemOffsets());
@@ -77,7 +80,6 @@ void Inventory::GenerateMesh() {
 }
 
 void Inventory::Update() {
-
 	HotBar.Update();
 
 	glm::vec2 mousePos = Input::getMousePosition();
@@ -154,9 +156,12 @@ void Inventory::HandleInput() {
 		if (m_IsInventoryOpen) {
 			if (m_HoveredSlot == -1) return;
 			m_Items[m_HoveredSlot] = InventoryItem{ 0, 0, m_HoveredSlot };
+			if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
+				s_SelectedHotbarItem = m_Items[m_HoveredSlot];
 		}
 		else {
 			m_Items[m_SelectedHotbarSlot + 27] = InventoryItem{ 0, 0, m_SelectedHotbarSlot + 27 };
+			s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 		}
 
 		SendItems();
@@ -175,6 +180,10 @@ void Inventory::HandleInput() {
 
 					SwapItems(m_HoveredSlot, m_PickedSlot);
 
+					//! Update SelectedHotbarItem
+					if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
+						s_SelectedHotbarItem = m_Items[m_HoveredSlot];
+
 					SendItems();
 					SetItemOffsets(CreateItemOffsets());
 
@@ -191,6 +200,10 @@ void Inventory::HandleInput() {
 				else {
 					SwapItems(m_HoveredSlot, m_PickedSlot);
 				}
+
+				//! Update SelectedHotbarItem
+				if (m_HoveredSlot == m_SelectedHotbarSlot + 27)
+					s_SelectedHotbarItem = m_Items[m_HoveredSlot];
 
 				SendItems();
 
@@ -215,6 +228,7 @@ void Inventory::HandleInput() {
 
 		m_SelectedHotbarSlot += 1;
 		if (m_SelectedHotbarSlot > 8) m_SelectedHotbarSlot = 0;
+		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 
 	}
 	else if (Input::getScrollWheel() == 1) {
@@ -222,7 +236,18 @@ void Inventory::HandleInput() {
 
 		m_SelectedHotbarSlot -= 1;
 		if (m_SelectedHotbarSlot < 0) m_SelectedHotbarSlot = 8;
+		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
 	}
+
+	if (Input::isKeyPressed(Key::D1))	   ChangeSelectedHotbarSlot(SLOT0);
+	else if (Input::isKeyPressed(Key::D2)) ChangeSelectedHotbarSlot(SLOT1);
+	else if (Input::isKeyPressed(Key::D3)) ChangeSelectedHotbarSlot(SLOT2);
+	else if (Input::isKeyPressed(Key::D4)) ChangeSelectedHotbarSlot(SLOT3);
+	else if (Input::isKeyPressed(Key::D5)) ChangeSelectedHotbarSlot(SLOT4);
+	else if (Input::isKeyPressed(Key::D6)) ChangeSelectedHotbarSlot(SLOT5);
+	else if (Input::isKeyPressed(Key::D7)) ChangeSelectedHotbarSlot(SLOT6);
+	else if (Input::isKeyPressed(Key::D8)) ChangeSelectedHotbarSlot(SLOT7);
+	else if (Input::isKeyPressed(Key::D9)) ChangeSelectedHotbarSlot(SLOT8);
 
 }
 
@@ -302,6 +327,30 @@ void Inventory::SendItems() {
 void Inventory::SendHotbarItems() {
 	HotBar.SetItems(std::vector<InventoryItem>(m_Items.begin() + 27, m_Items.begin() + 27 + 9));
 }
+
+void Inventory::ChangeSelectedHotbarSlot(const int hotbarSlotIndex) {
+	std::chrono::milliseconds time = Utils::GetMs();
+	if ((time - m_LastButton).count() > 20) {
+
+		if (m_IsInventoryOpen) {
+			SwapItems(m_HoveredSlot, hotbarSlotIndex + 27);
+
+			SendItems();
+			SetItemOffsets(CreateItemOffsets());
+
+			SendHotbarItems();
+		}
+		else {
+			m_SelectedHotbarSlot = hotbarSlotIndex;
+
+		}
+
+		s_SelectedHotbarItem = m_Items[m_SelectedHotbarSlot + 27];
+
+	}
+	m_LastButton = time;
+}
+
 
 void Inventory::SetVAO() {
 	VAO.Bind();
