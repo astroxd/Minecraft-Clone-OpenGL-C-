@@ -1,6 +1,7 @@
 #include "Window.h"
 #include "Log.h"
 #include "Input.h"
+#include "Events/EventManager.h"
 
 //Window* Window::s_Instance = new Window();
 Window* Window::s_Instance = nullptr;
@@ -9,7 +10,9 @@ std::mutex Window::s_Mutex;
 unsigned int Window::s_Width;
 unsigned int Window::s_Height;
 
-Window::Window() {
+Window::Window()
+	: m_Handler([this](const TestEvent& e) {OnEvent(e); })
+{
 	LOG_INFO("Window created");
 	s_Width = 1280;
 	s_Height = 720;
@@ -37,8 +40,17 @@ Window::Window() {
 	glfwMakeContextCurrent(m_Window);
 
 	gladLoadGL();
+
+	Subscribe(m_Handler);
+
+
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 	glfwSetScrollCallback(m_Window, scroll_callback);
+
+
+
+
+
 
 #ifdef __APPLE__
 	glViewport(0, 0, getWidth() * 2, getHeight() * 2); // Due to mac glitch resolution needs to be twice as big
@@ -70,9 +82,18 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 	s_Width = width;
 	s_Height = height;
 
+	TriggerEvent(TestEvent(3));
+
+
+
+
 #endif
 }
 
 void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	Input::setScrollWheel(yoffset);
+}
+
+void Window::OnEvent(const TestEvent& e) {
+	LOG_WARN("EVENTTTT, {0}", e.value);
 }
