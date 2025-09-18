@@ -41,7 +41,7 @@ Window::Window()
 
 	gladLoadGL();
 
-	Subscribe(m_Handler);
+	Events::Subscribe(m_Handler);
 
 
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
@@ -82,7 +82,7 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 	s_Width = width;
 	s_Height = height;
 
-	TriggerEvent(TestEvent(3));
+	Events::TriggerEvent(TestEvent(3));
 
 
 

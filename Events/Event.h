@@ -1,15 +1,25 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <iostream>
+//#include <iostream>
 #include <string>
 
-class Event {
-public:
-	virtual std::string GetEventType() const = 0;
+namespace Events {
 
-	bool isHandled{ false };
-};
+	class Event {
+	public:
+		virtual ~Event() = default;
+		virtual std::string GetEventType() const = 0;
+		virtual std::string ToString() const { return GetEventType(); }
+
+		bool m_IsHandled{ false };
+	};
+
+	/*inline std::ostream& operator<<(std::ostream& os, const Event& e) {
+		return os << e.ToString();
+	}*/
+
+}
 
 #define EVENT_TYPE(event_type)                  \
     static std::string GetStaticEventType()     \
@@ -20,7 +30,4 @@ public:
     {                                           \
         return GetStaticEventType();            \
     }
-
-
-
 #endif 

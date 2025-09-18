@@ -59,7 +59,7 @@ private:
 
 
 	//EVENT
-	EventHandler<TestEvent> m_Handler;
+	Events::EventHandler<TestEvent> m_Handler;
 
 };
 
