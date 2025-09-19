@@ -2,9 +2,14 @@
 
 #include "Utils.h"
 
-Inventory::Inventory() {
+Inventory::Inventory()
+	: m_WindowResizeHandler([this](const WindowResizeEvent& e) { OnWindowResize(e); })
+	, m_BlockPlacedHandler([this](const BlockPlacedEvent& e) {OnBlockPlaced(e); })
+{
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
+	Events::Subscribe(m_WindowResizeHandler);
+	Events::Subscribe(m_BlockPlacedHandler);
 
 	//36 = Number of Slots
 	//1 = The extra slot for the picked item
@@ -85,7 +90,6 @@ void Inventory::Update() {
 
 	m_Shader.Activate();
 
-	UpdateWindowSize();
 	HandleInput();
 
 	if (!m_IsInventoryOpen) return;
@@ -118,14 +122,6 @@ void Inventory::Update() {
 
 	//If Item is Picked update its position every frame
 	if (m_IsItemPicked) {
-		m_InventoryItems.UpdateTransform(CreateItemOffsets());
-	}
-}
-
-void Inventory::UpdateWindowSize() {
-	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
-		m_WindowSize = Window::GetInstance().getWindowSize();
-		Transform();
 		m_InventoryItems.UpdateTransform(CreateItemOffsets());
 	}
 }
@@ -379,3 +375,25 @@ void Inventory::Draw() {
 	m_InventoryItems.Draw();
 
 };
+
+//! Event Callbacks
+void Inventory::OnWindowResize(const WindowResizeEvent& e) {
+	LOG_WARN("Inventory: {0}, {1}", e.m_Width, e.m_Height);
+	m_WindowSize = Window::GetInstance().getWindowSize();
+	Transform();
+	m_InventoryItems.UpdateTransform(CreateItemOffsets());
+}
+
+void Inventory::OnBlockPlaced(const BlockPlacedEvent& e)
+{
+	s_SelectedHotbarItem->count -= 1;
+
+	if (s_SelectedHotbarItem->count <= 0) {
+		*s_SelectedHotbarItem = InventoryItem{ 0, 0, s_SelectedHotbarItem->slot }; //EMPTY SLOT
+
+		SendItems();
+		SetItemOffsets(CreateItemOffsets());
+
+		SendHotbarItems();
+	}
+}

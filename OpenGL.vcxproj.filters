@@ -278,13 +278,16 @@
     <ClInclude Include="Events\Event.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Events\TestEvent.h">
+    <ClInclude Include="Events\WindowEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events\EventHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Events\EventManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Events\ApplicationEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

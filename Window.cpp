@@ -11,7 +11,7 @@ unsigned int Window::s_Width;
 unsigned int Window::s_Height;
 
 Window::Window()
-	: m_Handler([this](const TestEvent& e) {OnEvent(e); })
+	: m_Handler([this](const WindowResizeEvent& e) {OnWindowResize(e); })
 {
 	LOG_INFO("Window created");
 	s_Width = 1280;
@@ -47,11 +47,6 @@ Window::Window()
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 	glfwSetScrollCallback(m_Window, scroll_callback);
 
-
-
-
-
-
 #ifdef __APPLE__
 	glViewport(0, 0, getWidth() * 2, getHeight() * 2); // Due to mac glitch resolution needs to be twice as big
 #else
@@ -82,10 +77,7 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 	s_Width = width;
 	s_Height = height;
 
-	Events::TriggerEvent(TestEvent(3));
-
-
-
+	Events::TriggerEvent(WindowResizeEvent(s_Width, s_Height));
 
 #endif
 }
@@ -94,6 +86,6 @@ void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 	Input::setScrollWheel(yoffset);
 }
 
-void Window::OnEvent(const TestEvent& e) {
-	LOG_WARN("EVENTTTT, {0}", e.value);
+void Window::OnWindowResize(const WindowResizeEvent& e) {
+	LOG_WARN("WindowResize: {0}, {1}", e.m_Width, e.m_Height);
 }

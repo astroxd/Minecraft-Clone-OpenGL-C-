@@ -4,14 +4,11 @@
 #include <iostream>
 #include <mutex>
 
-
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
-#include "Events/TestEvent.h"
+#include "Events/WindowEvent.h"
 #include "Events/EventHandler.h"
 
 //Singleton implementation of Window
@@ -38,7 +35,7 @@ public:
 
 	inline void DestroyWindow() { glfwDestroyWindow(m_Window); }
 
-	void OnEvent(const TestEvent& e);
+	void OnWindowResize(const WindowResizeEvent& e);
 
 private:
 	Window();
@@ -59,7 +56,7 @@ private:
 
 
 	//EVENT
-	Events::EventHandler<TestEvent> m_Handler;
+	Events::EventHandler<WindowResizeEvent> m_Handler;
 
 };
 

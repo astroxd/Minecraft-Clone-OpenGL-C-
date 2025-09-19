@@ -1,9 +1,10 @@
 #ifndef EVENT_MANAGER_H
 #define EVENT_MANAGER_H
 
-#include "EventHandler.h"
 #include <vector>
 #include <unordered_map>
+
+#include "EventHandler.h"
 #include "../Log.h"
 
 namespace Events {
@@ -52,4 +53,4 @@ namespace Events {
 	}
 }
 
-#endif // !EVENT_MANAGER_H
+#endif

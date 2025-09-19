@@ -46,6 +46,8 @@ private:
 
 	void DestroyVoxel();
 	void PlaceVoxel();
+
+	void UpdateAdjacentChunks();
 	void RebuildAdjacentChunk(AdjacentChunkPos pos);
 
 	void Input();

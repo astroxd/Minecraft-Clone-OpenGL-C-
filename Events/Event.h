@@ -1,7 +1,7 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-//#include <iostream>
+#include <sstream>
 #include <string>
 
 namespace Events {
@@ -15,9 +15,9 @@ namespace Events {
 		bool m_IsHandled{ false };
 	};
 
-	/*inline std::ostream& operator<<(std::ostream& os, const Event& e) {
+	inline std::ostream& operator<<(std::ostream& os, const Event& e) {
 		return os << e.ToString();
-	}*/
+	}
 
 }
 

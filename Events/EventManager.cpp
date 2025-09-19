@@ -40,11 +40,12 @@ namespace Events {
 		}
 	}
 
-	void EventManager::TriggerEvent(const Event& event_)
+	void EventManager::TriggerEvent(const Event& event)
 	{
-		for (auto& handler : s_Subscribers[event_.GetEventType()]) {
-			handler->Exec(event_);
+		for (auto& handler : s_Subscribers[event.GetEventType()]) {
+			handler->Exec(event);
 		}
+		LOG_WARN(event.ToString());
 	}
 
 	void EventManager::QueueEvent(std::unique_ptr<Event>&& event)

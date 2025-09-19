@@ -2,6 +2,9 @@
 #define INVENTORY_H
 
 #include "Hotbar.h"
+#include "Events/EventManager.h"
+#include "Events/WindowEvent.h"
+#include "Events/ApplicationEvent.h"
 
 class Inventory : public Mesh<GUIVertex> {
 public:
@@ -50,11 +53,13 @@ private:
 
 	int m_SelectedHotbarSlot = 0;
 
+	//EVENT
+	Events::EventHandler<WindowResizeEvent> m_WindowResizeHandler;
+	Events::EventHandler<BlockPlacedEvent> m_BlockPlacedHandler;
+
 private:
 	void SetVAO() override;
 	void Transform();
-
-	void UpdateWindowSize();
 
 	inline float GetScaledSize(const float size) const { return size * m_Scale.x; }
 	inline float GetScaledWidth() const { return m_InventoryWidth * m_Scale.x; }
@@ -78,6 +83,10 @@ private:
 
 	void SendHotbarItems();
 	void ChangeSelectedHotbarSlot(const int hotbarSlotIndex);
+
+	//EVENT
+	void OnWindowResize(const WindowResizeEvent& e);
+	void OnBlockPlaced(const BlockPlacedEvent& e);
 };
 
 #endif 
