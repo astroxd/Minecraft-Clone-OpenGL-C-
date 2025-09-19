@@ -162,7 +162,7 @@ void VoxelHandler::DestroyVoxel() {
 		(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 		(*m_Chunks)[m_ChunkCoord]->SetVAO();
 
-		Events::TriggerEvent(BlockBreakedEvent());
+		Events::TriggerEvent(BlockBrokenEvent());
 
 		UpdateAdjacentChunks();
 

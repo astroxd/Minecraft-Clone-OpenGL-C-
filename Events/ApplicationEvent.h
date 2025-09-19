@@ -18,12 +18,12 @@ public:
 
 };
 
-class BlockBreakedEvent : public Events::Event {
+class BlockBrokenEvent : public Events::Event {
 public:
 
-	EVENT_TYPE("BlockBreakedEvent");
+	EVENT_TYPE("BlockBrokenEvent");
 
-	BlockBreakedEvent()
+	BlockBrokenEvent()
 	{
 	}
 };
