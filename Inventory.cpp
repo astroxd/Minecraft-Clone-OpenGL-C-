@@ -85,14 +85,13 @@ void Inventory::GenerateMesh() {
 
 void Inventory::Update() {
 	HotBar.Update();
-
-	glm::vec2 mousePos = Input::getMousePosition();
-
-	m_Shader.Activate();
-
 	HandleInput();
 
 	if (!m_IsInventoryOpen) return;
+
+	//TODO Could get moved inside a different function
+	glm::vec2 mousePos = Input::getMousePosition();
+	m_Shader.Activate();
 
 	if (IsInSelectedArea(glm::vec2(7.0f, 30.0f), glm::vec2(169.0f, 83.0f)) ||
 		IsInSelectedArea(glm::vec2(7.0f, 7.0f), glm::vec2(169.0f, 25.0f)))
@@ -378,7 +377,6 @@ void Inventory::Draw() {
 
 //! Event Callbacks
 void Inventory::OnWindowResize(const WindowResizeEvent& e) {
-	LOG_WARN("Inventory: {0}, {1}", e.m_Width, e.m_Height);
 	m_WindowSize = Window::GetInstance().getWindowSize();
 	Transform();
 	m_InventoryItems.UpdateTransform(CreateItemOffsets());

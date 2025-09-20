@@ -1,7 +1,6 @@
 #include "Window.h"
 #include "Log.h"
 #include "Input.h"
-#include "Events/EventManager.h"
 
 //Window* Window::s_Instance = new Window();
 Window* Window::s_Instance = nullptr;
@@ -11,7 +10,6 @@ unsigned int Window::s_Width;
 unsigned int Window::s_Height;
 
 Window::Window()
-	: m_Handler([this](const WindowResizeEvent& e) {OnWindowResize(e); })
 {
 	LOG_INFO("Window created");
 	s_Width = 1280;
@@ -40,9 +38,6 @@ Window::Window()
 	glfwMakeContextCurrent(m_Window);
 
 	gladLoadGL();
-
-	Events::Subscribe(m_Handler);
-
 
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 	glfwSetScrollCallback(m_Window, scroll_callback);
@@ -84,8 +79,4 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 
 void Window::scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
 	Input::setScrollWheel(yoffset);
-}
-
-void Window::OnWindowResize(const WindowResizeEvent& e) {
-	LOG_WARN("WindowResize: {0}, {1}", e.m_Width, e.m_Height);
 }

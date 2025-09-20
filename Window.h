@@ -8,8 +8,8 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include "Events/EventManager.h"
 #include "Events/WindowEvent.h"
-#include "Events/EventHandler.h"
 
 //Singleton implementation of Window
 class Window {
@@ -35,7 +35,6 @@ public:
 
 	inline void DestroyWindow() { glfwDestroyWindow(m_Window); }
 
-	void OnWindowResize(const WindowResizeEvent& e);
 
 private:
 	Window();
@@ -53,10 +52,6 @@ private:
 	// window resize callback
 	static void framebuffer_size_callback(GLFWwindow* window, GLint width, GLint height);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
-
-	//EVENT
-	Events::EventHandler<WindowResizeEvent> m_Handler;
 
 };
 

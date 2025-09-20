@@ -9,6 +9,10 @@
 class Inventory : public Mesh<GUIVertex> {
 public:
 	Inventory();
+	~Inventory() {
+		Events::Unsubscribe(m_WindowResizeHandler);
+		Events::Unsubscribe(m_BlockPlacedHandler);
+	}
 
 	void GenerateMesh();
 
