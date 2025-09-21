@@ -15,9 +15,11 @@ namespace Events {
 	{
 		auto subscribers = s_Subscribers.find(eventId);
 		if (subscribers != s_Subscribers.end()) {
+			//Vector of handlers of eventId Event 
 			auto& handlers = subscribers->second;
-			for (auto& it : handlers) {
-				if (it->GetType() == handler->GetType()) {
+			for (auto& subscribedHandler : handlers) {
+				//e.g of handler->GetType(): class `public: __cdecl Inventory::Inventory(void) __ptr64'::`1'::<lambda_2_>
+				if (subscribedHandler->GetType() == handler->GetType()) {
 					LOG_ERROR("Attempting to double-register callback");
 					return;
 				}

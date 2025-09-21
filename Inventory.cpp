@@ -1,5 +1,4 @@
 #include "Inventory.h"
-
 #include "Utils.h"
 
 Inventory::Inventory()
@@ -14,7 +13,7 @@ Inventory::Inventory()
 	//36 = Number of Slots
 	//1 = The extra slot for the picked item
 	//The slot 0 is in the top left corner
-	//The slot 35 is the bottom right cornero of hotbar
+	//The slot 35 is the bottom right corner of hotbar
 	m_Items.reserve(36 + 1);
 	for (int i = 0; i < 36 + 1; i++)
 	{

@@ -12,7 +12,7 @@ namespace Events {
 		virtual std::string GetEventType() const = 0;
 		virtual std::string ToString() const { return GetEventType(); }
 
-		bool m_IsHandled{ false };
+		bool m_IsHandled{ false }; //Not really used
 	};
 
 	inline std::ostream& operator<<(std::ostream& os, const Event& e) {

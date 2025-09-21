@@ -46,4 +46,4 @@ namespace Events {
 		const std::string m_HandlerType;
 	};
 }
-#endif // !EVENT_HANDLER_H
+#endif
