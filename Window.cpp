@@ -9,7 +9,8 @@ std::mutex Window::s_Mutex;
 unsigned int Window::s_Width;
 unsigned int Window::s_Height;
 
-Window::Window() {
+Window::Window()
+{
 	LOG_INFO("Window created");
 	s_Width = 1280;
 	s_Height = 720;
@@ -37,6 +38,7 @@ Window::Window() {
 	glfwMakeContextCurrent(m_Window);
 
 	gladLoadGL();
+
 	glfwSetFramebufferSizeCallback(m_Window, framebuffer_size_callback);
 	glfwSetScrollCallback(m_Window, scroll_callback);
 
@@ -69,6 +71,8 @@ void Window::framebuffer_size_callback(GLFWwindow* window, GLint width, GLint he
 	glViewport(0, 0, width, height);
 	s_Width = width;
 	s_Height = height;
+
+	Events::TriggerEvent(WindowResizeEvent(s_Width, s_Height));
 
 #endif
 }

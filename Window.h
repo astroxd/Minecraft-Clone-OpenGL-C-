@@ -4,13 +4,12 @@
 #include <iostream>
 #include <mutex>
 
-
-
-
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include "Events/EventManager.h"
+#include "Events/WindowEvent.h"
 
 //Singleton implementation of Window
 class Window {
@@ -36,6 +35,7 @@ public:
 
 	inline void DestroyWindow() { glfwDestroyWindow(m_Window); }
 
+
 private:
 	Window();
 
@@ -52,6 +52,7 @@ private:
 	// window resize callback
 	static void framebuffer_size_callback(GLFWwindow* window, GLint width, GLint height);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
 };
 
 #endif;

@@ -1,9 +1,13 @@
 #include "Hotbar.h"
 #include "Utils.h"
 
-Hotbar::Hotbar() {
+Hotbar::Hotbar()
+	: m_WindowResizeHandler([this](const WindowResizeEvent& e) { OnWindowResize(e); })
+{
 	LOG_INFO("HotBar Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
+
+	Events::Subscribe(m_WindowResizeHandler);
 
 	GenerateMesh();
 }
@@ -55,17 +59,7 @@ void Hotbar::GenerateMesh() {
 }
 
 void Hotbar::Update() {
-	UpdateWindowSize();
 	HandleInput();
-}
-
-void Hotbar::UpdateWindowSize() {
-	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
-		m_WindowSize = Window::GetInstance().getWindowSize();
-		Transform();
-		m_HotBarItems.UpdateTransform(CreateItemOffsets());
-
-	}
 }
 
 glm::vec3 Hotbar::GetTranslationVector() const {
@@ -197,4 +191,11 @@ void Hotbar::Draw() {
 
 	m_HotBarItems.Draw();
 
+}
+
+//! Event Callbacks
+void Hotbar::OnWindowResize(const WindowResizeEvent& e) {
+	m_WindowSize = Window::GetInstance().getWindowSize();
+	Transform();
+	m_HotBarItems.UpdateTransform(CreateItemOffsets());
 }

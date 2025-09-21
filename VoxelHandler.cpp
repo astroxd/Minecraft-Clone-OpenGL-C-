@@ -162,19 +162,10 @@ void VoxelHandler::DestroyVoxel() {
 		(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 		(*m_Chunks)[m_ChunkCoord]->SetVAO();
 
-		if (m_VoxelLocalPosition.x == 0) {
-			RebuildAdjacentChunk(XNEG);
-		}
-		else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
-			RebuildAdjacentChunk(XPOS);
-		}
+		Events::TriggerEvent(BlockBrokenEvent());
 
-		if (m_VoxelLocalPosition.z == 0) {
-			RebuildAdjacentChunk(ZNEG);
-		}
-		else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
-			RebuildAdjacentChunk(ZPOS);
-		}
+		UpdateAdjacentChunks();
+
 		m_LastDestroyed = time;
 	}
 }
@@ -190,27 +181,34 @@ void VoxelHandler::PlaceVoxel() {
 	if (m_VoxelId > 0) {
 		int newVoxelId = GetHitVoxelId(m_VoxelWorldPos + m_VoxelNormal);
 		if (newVoxelId == 0) {
+			if (Inventory::s_SelectedHotbarItem->id <= 0) return;
+
 			(*m_Chunks)[m_ChunkCoord]->SetBlock(m_VoxelLocalPosition, Inventory::s_SelectedHotbarItem->id);
 			(*m_Chunks)[m_ChunkCoord]->GenerateChunk();
 			(*m_Chunks)[m_ChunkCoord]->SetVAO();
-			//TODO Should Launch a BlockPlaced Event to decrease item quantity
 
-			if (m_VoxelLocalPosition.x == 0) {
-				RebuildAdjacentChunk(XNEG);
-			}
-			else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
-				RebuildAdjacentChunk(XPOS);
-			}
+			Events::TriggerEvent(BlockPlacedEvent(*(Inventory::s_SelectedHotbarItem)));
 
-			if (m_VoxelLocalPosition.z == 0) {
-				RebuildAdjacentChunk(ZNEG);
-			}
-			else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
-				RebuildAdjacentChunk(ZPOS);
-			}
+			UpdateAdjacentChunks();
 		}
 	}
 	m_LastPlaced = time;
+}
+
+void VoxelHandler::UpdateAdjacentChunks() {
+	if (m_VoxelLocalPosition.x == 0) {
+		RebuildAdjacentChunk(XNEG);
+	}
+	else if (m_VoxelLocalPosition.x == CHUNK_W - 1) {
+		RebuildAdjacentChunk(XPOS);
+	}
+
+	if (m_VoxelLocalPosition.z == 0) {
+		RebuildAdjacentChunk(ZNEG);
+	}
+	else if (m_VoxelLocalPosition.z == CHUNK_D - 1) {
+		RebuildAdjacentChunk(ZPOS);
+	}
 }
 
 void VoxelHandler::RebuildAdjacentChunk(AdjacentChunkPos pos) {

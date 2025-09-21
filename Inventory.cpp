@@ -1,15 +1,19 @@
 #include "Inventory.h"
-
 #include "Utils.h"
 
-Inventory::Inventory() {
+Inventory::Inventory()
+	: m_WindowResizeHandler([this](const WindowResizeEvent& e) { OnWindowResize(e); })
+	, m_BlockPlacedHandler([this](const BlockPlacedEvent& e) {OnBlockPlaced(e); })
+{
 	LOG_INFO("Inventory Created");
 	m_Shader = ShaderManager::GetShader("GUIProgram");
+	Events::Subscribe(m_WindowResizeHandler);
+	Events::Subscribe(m_BlockPlacedHandler);
 
 	//36 = Number of Slots
 	//1 = The extra slot for the picked item
 	//The slot 0 is in the top left corner
-	//The slot 35 is the bottom right cornero of hotbar
+	//The slot 35 is the bottom right corner of hotbar
 	m_Items.reserve(36 + 1);
 	for (int i = 0; i < 36 + 1; i++)
 	{
@@ -80,15 +84,13 @@ void Inventory::GenerateMesh() {
 
 void Inventory::Update() {
 	HotBar.Update();
-
-	glm::vec2 mousePos = Input::getMousePosition();
-
-	m_Shader.Activate();
-
-	UpdateWindowSize();
 	HandleInput();
 
 	if (!m_IsInventoryOpen) return;
+
+	//TODO Could get moved inside a different function
+	glm::vec2 mousePos = Input::getMousePosition();
+	m_Shader.Activate();
 
 	if (IsInSelectedArea(glm::vec2(7.0f, 30.0f), glm::vec2(169.0f, 83.0f)) ||
 		IsInSelectedArea(glm::vec2(7.0f, 7.0f), glm::vec2(169.0f, 25.0f)))
@@ -118,14 +120,6 @@ void Inventory::Update() {
 
 	//If Item is Picked update its position every frame
 	if (m_IsItemPicked) {
-		m_InventoryItems.UpdateTransform(CreateItemOffsets());
-	}
-}
-
-void Inventory::UpdateWindowSize() {
-	if (Window::GetInstance().getWindowSize() != m_WindowSize) {
-		m_WindowSize = Window::GetInstance().getWindowSize();
-		Transform();
 		m_InventoryItems.UpdateTransform(CreateItemOffsets());
 	}
 }
@@ -379,3 +373,24 @@ void Inventory::Draw() {
 	m_InventoryItems.Draw();
 
 };
+
+//! Event Callbacks
+void Inventory::OnWindowResize(const WindowResizeEvent& e) {
+	m_WindowSize = Window::GetInstance().getWindowSize();
+	Transform();
+	m_InventoryItems.UpdateTransform(CreateItemOffsets());
+}
+
+void Inventory::OnBlockPlaced(const BlockPlacedEvent& e)
+{
+	s_SelectedHotbarItem->count -= 1;
+
+	if (s_SelectedHotbarItem->count <= 0) {
+		*s_SelectedHotbarItem = InventoryItem{ 0, 0, s_SelectedHotbarItem->slot }; //EMPTY SLOT
+
+		SendItems();
+		SetItemOffsets(CreateItemOffsets());
+
+		SendHotbarItems();
+	}
+}

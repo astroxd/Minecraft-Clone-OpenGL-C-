@@ -6,6 +6,8 @@
 #include "TextureAtlas.h"
 #include "Input.h"
 #include "BlockItem.h"
+#include "Events/EventManager.h"
+#include "Events/WindowEvent.h"
 
 struct GUIVertex {
 	glm::vec3 pos;
@@ -60,6 +62,7 @@ enum Slots {
 class Hotbar : public Mesh<GUIVertex> {
 public:
 	Hotbar();
+	~Hotbar() { Events::Unsubscribe(m_WindowResizeHandler); }
 
 	void GenerateMesh();
 
@@ -93,11 +96,12 @@ private:
 
 	bool m_IsInventoryOpen;
 
+	//EVENT
+	Events::EventHandler<WindowResizeEvent> m_WindowResizeHandler;
+
 private:
 	void SetVAO() override;
 	void Transform();
-
-	void UpdateWindowSize();
 
 	inline float GetScaledWidth() const { return m_HotBarWidth * m_Scale.x; }
 	inline float GetScaledHeight() const { return m_HotBarHeight * m_Scale.y; }
@@ -115,6 +119,9 @@ private:
 
 	void SendItems();
 	std::vector<glm::vec3> CreateItemOffsets();
+
+	//EVENT
+	void OnWindowResize(const WindowResizeEvent& e);
 
 };
 
